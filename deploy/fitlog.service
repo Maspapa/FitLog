@@ -18,6 +18,7 @@ Restart=on-failure
 RestartSec=5
 TimeoutStopSec=20
 KillSignal=SIGTERM
+SuccessExitStatus=143 SIGTERM
 NoNewPrivileges=true
 PrivateTmp=true
 ProtectHome=true
