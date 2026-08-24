@@ -1,0 +1,31 @@
+[Unit]
+Description=FitLog personal fitness tracker
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/fitlog/current
+EnvironmentFile=/etc/fitlog.env
+Environment=NODE_ENV=production
+Environment=HOSTNAME=127.0.0.1
+Environment=PORT=3020
+Environment=NODE_OPTIONS=--max-old-space-size=180
+ExecStart=/usr/bin/node server.js
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=20
+KillSignal=SIGTERM
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/fitlog
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+MemoryHigh=220M
+MemoryMax=280M
+
+[Install]
+WantedBy=multi-user.target
