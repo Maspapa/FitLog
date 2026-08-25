@@ -65,8 +65,8 @@ export function FitLogApp() {
 
     <header className="hero" id="top">
       <div className="hero-meta"><span>{new Date().toLocaleDateString("zh-CN", { month: "long", day: "numeric", weekday: "long" })}</span><label>目标<select value={data.profile.goal} onChange={(e) => changeGoal(e.target.value as Goal)}>{Object.entries(GOALS).map(([value,label]) => <option value={value} key={value}>{label}</option>)}</select></label></div>
-      <h1>练过的，<br /><em>都算数。</em></h1>
-      <p>每天一分钟，记下身体、训练和吃过的东西。我们看长期趋势，不审判某一天。</p>
+      <h1>今天的状态</h1>
+      <p>记下身体、训练和饮食，轻松看见自己的长期变化。</p>
       <div className="date-control"><button type="button" onClick={() => { const date = new Date(`${selectedDate}T12:00:00`); date.setDate(date.getDate()-1); changeDate(dateKey(date)); }}>←</button><input aria-label="打卡日期" type="date" max={dateKey()} value={selectedDate} onChange={(e) => changeDate(e.target.value)} /><button type="button" disabled={selectedDate === dateKey()} onClick={() => { const date = new Date(`${selectedDate}T12:00:00`); date.setDate(date.getDate()+1); changeDate(dateKey(date)); }}>→</button></div>
     </header>
 
