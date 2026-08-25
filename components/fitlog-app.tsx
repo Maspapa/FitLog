@@ -61,12 +61,12 @@ export function FitLogApp() {
 
   if (!ready) return <div className="loading-screen"><span>FITLOG</span><i /></div>;
   return <main>
-    <nav className="topbar"><a href="#top" className="brand"><i>FL</i>FitLog</a><div><button type="button" onClick={() => exportData(data)}>导出备份</button><button type="button" onClick={() => importRef.current?.click()}>导入</button><input ref={importRef} hidden type="file" accept="application/json" onChange={onImport} /></div></nav>
+    <nav className="topbar"><a href="#top" className="brand"><i>FL</i>FitLog</a><div><a className="topbar-primary" href="#daily">今日打卡</a><button type="button" onClick={() => exportData(data)}>导出备份</button><button type="button" onClick={() => importRef.current?.click()}>导入</button><input ref={importRef} hidden type="file" accept="application/json" onChange={onImport} /></div></nav>
 
     <header className="hero" id="top">
       <div className="hero-meta"><span>{new Date().toLocaleDateString("zh-CN", { month: "long", day: "numeric", weekday: "long" })}</span><label>目标<select value={data.profile.goal} onChange={(e) => changeGoal(e.target.value as Goal)}>{Object.entries(GOALS).map(([value,label]) => <option value={value} key={value}>{label}</option>)}</select></label></div>
-      <h1>今天的状态</h1>
-      <p>记下身体、训练和饮食，轻松看见自己的长期变化。</p>
+      <h1>今天，过得怎么样？</h1>
+      <p>选一个项目开始记录。不用全部填满，也不用追求完美。</p>
       <div className="date-control"><button type="button" onClick={() => { const date = new Date(`${selectedDate}T12:00:00`); date.setDate(date.getDate()-1); changeDate(dateKey(date)); }}>←</button><input aria-label="打卡日期" type="date" max={dateKey()} value={selectedDate} onChange={(e) => changeDate(e.target.value)} /><button type="button" disabled={selectedDate === dateKey()} onClick={() => { const date = new Date(`${selectedDate}T12:00:00`); date.setDate(date.getDate()+1); changeDate(dateKey(date)); }}>→</button></div>
     </header>
 
@@ -76,6 +76,8 @@ export function FitLogApp() {
       <Stat value={String(stats.workouts)} unit="项" label="本周训练" />
       <Stat value={String(stats.streak)} unit="天" label="连续记录" />
     </section>
+
+    <nav className="quick-nav" aria-label="打卡快捷入口"><span>快速记录</span><a href="#body-card"><b>01</b>身体</a><a href="#workout-card"><b>02</b>训练</a><a href="#food-card"><b>03</b>饮食</a><a href="#state-card"><b>04</b>恢复</a></nav>
 
     <DailyEditor key={`${selectedDate}-${editorKey}`} initial={selectedLog} onSave={saveLog} />
 
