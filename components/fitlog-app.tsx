@@ -3,10 +3,12 @@
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import { DailyEditor, freshLog } from "./daily-editor";
 import { CoachReport } from "./coach-report";
+import { TrainingPlan } from "./training-plan";
 import { TrendChart } from "./trend-chart";
 import { calculateStreak, dateKey, latestMeasurement, recentLogs, weightAverage, workoutsThisWeek } from "@/lib/metrics";
 import { createData, exportData, getOrCreateDeviceToken, importData, loadData, saveData, upsertLog } from "@/lib/storage";
 import type { AiReport, FitData, Goal } from "@/lib/schemas";
+import type { PlanExercise, TrainingDay } from "@/lib/training-plan";
 
 const GOALS: Record<Goal, string> = { fat_loss: "减脂", muscle_gain: "增肌", maintenance: "保持体型", performance: "提升运动表现" };
 
@@ -33,13 +35,25 @@ export function FitLogApp() {
   const last14 = useMemo(() => recentLogs(data.logs, 14), [data.logs]);
   const stats = useMemo(() => ({ average: weightAverage(data.logs), waist: latestMeasurement(data.logs, "waist"), workouts: workoutsThisWeek(data.logs), streak: calculateStreak(data.logs) }), [data.logs]);
 
-  async function persist(next: FitData) {
+  async function persist(next: FitData, successMessage = "记录已保存到服务器") {
     setData(next);
-    try { await saveData(tokenRef.current, next); setMessage("记录已保存到服务器"); }
+    try { await saveData(tokenRef.current, next); setMessage(successMessage); }
     catch (error) { setMessage(error instanceof Error ? error.message : "保存失败"); }
     window.setTimeout(() => setMessage(""), 2500);
   }
   function saveLog(log: typeof selectedLog) { void persist(upsertLog(data, log)); setEditorKey((key) => key + 1); }
+  function addPlanExercises(items: PlanExercise[], day: TrainingDay) {
+    const existing = new Set(selectedLog.workouts.map((item) => item.name.trim()));
+    const additions = items.filter((item) => !existing.has(item.name)).map((item) => ({
+      id: crypto.randomUUID(), name: item.name, category: "strength" as const, sets: item.log?.sets ?? null,
+      reps: item.log?.reps ?? null, weight: null, duration: null, intensity: "moderate" as const,
+    }));
+    if (!additions.length) { setMessage(`${day.title}已经在当天训练里了`); window.setTimeout(() => setMessage(""), 2500); return; }
+    const nextLog = { ...selectedLog, workouts: [...selectedLog.workouts, ...additions], updatedAt: new Date().toISOString() };
+    void persist(upsertLog(data, nextLog), `已把「${day.title}」${additions.length} 个器械动作加入当天打卡`);
+    setEditorKey((key) => key + 1);
+    requestAnimationFrame(() => document.querySelector("#workout-card")?.scrollIntoView({ behavior: "smooth", block: "start" }));
+  }
   function changeDate(value: string) { setSelectedDate(value); setEditorKey((key) => key + 1); }
   function changeGoal(goal: Goal) { void persist({ ...data, profile: { ...data.profile, goal } }); }
   async function onImport(event: ChangeEvent<HTMLInputElement>) {
@@ -61,7 +75,7 @@ export function FitLogApp() {
 
   if (!ready) return <div className="loading-screen"><span>FITLOG</span><i /></div>;
   return <main>
-    <nav className="topbar"><a href="#top" className="brand"><i>FL</i>FitLog</a><div><a className="topbar-primary" href="#daily">今日打卡</a><button type="button" onClick={() => exportData(data)}>导出备份</button><button type="button" onClick={() => importRef.current?.click()}>导入</button><input ref={importRef} hidden type="file" accept="application/json" onChange={onImport} /></div></nav>
+    <nav className="topbar"><a href="#top" className="brand"><i>FL</i>FitLog</a><div><a className="topbar-plan" href="#training-plan">训练计划</a><a className="topbar-primary" href="#daily">今日打卡</a><button type="button" onClick={() => exportData(data)}>导出备份</button><button type="button" onClick={() => importRef.current?.click()}>导入</button><input ref={importRef} hidden type="file" accept="application/json" onChange={onImport} /></div></nav>
 
     <header className="hero" id="top">
       <div className="hero-meta"><span>{new Date().toLocaleDateString("zh-CN", { month: "long", day: "numeric", weekday: "long" })}</span><label>目标<select value={data.profile.goal} onChange={(e) => changeGoal(e.target.value as Goal)}>{Object.entries(GOALS).map(([value,label]) => <option value={value} key={value}>{label}</option>)}</select></label></div>
@@ -80,6 +94,8 @@ export function FitLogApp() {
     <nav className="quick-nav" aria-label="打卡快捷入口"><span>快速记录</span><a href="#body-card"><b>01</b>身体</a><a href="#workout-card"><b>02</b>训练</a><a href="#food-card"><b>03</b>饮食</a><a href="#state-card"><b>04</b>恢复</a></nav>
 
     <DailyEditor key={`${selectedDate}-${editorKey}`} initial={selectedLog} onSave={saveLog} />
+
+    <TrainingPlan selectedDate={selectedDate} onAddExercises={addPlanExercises} />
 
     <section className="insights-section">
       <div className="section-title light"><span>LONG GAME</span><h2>别盯着一天，看趋势。</h2><p>单日体重会受水分、盐分和作息影响。曲线比数字更诚实。</p></div>
