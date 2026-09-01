@@ -26,6 +26,21 @@ const MEDIA: Partial<Record<DiagramKind, { start: string; peak?: string }>> = {
 };
 
 const MEDIA_BY_NAME: Record<string, { start: string; peak?: string }> = {
+  "史密斯上斜卧推": { start: "smith-machine-incline-bench-press-start.webp", peak: "smith-machine-incline-bench-press-peak.webp" },
+  "哑铃卧推": { start: "db-bench-press-start.webp", peak: "db-bench-press-peak.webp" },
+  "绳索夹胸": { start: "cable-fly-start.webp", peak: "cable-fly-peak.webp" },
+  "助力双杠臂屈伸": { start: "assisted-dips-start.webp", peak: "assisted-dips-peak.webp" },
+  "器械肱三头伸展": { start: "machine-triceps-extension-start.webp", peak: "machine-triceps-extension-peak.webp" },
+  "哈克深蹲机": { start: "hack-squat-start.webp", peak: "hack-squat-peak.webp" },
+  "史密斯深蹲": { start: "smith-machine-squat-start.webp", peak: "smith-machine-squat-peak.webp" },
+  "俯卧腿弯举": { start: "leg-curl-start.webp", peak: "leg-curl-peak.webp" },
+  "坐姿髋内收": { start: "hip-adduction-start.webp", peak: "hip-adduction-peak.webp" },
+  "站姿提踵机": { start: "machine-calf-raise-start.webp", peak: "machine-calf-raise-peak.webp" },
+  "助力引体向上": { start: "assisted-pull-ups-start.webp", peak: "assisted-pull-ups-peak.webp" },
+  "单臂高位下拉": { start: "one-arm-lat-pulldown-start.webp", peak: "one-arm-lat-pulldown-peak.webp" },
+  "绳索面拉": { start: "face-pull-start.webp", peak: "face-pull-peak.webp" },
+  "哑铃侧平举": { start: "lateral-raise-start.webp", peak: "lateral-raise-peak.webp" },
+  "器械背伸": { start: "machine-back-extension-start.webp", peak: "machine-back-extension-peak.webp" },
   "墙面俯卧撑": { start: "wall-push-ups-start.webp", peak: "wall-push-ups-peak.webp" },
   "上斜推胸机": { start: "smith-machine-incline-bench-press-start.webp", peak: "smith-machine-incline-bench-press-peak.webp" },
   "固定自行车": { start: "stationary-bike-main.webp" },

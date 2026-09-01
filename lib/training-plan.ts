@@ -33,6 +33,7 @@ export interface TrainingDay {
   duration: string;
   summary: string;
   exercises: PlanExercise[];
+  alternatives: PlanExercise[];
 }
 
 const equipmentGuide = "https://www.puregym.com/blog/how-to-use-gym-equipment/";
@@ -102,6 +103,38 @@ export const TRAINING_DAYS: TrainingDay[] = [
         setup: "站直或坐直，一只手沿背后向下，另一只手轻扶该侧肘部。",
         steps: ["收紧腹部，避免腰部前拱。", "轻轻把肘部引向头后，直到上臂后侧有拉伸感。", "自然呼吸后换边。"],
         cues: ["头不要前伸", "不要压颈部", "轻柔保持"], mistake: "用力扳动肘部，或为了够到背部而过度塌腰。", safety: "肩或肘出现锐痛时立即放下手臂，不要继续拉伸。", diagram: "arm-stretch", guideUrl: aceLibrary,
+      },
+    ],
+    alternatives: [
+      {
+        id: "m-alt-smith-incline", phase: "main", name: "史密斯上斜卧推", englishName: "Smith incline bench press", dose: "3 组 × 8–12 次", rest: "90 秒", target: "上胸、肩前束、肱三头肌", equipment: "史密斯机 + 上斜凳",
+        setup: "把凳子调到约 20–30°，移动到杠铃下方；躺下时杠铃落点应在上胸，不是颈部。先用空杆确认凳子位置和挂钩方向。",
+        steps: ["双脚踩稳，肩胛向后下夹紧，旋开挂钩。", "吸气把杠铃缓慢降向锁骨下方，肘部斜向下。", "呼气推回起点，保留一点肘部弯曲后重新挂好。"],
+        cues: ["先试空杆", "杠铃对准上胸", "肩胛不离凳"], mistake: "凳子角度过高变成肩推，或杠铃落向颈部。", safety: "先确认两侧安全限位；不熟悉挂钩时请教练协助。", diagram: "push", guideUrl: "https://www.puregym.com/exercises/chest/bench-press/barbell-incline-bench-press/", log: { sets: 3, reps: 12 },
+      },
+      {
+        id: "m-alt-db-press", phase: "main", name: "哑铃卧推", englishName: "Dumbbell bench press", dose: "3 组 × 8–12 次", rest: "90 秒", target: "胸大肌、肱三头肌、肩前束", equipment: "平凳 + 哑铃",
+        setup: "先坐在凳边，把哑铃放在大腿上；借大腿轻推帮助躺下，双脚踩稳，哑铃位于胸口两侧。",
+        steps: ["肩胛压向凳面，手腕保持在肘部正上方。", "呼气沿轻微弧线向上推，顶端哑铃接近但不碰撞。", "吸气缓慢下放到上臂与躯干约 45°。"],
+        cues: ["肩胛贴凳", "手腕叠在肘上", "左右同步"], mistake: "肘部完全横向展开，或结束时从高处把哑铃扔到地面。", safety: "先选能独立起落的轻重量；肩部不适可用中立握法。", diagram: "push", guideUrl: "https://www.puregym.com/exercises/chest/bench-press/dumbbell-bench-press/", log: { sets: 3, reps: 12 },
+      },
+      {
+        id: "m-alt-cable-fly", phase: "main", name: "绳索夹胸", englishName: "Cable fly", dose: "3 组 × 10–15 次", rest: "60–75 秒", target: "胸大肌", equipment: "双侧龙门架 + 单手柄",
+        setup: "两侧滑轮调到略低于肩，使用很轻重量；站到中间，一脚在前，双手握柄并保持肘部微屈。",
+        steps: ["胸口打开，肩胛稳定，身体保持不动。", "呼气把双手沿弧线合到胸前，像抱住圆桶。", "吸气缓慢打开，手肘到躯干两侧即止。"],
+        cues: ["肘角度固定", "胸部带动合拢", "回程不被配重拉走"], mistake: "重量太大导致身体前倾、手臂变成推举。", safety: "先分别拿好两侧手柄再站到中间；肩前侧拉痛时缩小幅度。", diagram: "fly", guideUrl: "https://www.puregym.com/exercises/chest/chest-fly/cable-flyes/", log: { sets: 3, reps: 15 },
+      },
+      {
+        id: "m-alt-assisted-dip", phase: "main", name: "助力双杠臂屈伸", englishName: "Machine assisted dip", dose: "3 组 × 8–12 次", rest: "90 秒", target: "胸下部、肱三头肌", equipment: "引体 / 双杠助力机",
+        setup: "选择足够大的助力重量，跪上踏板后握住双杠；身体轻微前倾练胸，保持直立则更偏肱三头。",
+        steps: ["肩膀向后下固定，肘部朝身后弯曲。", "吸气缓慢下降到上臂接近水平或舒适深度。", "呼气压住把手回到起点，肘部不猛烈锁死。"],
+        cues: ["助力宁多勿少", "肩膀远离耳朵", "下降慢"], mistake: "助力太少导致耸肩和身体下坠，或下降得过深。", safety: "上下踏板时抓稳把手；肩前侧夹痛应立即停止。", diagram: "push", guideUrl: "https://www.puregym.com/exercises/chest/chest-dips/", log: { sets: 3, reps: 12 },
+      },
+      {
+        id: "m-alt-triceps-machine", phase: "main", name: "器械肱三头伸展", englishName: "Machine triceps extension", dose: "3 组 × 10–15 次", rest: "60 秒", target: "肱三头肌", equipment: "肱三头伸展机",
+        setup: "调座椅让肘关节对准器械转轴，胸口或背部贴稳靠垫；手腕保持自然直线。",
+        steps: ["上臂贴住支撑垫，吸气准备。", "呼气伸直肘部，底部不要猛烈锁死。", "吸气慢慢回到肘部弯曲、仍能控制的位置。"],
+        cues: ["肘轴对准转轴", "上臂不抬", "回程慢"], mistake: "座椅高度错误，或用肩膀和身体压动握把。", safety: "肘尖疼痛时减重并缩短伸直幅度。", diagram: "pressdown", guideUrl: "https://www.puregym.com/exercises/arms-and-shoulders/tricep-extension/", log: { sets: 3, reps: 15 },
       },
     ],
   },
@@ -176,6 +209,38 @@ export const TRAINING_DAYS: TrainingDay[] = [
         cues: ["脚踝主动勾起", "尾骨贴地", "自然呼吸"], mistake: "用手直接压膝盖，或让头颈悬空紧张。", safety: "膝关节不适时减小髋外旋角度。", diagram: "glute-stretch", guideUrl: aceLibrary,
       },
     ],
+    alternatives: [
+      {
+        id: "w-alt-hack-squat", phase: "main", name: "哈克深蹲机", englishName: "Hack squat", dose: "3 组 × 8–12 次", rest: "90–120 秒", target: "股四头肌、臀肌", equipment: "哈克深蹲机",
+        setup: "肩膀和背部贴稳靠垫，双脚放在踏板中上部、约肩宽；先不加片确认安全把手和限位位置。",
+        steps: ["解开安全把手，吸气屈膝下蹲。", "膝盖沿脚尖方向移动，降到腰背仍贴垫的深度。", "呼气用全脚掌推起，顶端膝盖保留微屈。"],
+        cues: ["背部贴垫", "膝盖跟脚尖", "全脚掌发力"], mistake: "双脚放得太低导致脚跟抬起，或顶端锁死膝盖。", safety: "先学会安全把手；膝前侧疼痛时把脚位略上移并减重。", diagram: "squat", guideUrl: "https://www.puregym.com/exercises/legs/quad-exercises/squats/hack-squat/", log: { sets: 3, reps: 12 },
+      },
+      {
+        id: "w-alt-smith-squat", phase: "main", name: "史密斯深蹲", englishName: "Smith machine squat", dose: "3 组 × 8–12 次", rest: "90–120 秒", target: "股四头肌、臀肌", equipment: "史密斯机",
+        setup: "杠铃放在斜方肌上部而不是颈椎，双脚略向前；先用空杆确认旋转挂钩和两侧安全限位。",
+        steps: ["吸气收紧腹部，旋开挂钩。", "臀部向后下方移动，膝盖始终跟随脚尖。", "呼气踩稳全脚掌站起，稳定后转腕重新挂钩。"],
+        cues: ["空杆先练挂钩", "杠不压颈部", "脚掌不抬"], mistake: "脚站得太靠后、膝盖内扣，或没有设置安全限位。", safety: "第一次必须请巡场教练确认杠位和限位；腰膝锐痛立即停止。", diagram: "squat", guideUrl: aceLibrary, log: { sets: 3, reps: 12 },
+      },
+      {
+        id: "w-alt-lying-curl", phase: "main", name: "俯卧腿弯举", englishName: "Lying leg curl", dose: "3 组 × 10–15 次", rest: "60–75 秒", target: "腘绳肌", equipment: "俯卧腿弯举机",
+        setup: "膝盖略伸出长凳边缘，脚垫位于脚踝上方；髋部压住垫面，握紧把手。",
+        steps: ["呼气把脚跟卷向臀部，髋骨保持贴垫。", "顶端停 1 秒，不用腰部抬起换幅度。", "吸气用 2–3 秒放回，配重片不相撞。"],
+        cues: ["髋部贴垫", "脚踝放松", "慢慢下放"], mistake: "脚垫压在小腿中段，或通过抬臀、塌腰完成动作。", safety: "膝后侧不舒服时重新调整转轴和脚垫。", diagram: "leg-curl", guideUrl: "https://www.puregym.com/exercises/legs/hamstring-exercises/hamstring-curls/lying-leg-curl/", log: { sets: 3, reps: 15 },
+      },
+      {
+        id: "w-alt-adduction", phase: "main", name: "坐姿髋内收", englishName: "Seated hip adduction", dose: "3 组 × 12–15 次", rest: "60 秒", target: "大腿内收肌群", equipment: "髋内收机",
+        setup: "大腿内侧贴住垫片，选择能舒适打开的起始角度；背部贴垫，先用轻重量。",
+        steps: ["双手握住把手固定骨盆。", "呼气把双腿平稳合拢，中心停 1 秒。", "吸气慢慢打开到大腿内侧有轻微拉伸。"],
+        cues: ["骨盆不晃", "双腿同时合拢", "打开要慢"], mistake: "开度设得过大，或身体前后甩动借力。", safety: "腹股沟刺痛时立即停止，不要强行拉开。", diagram: "abduction", guideUrl: "https://www.puregym.com/exercises/legs/inner-outer-thigh/", log: { sets: 3, reps: 15 },
+      },
+      {
+        id: "w-alt-calf", phase: "main", name: "站姿提踵机", englishName: "Machine calf raise", dose: "3 组 × 12–15 次", rest: "60 秒", target: "腓肠肌、比目鱼肌", equipment: "站姿提踵机",
+        setup: "前脚掌踩在踏板边缘，肩垫调到站直时能稳定承重；膝盖保持轻微弯曲。",
+        steps: ["脚跟缓慢下降到小腿有拉伸感。", "呼气用前脚掌把脚跟抬到最高，停 1 秒。", "吸气控制下降，不在底部弹震。"],
+        cues: ["脚踝直上直下", "顶端停一下", "全程可控"], mistake: "只做很短的弹跳幅度，或脚踝向外翻。", safety: "先确认肩垫和安全把手；跟腱疼痛时停止。", diagram: "squat", guideUrl: "https://www.puregym.com/exercises/legs/calf-exercises/", log: { sets: 3, reps: 15 },
+      },
+    ],
   },
   {
     id: "friday", weekday: "周五", title: "背与肩", focus: "背阔肌 · 菱形肌 · 三角肌中后束", duration: "约 60–70 分钟",
@@ -240,6 +305,38 @@ export const TRAINING_DAYS: TrainingDay[] = [
         setup: "站直或坐直，胸口朝向正前方；一只手臂抬到胸前，肘部保持微屈。",
         steps: ["另一只手扶在上臂处，不要直接压肘关节。", "把手臂轻轻引向胸前，肩膀保持向下。", "肩后侧有温和拉伸感时保持，换边。"],
         cues: ["身体朝前", "不耸肩", "轻柔拉近"], mistake: "扭转躯干，或用力压肘导致关节不适。", safety: "肩关节内部出现刺痛时停止。", diagram: "arm-stretch", guideUrl: aceLibrary,
+      },
+    ],
+    alternatives: [
+      {
+        id: "f-alt-assisted-pullup", phase: "main", name: "助力引体向上", englishName: "Assisted pull-up", dose: "3 组 × 6–10 次", rest: "90 秒", target: "背阔肌、肱二头肌", equipment: "引体 / 双杠助力机",
+        setup: "选择足够大的助力重量，双手略宽于肩握杠；抓稳后再跪上踏板，先让身体安静悬垂。",
+        steps: ["肩膀先向下远离耳朵，胸口略抬。", "呼气让肘部向身体两侧下压，把上胸拉向横杆。", "吸气慢慢伸直手臂，保持肩胛可控后重复。"],
+        cues: ["助力宁多勿少", "肘向下", "身体不摆"], mistake: "用蹬腿和摆动上冲，或耸肩缩着脖子。", safety: "上下踏板时始终抓稳；肩部夹痛时改做中立握高位下拉。", diagram: "pulldown", guideUrl: "https://www.puregym.com/exercises/back/pull-ups/", log: { sets: 3, reps: 10 },
+      },
+      {
+        id: "f-alt-one-arm-pulldown", phase: "main", name: "单臂高位下拉", englishName: "Single-arm lat pulldown", dose: "每侧 3 组 × 10–12 次", rest: "60 秒", target: "背阔肌、左右侧控制", equipment: "龙门架 + 单手柄",
+        setup: "滑轮调高，单膝跪地或坐在长凳上；工作侧手臂充分上伸，躯干保持朝前。",
+        steps: ["先把工作侧肩胛向下放。", "呼气让肘部沿身体侧面拉向髋部。", "吸气缓慢上伸，感受背阔肌拉长后换边。"],
+        cues: ["肘拉向髋", "身体不侧弯", "肩膀不耸"], mistake: "躯干大幅侧倾，把动作变成用体重拉手柄。", safety: "使用轻重量并远离配重片；肩部不适时缩短上伸幅度。", diagram: "pulldown", guideUrl: "https://www.puregym.com/exercises/back/lat-exercises/lat-pulldown/single-arm-lat-pulldown/", log: { sets: 3, reps: 12 },
+      },
+      {
+        id: "f-alt-face-pull", phase: "main", name: "绳索面拉", englishName: "Cable face pull", dose: "3 组 × 12–15 次", rest: "60 秒", target: "肩后束、肩袖、上背", equipment: "龙门架 + 绳索",
+        setup: "滑轮调到脸部高度，双手拇指朝向自己握绳；退后让绳索产生张力，膝盖微屈。",
+        steps: ["肩膀放松，肋骨收住。", "呼气把绳索拉向眉眼高度，同时把绳端分向耳朵两侧。", "肩胛轻夹后吸气慢慢伸臂。"],
+        cues: ["绳端拉向耳朵", "肘部抬起", "身体不后仰"], mistake: "重量太重导致腰部后仰，或把绳索拉向胸口变成划船。", safety: "先检查绳索卡扣；肩部疼痛时降低肘部高度和重量。", diagram: "rear-fly", guideUrl: "https://www.puregym.com/exercises/arms-and-shoulders/rear-delt-exercises/face-pulls/", log: { sets: 3, reps: 15 },
+      },
+      {
+        id: "f-alt-db-lateral", phase: "main", name: "哑铃侧平举", englishName: "Dumbbell lateral raise", dose: "3 组 × 12–15 次", rest: "60 秒", target: "三角肌中束", equipment: "轻重量哑铃",
+        setup: "站直或坐直，哑铃放在身体两侧略靠前；膝盖和肘部都保持轻微弯曲。",
+        steps: ["肩膀保持向下，呼气由肘部带动手臂抬起。", "抬到接近肩高或无痛高度停一下。", "吸气用 2–3 秒缓慢放回。"],
+        cues: ["肘部带动", "哑铃宁轻勿重", "不耸肩"], mistake: "用身体甩动，或把手抬得远高于肘部像倒水。", safety: "肩部出现疼痛弧时降低高度；不要用惯性冲过疼痛点。", diagram: "lateral", guideUrl: "https://www.puregym.com/exercises/arms-and-shoulders/lateral-raises/", log: { sets: 3, reps: 15 },
+      },
+      {
+        id: "f-alt-back-extension", phase: "main", name: "器械背伸", englishName: "Machine back extension", dose: "3 组 × 10–15 次", rest: "60–75 秒", target: "竖脊肌、臀肌", equipment: "坐姿背伸机",
+        setup: "调座椅和背垫，让器械转轴接近髋部；胸前交叉双臂或握住把手，先用最轻档。",
+        steps: ["腹部轻收，保持脊柱自然，不含胸。", "呼气用臀部和背部把躯干推向后方。", "到身体接近直立即停，吸气控制回到起点。"],
+        cues: ["不是猛甩", "顶端不过伸", "腹部保持张力"], mistake: "追求大幅后仰挤压腰椎，或快速弹回。", safety: "腰椎已有疼痛或放射性麻痛时跳过此动作并咨询专业人员。", diagram: "row", guideUrl: aceLibrary, log: { sets: 3, reps: 15 },
       },
     ],
   },

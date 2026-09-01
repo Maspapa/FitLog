@@ -15,7 +15,7 @@ describe("beginner training plan", () => {
   });
 
   it("keeps every exercise instructional and every logged movement actionable", () => {
-    const exercises = TRAINING_DAYS.flatMap((day) => day.exercises);
+    const exercises = TRAINING_DAYS.flatMap((day) => [...day.exercises, ...day.alternatives]);
     expect(new Set(exercises.map((item) => item.id)).size).toBe(exercises.length);
     for (const item of exercises) {
       expect(item.setup.length, item.id).toBeGreaterThan(20);
@@ -27,6 +27,14 @@ describe("beginner training plan", () => {
         expect(item.log?.sets).toBeGreaterThanOrEqual(2);
         expect(item.guideUrl).toMatch(/^https:\/\//);
       }
+    }
+  });
+
+  it("offers common replacement movements without inflating the base workout", () => {
+    for (const day of TRAINING_DAYS) {
+      expect(day.alternatives.length).toBeGreaterThanOrEqual(5);
+      expect(day.exercises.filter((item) => item.phase === "main").length).toBeLessThanOrEqual(5);
+      expect(day.alternatives.every((item) => item.phase === "main" && item.log)).toBe(true);
     }
   });
 });

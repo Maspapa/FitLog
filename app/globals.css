@@ -154,6 +154,7 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
 .phase-heading { display: grid; grid-template-columns: 45px 1fr auto; gap: 14px; align-items: center; margin-bottom: 18px; }
 .phase-heading > b { width: 43px; height: 43px; display: grid; place-items: center; border-radius: 12px; background: var(--yellow-soft); color: #9a6700; font: 850 10px ui-monospace, monospace; }
 .phase-main .phase-heading > b { background: var(--ultramarine); color: white; }.phase-stretch .phase-heading > b { background: #dff8ef; color: #087e69; }
+.alternatives-phase { background: linear-gradient(180deg,#fffdf3 0,#fff 160px); }.alternatives-phase .phase-heading > b { background: var(--yellow); color: var(--indigo-deep); font-size: 18px; }.alternative-note { margin: -2px 0 20px; border-left: 3px solid var(--yellow); border-radius: 0 10px 10px 0; background: white; color: var(--muted); padding: 11px 14px; font-size: 10px; line-height: 1.65; }.alternative-note strong { color: var(--indigo-deep); }
 .phase-heading h4 { margin: 0; color: var(--indigo-deep); font-size: 19px; }.phase-heading p { margin: 3px 0 0; color: var(--muted); font-size: 11px; }
 .phase-heading > span { color: var(--muted); font-size: 10px; font-weight: 750; }
 .exercise-list { border-top: 1px solid var(--line); }
@@ -192,7 +193,7 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
 .cue-block > div { display: flex; flex-wrap: wrap; gap: 7px; }.cue-block span { border: 1px solid rgba(49,87,213,.18); border-radius: 9px; background: white; color: var(--ultramarine); padding: 7px 9px; font-size: 10px; font-weight: 800; }
 .form-alert { display: grid; gap: 8px; margin: 4px 0 18px; }.form-alert p { margin: 0; padding: 11px 13px; border-left: 3px solid #f0b000; border-radius: 0 9px 9px 0; background: #fff9dc; }
 .form-alert p:last-child { border-color: #e45858; background: #fff1f1; }.form-alert b { display: block; margin-bottom: 2px; color: var(--ink); font-size: 10px; }
-.video-link { display: flex; justify-content: space-between; align-items: center; border-radius: 11px; background: var(--indigo); color: white; padding: 12px 14px; text-decoration: none; font-size: 11px; font-weight: 850; }.video-link span { color: var(--yellow); font-size: 17px; }
+.detail-actions { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 9px; align-items: stretch; }.video-link { display: flex; justify-content: space-between; align-items: center; border-radius: 11px; background: var(--indigo); color: white; padding: 12px 14px; text-decoration: none; font-size: 11px; font-weight: 850; }.video-link span { color: var(--yellow); font-size: 17px; }.detail-actions > button { border: 1px solid rgba(49,87,213,.2); border-radius: 11px; background: white; color: var(--ultramarine); padding: 11px 14px; font-size: 10px; font-weight: 850; white-space: nowrap; }.detail-actions > button:hover { border-color: var(--ultramarine); background: var(--ice); }
 .plan-footer { padding: 25px 34px 28px; display: block; border: 0; background: var(--indigo-deep); color: white; }
 .plan-footer p { margin: 0 0 10px; font-size: 12px; line-height: 1.65; }.plan-footer span { display: block; color: rgba(255,255,255,.58); font-size: 9px; line-height: 1.6; }.plan-footer a { color: #ffe26b; text-underline-offset: 2px; }
 
@@ -238,5 +239,5 @@ footer { padding: 38px 5vw; border-top: 1px solid var(--line); background: white
   .day-tabs { grid-template-columns: 1fr; }.day-tabs button { min-height: 82px; }.plan-day > header { padding: 24px 19px; align-items: stretch; flex-direction: column; }.plan-day > header button { width: 100%; }
   .plan-phase { padding: 25px 17px 29px; }.phase-heading { grid-template-columns: 42px 1fr; }.phase-heading > span { display: none; }
   .exercise-summary { min-height: 84px; padding: 11px 3px; grid-template-columns: 30px minmax(0,1fr) 25px; gap: 8px; }.exercise-summary > b { grid-column: 2; }.exercise-summary > em { display: none; }.exercise-summary > i { grid-column: 3; grid-row: 1 / 3; }.exercise-name small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .exercise-card.open .exercise-summary { padding-left: 10px; padding-right: 10px; }.exercise-detail { padding: 17px 12px 22px; gap: 18px; }.plan-footer { padding: 23px 19px; }
+  .exercise-card.open .exercise-summary { padding-left: 10px; padding-right: 10px; }.exercise-detail { padding: 17px 12px 22px; gap: 18px; }.detail-actions { grid-template-columns: 1fr; }.detail-actions > button { min-height: 42px; }.plan-footer { padding: 23px 19px; }
 }
