@@ -62,9 +62,15 @@ export function TrainingPlan({ selectedDate, onAddExercises }: { selectedDate: s
           </section>;
         })}
         <section className="plan-phase alternatives-phase">
-          <div className="phase-heading"><b>＋</b><div><h4>更多常见动作</h4><p>不需要全部做；缺器械或想换口味时，挑 1–2 个替换基础计划中的同部位动作</p></div><span>{day.alternatives.length} 个可选</span></div>
-          <div className="alternative-note"><strong>怎么用：</strong>展开动作看图和细节，确认健身房有对应器械后再加入打卡。同一天的器械训练总数尽量控制在 5–6 个。</div>
-          <div className="exercise-list">{day.alternatives.map((item, index) => <ExerciseCard key={item.id} item={item} index={index} open={openId === item.id} onToggle={() => setOpenId(openId === item.id ? null : item.id)} onAdd={() => onAddExercises([item], day)} />)}</div>
+          <div className="phase-heading"><b>＋</b><div><h4>更多常见动作</h4><p>热身、器械、拉伸都有备选；按当天器械和身体状态替换</p></div><span>{day.alternatives.length} 个可选</span></div>
+          <div className="alternative-note"><strong>怎么用：</strong>热身和拉伸各挑 1–3 个；器械动作挑 1–2 个替换同部位动作。同一天的器械训练总数尽量控制在 5–6 个，不要把整库全部做完。</div>
+          <div className="alternative-groups">{PHASES.map((phase) => {
+            const items = day.alternatives.filter((item) => item.phase === phase);
+            return <section className={`alternative-group alt-${phase}`} key={phase}>
+              <header><div><span>{phase === "warmup" ? "WARM UP" : phase === "main" ? "EQUIPMENT" : "COOL DOWN"}</span><h5>{PHASE_LABELS[phase].title}备选</h5></div><b>{items.length} 个</b></header>
+              <div className="exercise-list">{items.map((item, index) => <ExerciseCard key={item.id} item={item} index={index} open={openId === item.id} onToggle={() => setOpenId(openId === item.id ? null : item.id)} onAdd={item.log ? () => onAddExercises([item], day) : undefined} />)}</div>
+            </section>;
+          })}</div>
         </section>
         <footer className="plan-footer"><p><strong>一堂课的节奏：</strong>热身不喘 → 器械组间按时休息 → 拉伸不忍痛。总时长超出很多，通常是重量太重或组间刷手机太久。</p><span>计划参考 ACE 动作库与 PureGym 专业动作示范；动作插图由 <a href="https://repdb.co" target="_blank" rel="noreferrer">RepDB</a> 提供。它是通用入门计划，不能替代医生、康复师或现场教练的个体评估。</span></footer>
       </article>

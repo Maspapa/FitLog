@@ -30,11 +30,15 @@ describe("beginner training plan", () => {
     }
   });
 
-  it("offers common replacement movements without inflating the base workout", () => {
+  it("offers warm-up, machine and stretch replacements without inflating the base workout", () => {
     for (const day of TRAINING_DAYS) {
-      expect(day.alternatives.length).toBeGreaterThanOrEqual(5);
+      expect(day.alternatives.length).toBeGreaterThanOrEqual(11);
       expect(day.exercises.filter((item) => item.phase === "main").length).toBeLessThanOrEqual(5);
-      expect(day.alternatives.every((item) => item.phase === "main" && item.log)).toBe(true);
+      for (const phase of ["warmup", "main", "stretch"] as const) {
+        expect(day.alternatives.filter((item) => item.phase === phase).length).toBeGreaterThanOrEqual(3);
+      }
+      expect(day.alternatives.filter((item) => item.phase === "main").every((item) => item.log)).toBe(true);
+      expect(day.alternatives.filter((item) => item.phase !== "main").every((item) => !item.log)).toBe(true);
     }
   });
 });

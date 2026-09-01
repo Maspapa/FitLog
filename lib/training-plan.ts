@@ -107,6 +107,24 @@ export const TRAINING_DAYS: TrainingDay[] = [
     ],
     alternatives: [
       {
+        id: "m-alt-rower-warmup", phase: "warmup", name: "划船机上肢热身", englishName: "Easy rowing warm-up", dose: "5 分钟", target: "全身升温、肩胛节奏", equipment: "划船机",
+        setup: "脚带固定在前脚掌最宽处，阻力放在中低档；握把放松，先用慢节奏熟悉腿—身—手的顺序。",
+        steps: ["先蹬腿，再让躯干略向后，最后把手拉到下胸。", "回程先伸手、再前倾躯干、最后屈膝。", "保持能正常说话的轻松强度，不追求速度。"],
+        cues: ["腿身手发力", "手身腿回程", "肩膀放松"], mistake: "只用手臂猛拉，或还没伸手就让膝盖顶上来。", safety: "腰部不适时改用快走；脚带和座椅稳定后再开始。", diagram: "cardio", guideUrl: equipmentGuide,
+      },
+      {
+        id: "m-alt-incline-push", phase: "warmup", name: "上斜俯卧撑", englishName: "Incline push-up", dose: "8–12 次 × 2 组", rest: "30 秒", target: "胸、肱三头肌、肩胛稳定", equipment: "史密斯杠 / 稳固长凳",
+        setup: "双手略宽于肩放在固定支撑面上，向后走到身体从头到脚接近直线；支撑越高越轻松。",
+        steps: ["收腹夹臀，肩膀保持远离耳朵。", "吸气屈肘，让胸口而不是下巴靠近支撑面。", "呼气推回起点，手肘不完全锁死。"],
+        cues: ["身体整块移动", "肘部约 45°", "支撑必须稳固"], mistake: "塌腰、只伸头，或用会滑动的凳子作为支撑。", safety: "确认史密斯杠已锁牢；肩前侧锐痛时提高支撑面。", diagram: "push", guideUrl: "https://www.puregym.com/exercises/chest/press-up/incline-push-ups/",
+      },
+      {
+        id: "m-alt-external-rotation", phase: "warmup", name: "绳索肩外旋", englishName: "Cable external rotation", dose: "每侧 12 次 × 2 组", rest: "30 秒", target: "肩袖、肩关节稳定", equipment: "龙门架 + 单手柄",
+        setup: "滑轮调到肘部高度并用最轻重量；侧身站立，上臂贴住肋骨，肘部弯曲 90°。",
+        steps: ["肩胛轻轻向后下方固定。", "保持肘部贴身，把前臂向身体外侧旋转。", "到无痛终点停一下，再慢慢回到腹部前方。"],
+        cues: ["肘部贴身", "重量极轻", "只转肩不转腰"], mistake: "肘部离开身体，或转动整个躯干来拉动配重。", safety: "这不是力量挑战；肩内出现夹痛时立即停止。", diagram: "shoulder-circle", guideUrl: aceLibrary,
+      },
+      {
         id: "m-alt-smith-incline", phase: "main", name: "史密斯上斜卧推", englishName: "Smith incline bench press", dose: "3 组 × 8–12 次", rest: "90 秒", target: "上胸、肩前束、肱三头肌", equipment: "史密斯机 + 上斜凳",
         setup: "把凳子调到约 20–30°，移动到杠铃下方；躺下时杠铃落点应在上胸，不是颈部。先用空杆确认凳子位置和挂钩方向。",
         steps: ["双脚踩稳，肩胛向后下夹紧，旋开挂钩。", "吸气把杠铃缓慢降向锁骨下方，肘部斜向下。", "呼气推回起点，保留一点肘部弯曲后重新挂好。"],
@@ -135,6 +153,24 @@ export const TRAINING_DAYS: TrainingDay[] = [
         setup: "调座椅让肘关节对准器械转轴，胸口或背部贴稳靠垫；手腕保持自然直线。",
         steps: ["上臂贴住支撑垫，吸气准备。", "呼气伸直肘部，底部不要猛烈锁死。", "吸气慢慢回到肘部弯曲、仍能控制的位置。"],
         cues: ["肘轴对准转轴", "上臂不抬", "回程慢"], mistake: "座椅高度错误，或用肩膀和身体压动握把。", safety: "肘尖疼痛时减重并缩短伸直幅度。", diagram: "pressdown", guideUrl: "https://www.puregym.com/exercises/arms-and-shoulders/tricep-extension/", log: { sets: 3, reps: 15 },
+      },
+      {
+        id: "m-alt-band-shoulder-stretch", phase: "stretch", name: "弹力带肩部拉伸", englishName: "Banded shoulder stretch", dose: "8 次慢速往返", target: "胸肩前侧、肩关节活动度", equipment: "轻弹力带 / 毛巾",
+        setup: "双手宽握弹力带举在身前，站直并收住肋骨；握距要宽到能够无痛越过头顶。",
+        steps: ["手臂伸直，把弹力带慢慢举过头顶。", "只在无痛范围继续向身后移动。", "沿原路线回到身前，整个过程不耸肩、不塌腰。"],
+        cues: ["握距宁宽", "动作慢", "肋骨收住"], mistake: "握得太窄，强行把肩关节压过疼痛点。", safety: "肩部曾脱位或出现夹痛时跳过，改做温和胸肌拉伸。", diagram: "arm-stretch", guideUrl: aceLibrary,
+      },
+      {
+        id: "m-alt-thread-needle", phase: "stretch", name: "穿针式胸椎旋转", englishName: "Thread the needle", dose: "每侧 6–8 次", target: "胸椎、肩后侧、上背", equipment: "瑜伽垫",
+        setup: "四点跪姿，手腕在肩下、膝盖在髋下；腹部轻收，骨盆尽量保持朝向地面。",
+        steps: ["一只手从另一侧手臂下方穿过，肩膀向地面靠近。", "呼气停在舒适旋转位置。", "吸气沿原路打开胸口，完成次数后换边。"],
+        cues: ["旋转来自上背", "骨盆不侧翻", "呼吸带动动作"], mistake: "用腰部塌陷换取幅度，或把重量全部压在颈部。", safety: "肩膀无法承重时只做坐姿胸椎旋转。", diagram: "lat-stretch", guideUrl: aceLibrary,
+      },
+      {
+        id: "m-alt-cross-body", phase: "stretch", name: "肩后侧横拉", englishName: "Cross-body shoulder stretch", dose: "每侧 20–30 秒 × 2", target: "三角肌后束、肩后侧", equipment: "无需器械",
+        setup: "站直或坐直，一只手臂横放胸前；另一只手扶住上臂，不直接压肘关节。",
+        steps: ["肩膀向下放松，胸口保持朝前。", "轻轻把手臂拉近胸口。", "肩后侧有温和牵拉后保持，换边重复。"],
+        cues: ["不扭身体", "肩膀向下", "轻柔保持"], mistake: "身体随手臂转动，或用力压住肘关节。", safety: "肩关节内部出现刺痛或麻木时立即松开。", diagram: "arm-stretch", guideUrl: aceLibrary,
       },
     ],
   },
@@ -211,6 +247,24 @@ export const TRAINING_DAYS: TrainingDay[] = [
     ],
     alternatives: [
       {
+        id: "w-alt-treadmill-warmup", phase: "warmup", name: "跑步机坡度走", englishName: "Incline treadmill walk", dose: "5–7 分钟", target: "升高体温、激活臀腿", equipment: "跑步机",
+        setup: "先站到跑带两侧再启动，速度从慢走开始；适应后加到 2–4% 小坡度，保持能正常说话。",
+        steps: ["前 2 分钟平地慢走。", "中间 3 分钟略加坡度并自然摆臂。", "最后 1–2 分钟恢复平地，呼吸放缓。"],
+        cues: ["身体直立", "脚步自然", "不吊着扶手"], mistake: "坡度过高后整个人趴在扶手上，臀腿反而不工作。", safety: "调速时扶稳；膝踝疼痛时取消坡度并减速。", diagram: "cardio", guideUrl: equipmentGuide,
+      },
+      {
+        id: "w-alt-good-morning", phase: "warmup", name: "徒手早安式", englishName: "Bodyweight good morning", dose: "10 次 × 2 组", rest: "30 秒", target: "髋铰链、臀腿后侧", equipment: "无需器械",
+        setup: "双脚与髋同宽，手放在髋部或胸前；膝盖微屈，脊柱保持自然，先练很小幅度。",
+        steps: ["臀部向后推，躯干从髋部整体前倾。", "大腿后侧有拉伸时停止，背部仍保持自然。", "呼气夹臀把髋部向前送，回到站直。"],
+        cues: ["臀部向后", "小腿近似不动", "背部保持长"], mistake: "把动作做成弯腰低头，或膝盖不断向前蹲。", safety: "腰痛时缩小幅度；无法找到髋铰链可先请教练示范。", diagram: "squat", guideUrl: aceLibrary,
+      },
+      {
+        id: "w-alt-band-walk", phase: "warmup", name: "弹力带侧向走", englishName: "Banded lateral walk", dose: "每侧 10 步 × 2 轮", rest: "30 秒", target: "臀中肌、膝关节稳定", equipment: "小环弹力带",
+        setup: "弹力带套在膝盖上方，双脚与髋同宽；髋膝轻微弯曲，脚尖保持朝前。",
+        steps: ["保持弹力带张力，向一侧迈出小步。", "另一只脚跟进但不要完全并拢。", "完成 10 步后反向返回，骨盆始终保持水平。"],
+        cues: ["步子小", "膝盖不内扣", "脚尖朝前"], mistake: "左右摇摆身体，或每一步都让双脚并拢使弹力带失去张力。", safety: "膝外侧疼痛时把弹力带移到膝上并减小阻力。", diagram: "abduction", guideUrl: aceLibrary,
+      },
+      {
         id: "w-alt-hack-squat", phase: "main", name: "哈克深蹲机", englishName: "Hack squat", dose: "3 组 × 8–12 次", rest: "90–120 秒", target: "股四头肌、臀肌", equipment: "哈克深蹲机",
         setup: "肩膀和背部贴稳靠垫，双脚放在踏板中上部、约肩宽；先不加片确认安全把手和限位位置。",
         steps: ["解开安全把手，吸气屈膝下蹲。", "膝盖沿脚尖方向移动，降到腰背仍贴垫的深度。", "呼气用全脚掌推起，顶端膝盖保留微屈。"],
@@ -239,6 +293,24 @@ export const TRAINING_DAYS: TrainingDay[] = [
         setup: "前脚掌踩在踏板边缘，肩垫调到站直时能稳定承重；膝盖保持轻微弯曲。",
         steps: ["脚跟缓慢下降到小腿有拉伸感。", "呼气用前脚掌把脚跟抬到最高，停 1 秒。", "吸气控制下降，不在底部弹震。"],
         cues: ["脚踝直上直下", "顶端停一下", "全程可控"], mistake: "只做很短的弹跳幅度，或脚踝向外翻。", safety: "先确认肩垫和安全把手；跟腱疼痛时停止。", diagram: "squat", guideUrl: "https://www.puregym.com/exercises/legs/calf-exercises/", log: { sets: 3, reps: 15 },
+      },
+      {
+        id: "w-alt-quad-stretch", phase: "stretch", name: "站姿股四头肌拉伸", englishName: "Standing quad stretch", dose: "每侧 20–30 秒 × 2", target: "大腿前侧、髋前侧", equipment: "墙面辅助",
+        setup: "一手扶墙站稳，另一手握住同侧脚踝；两侧膝盖靠近，支撑腿保持微屈。",
+        steps: ["轻收腹并夹紧被拉伸侧臀部。", "膝盖指向地面，脚跟温和靠近臀部。", "大腿前侧有牵拉时保持，慢慢放下后换边。"],
+        cues: ["膝盖并拢", "骨盆微后卷", "不要拽脚"], mistake: "为了拉得更远而塌腰，或把膝盖甩向身体外侧。", safety: "膝盖弯曲不适时改用侧卧版本，别强拉脚踝。", diagram: "hip-stretch", guideUrl: aceLibrary,
+      },
+      {
+        id: "w-alt-calf-stretch", phase: "stretch", name: "墙面小腿拉伸", englishName: "Standing calf stretch", dose: "每侧 20–30 秒 × 2", target: "腓肠肌、跟腱周围", equipment: "墙面",
+        setup: "双手扶墙，一脚向后迈；后脚脚尖朝前、脚跟踩地，前腿自然弯曲。",
+        steps: ["保持后腿膝盖伸直，身体整体向墙靠近。", "后侧小腿出现温和牵拉后保持。", "再稍弯后膝可拉到更深层的小腿，随后换边。"],
+        cues: ["后脚跟贴地", "脚尖朝前", "不弹震"], mistake: "后脚向外转或脚跟离地，让拉伸失去目标。", safety: "跟腱出现锐痛时立即退出，不在台阶边缘压脚跟。", diagram: "hamstring-stretch", guideUrl: "https://www.puregym.com/exercises/legs/calf-exercises/",
+      },
+      {
+        id: "w-alt-adductor-stretch", phase: "stretch", name: "长凳内收肌拉伸", englishName: "Bench adductor stretch", dose: "每侧 20–30 秒 × 2", target: "大腿内侧、腹股沟周围", equipment: "长凳 / 软垫",
+        setup: "跪在软垫上，把一侧腿向旁边伸出并放到低长凳上；双手撑地或扶住固定物。",
+        steps: ["脊柱保持自然，臀部缓慢向后移动。", "伸出侧大腿内侧有温和拉伸时停止。", "自然呼吸后缓慢回正，再换边。"],
+        cues: ["臀部向后", "骨盆保持正", "幅度温和"], mistake: "快速压向最低点，或让骨盆整块向一侧翻转。", safety: "腹股沟刺痛时立即停止；长凳必须稳固。", diagram: "glute-stretch", guideUrl: aceLibrary,
       },
     ],
   },
@@ -309,6 +381,24 @@ export const TRAINING_DAYS: TrainingDay[] = [
     ],
     alternatives: [
       {
+        id: "f-alt-bike-warmup", phase: "warmup", name: "固定自行车轻骑", englishName: "Easy stationary bike", dose: "5–6 分钟", target: "全身升温、低冲击热身", equipment: "固定自行车",
+        setup: "调座椅使踏板最低点时膝盖仍略微弯曲；阻力使用中低档，上身保持放松。",
+        steps: ["前 2 分钟低阻力慢骑。", "中间 2–3 分钟略微加速，让身体暖起来。", "最后 1 分钟放慢并活动肩膀。"],
+        cues: ["肩膀放松", "骨盆稳定", "呼吸不急促"], mistake: "座椅过低让膝盖弯曲过多，或为了加速左右摇晃身体。", safety: "膝盖不适时检查座椅高度并减阻力。", diagram: "cardio", guideUrl: equipmentGuide,
+      },
+      {
+        id: "f-alt-scap-pullup", phase: "warmup", name: "肩胛引体向上", englishName: "Scapular pull-up", dose: "6–10 次 × 2 组", rest: "30 秒", target: "肩胛下沉、下拉动作准备", equipment: "引体杠 / 助力机",
+        setup: "双手握杠，使用助力机或双脚轻触地面减轻负荷；手臂保持伸直，身体不摆动。",
+        steps: ["先从肩膀靠近耳朵的放松位置开始。", "不屈肘，把肩胛向下拉，让身体微微上升。", "停 1 秒后慢慢回到放松位置。"],
+        cues: ["肘部始终直", "肩膀向下", "幅度很小"], mistake: "把动作做成半个引体，或靠摆腿让身体上升。", safety: "握力不足时使用助力机；肩部夹痛时改做轻重量直臂下压。", diagram: "pulldown", guideUrl: aceLibrary,
+      },
+      {
+        id: "f-alt-cat-cow", phase: "warmup", name: "猫牛式", englishName: "Cat-cow", dose: "8–10 次慢速往返", target: "脊柱活动、呼吸配合", equipment: "瑜伽垫",
+        setup: "四点跪姿，手腕在肩膀下方、膝盖在髋部下方；手指张开，颈部保持自然。",
+        steps: ["吸气抬胸、尾骨微抬，让脊柱温和伸展。", "呼气推开地面、收下巴和尾骨，让背部拱起。", "跟随呼吸缓慢往返，不追求极限幅度。"],
+        cues: ["一节一节移动", "跟随呼吸", "肩膀远离耳朵"], mistake: "快速甩动腰部，或仰头过多挤压颈椎。", safety: "手腕不适可用拳撑或前臂支撑；腰痛时减小幅度。", diagram: "shoulder-circle", guideUrl: aceLibrary,
+      },
+      {
         id: "f-alt-assisted-pullup", phase: "main", name: "助力引体向上", englishName: "Assisted pull-up", dose: "3 组 × 6–10 次", rest: "90 秒", target: "背阔肌、肱二头肌", equipment: "引体 / 双杠助力机",
         setup: "选择足够大的助力重量，双手略宽于肩握杠；抓稳后再跪上踏板，先让身体安静悬垂。",
         steps: ["肩膀先向下远离耳朵，胸口略抬。", "呼气让肘部向身体两侧下压，把上胸拉向横杆。", "吸气慢慢伸直手臂，保持肩胛可控后重复。"],
@@ -337,6 +427,24 @@ export const TRAINING_DAYS: TrainingDay[] = [
         setup: "调座椅和背垫，让器械转轴接近髋部；胸前交叉双臂或握住把手，先用最轻档。",
         steps: ["腹部轻收，保持脊柱自然，不含胸。", "呼气用臀部和背部把躯干推向后方。", "到身体接近直立即停，吸气控制回到起点。"],
         cues: ["不是猛甩", "顶端不过伸", "腹部保持张力"], mistake: "追求大幅后仰挤压腰椎，或快速弹回。", safety: "腰椎已有疼痛或放射性麻痛时跳过此动作并咨询专业人员。", diagram: "row", guideUrl: aceLibrary, log: { sets: 3, reps: 15 },
+      },
+      {
+        id: "f-alt-bench-child", phase: "stretch", name: "长凳婴儿式", englishName: "Bench child's pose", dose: "20–30 秒 × 2", target: "背阔肌、上背、肩部", equipment: "长凳",
+        setup: "跪在长凳前，双手或前臂放在凳面，膝盖垫软垫；臀部位于膝盖上方。",
+        steps: ["手臂向前延伸，拇指朝上。", "臀部缓慢向后坐，同时胸口向地面下沉。", "腋下和上背有温和拉伸时自然呼吸。"],
+        cues: ["肋骨收住", "腰部不塌", "肩膀放松"], mistake: "用腰部大幅下沉来换取肩部活动范围。", safety: "肩部夹痛时把双手分开并缩小下沉幅度。", diagram: "lat-stretch", guideUrl: aceLibrary,
+      },
+      {
+        id: "f-alt-thread-needle", phase: "stretch", name: "穿针式上背拉伸", englishName: "Thread the needle", dose: "每侧 6–8 次", target: "胸椎旋转、菱形肌、肩后侧", equipment: "瑜伽垫",
+        setup: "四点跪姿，手腕在肩下、膝盖在髋下；腹部轻收，让骨盆尽量稳定。",
+        steps: ["一只手从另一只手臂下方穿过。", "肩膀和头侧面轻轻靠近垫面。", "呼气停顿后沿原路打开胸口，完成次数再换边。"],
+        cues: ["旋转上背", "骨盆不翻", "颈部放松"], mistake: "把全部重量压到颈部，或用腰部侧弯代替旋转。", safety: "肩无法承重时改成坐姿胸椎旋转。", diagram: "lat-stretch", guideUrl: aceLibrary,
+      },
+      {
+        id: "f-alt-neck-stretch", phase: "stretch", name: "颈侧温和拉伸", englishName: "Neck side stretch", dose: "每侧 15–20 秒 × 2", target: "上斜方肌、颈部侧面", equipment: "无需器械",
+        setup: "坐直或站直，一只手自然垂向地面；另一只手只轻放在头侧，不主动用力下压。",
+        steps: ["肩膀向下放松，目光保持朝前。", "把耳朵缓慢靠向对侧肩膀。", "颈侧有轻微牵拉时保持，再缓慢回正换边。"],
+        cues: ["手不下压", "肩膀向下", "幅度很小"], mistake: "用手猛拉头部，或同时低头和转头制造更大幅度。", safety: "出现眩晕、头痛、麻木或放射痛时立即停止。", diagram: "arm-stretch", guideUrl: aceLibrary,
       },
     ],
   },
