@@ -1,0 +1,6 @@
+Exercise illustrations in this directory are from the RepDB Free Exercise Dataset.
+Source: https://github.com/RepDB/exercise-dataset
+License: https://github.com/RepDB/exercise-dataset/blob/main/LICENSE-DATA.md
+Attribution: Exercise data by RepDB (https://repdb.co)
+
+These files are bundled for in-app display and are not offered as a standalone dataset.

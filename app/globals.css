@@ -167,14 +167,25 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
 .exercise-summary > i { width: 27px; height: 27px; display: grid; place-items: center; border-radius: 8px; background: var(--ice); color: var(--ultramarine); font-style: normal; font-size: 16px; }
 
 .exercise-detail { display: grid; grid-template-columns: minmax(300px, .82fr) 1.18fr; gap: 30px; padding: 28px; }
-.exercise-diagram { min-width: 0; align-self: start; position: sticky; top: 95px; }
-.exercise-diagram svg { width: 100%; height: auto; display: block; }
-.diagram-panel { fill: #f1f4ff; stroke: rgba(49,87,213,.16); }.diagram-panel.end { fill: #fffbe4; stroke: rgba(255,196,0,.34); }
-.exercise-diagram text { fill: #777a9a; font: 750 8px ui-monospace, monospace; letter-spacing: .08em; }
-.exercise-diagram .diagram-caption { fill: #8c8fab; font-size: 7px; }.figure-head { fill: white; stroke: #312e81; stroke-width: 3; }
-.figure, .equipment, .ground, .motion, .diagram-arrow { fill: none; stroke: #6e72a0; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
-.figure.accent { stroke: var(--ultramarine); stroke-width: 5; }.equipment { stroke: #a9adca; stroke-width: 3; }.ground { stroke: #d4d7e8; stroke-width: 2; }
-.motion, .diagram-arrow { stroke: #e4ad00; stroke-width: 2.5; }.diagram-arrow { stroke: var(--indigo); }
+.exercise-diagram { min-width: 0; margin: 0; align-self: start; position: sticky; top: 95px; }
+.exercise-diagram svg { width: 100%; height: auto; display: block; filter: drop-shadow(0 10px 24px rgba(48,46,129,.07)); }
+.diagram-panel { fill: #f4f6ff; stroke: rgba(49,87,213,.2); stroke-width: 1.5; }.diagram-panel.end { fill: #fffbed; stroke: rgba(255,196,0,.42); }
+.exercise-diagram text { fill: #6f7293; font: 800 10px ui-sans-serif, system-ui, sans-serif; letter-spacing: .04em; }
+.frame-label rect { fill: #312e81; }.frame-label text { fill: white; font-size: 9px; letter-spacing: 0; }.frame-label.end rect { fill: #f3c400; }.frame-label.end text { fill: #493900; }
+.exercise-diagram .diagram-title { fill: var(--indigo-deep); font-size: 13px; font-weight: 900; letter-spacing: .02em; }.exercise-diagram .diagram-caption { fill: #8588a5; font-size: 8px; font-weight: 650; letter-spacing: .025em; }
+.figure-head { fill: #ffd4b3; stroke: #342e75; stroke-width: 2; }.hair { fill: #302b61; stroke: none; }.face-eye { fill: #302b61; stroke: none; }
+.body-shirt { fill: #536fe3; stroke: #2e3192; stroke-width: 1.5; stroke-linejoin: round; }.body-shorts { fill: #302b61; stroke: none; }
+.figure, .equipment, .ground, .motion, .diagram-arrow, .shoe, .seat-pad { fill: none; stroke: #6e72a0; stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; }
+.figure.leg { stroke: #48518a; stroke-width: 8; }.figure.accent { stroke: #3157d5; stroke-width: 8; }.equipment { stroke: #9ca2bd; stroke-width: 4; }.seat-pad { stroke: #696f93; stroke-width: 8; }.ground { stroke: #d4d7e8; stroke-width: 2; }.shoe { stroke: #252653; stroke-width: 5; }
+.motion, .diagram-arrow { stroke: #e7ad00; stroke-width: 3; }.diagram-arrow { stroke: var(--indigo); stroke-width: 3.5; }
+.photo-diagram { overflow: hidden; border: 1px solid rgba(49,87,213,.16); border-radius: 20px; background: #f7f9ff; box-shadow: 0 12px 30px rgba(45,48,120,.08); }
+.photo-frames { display: grid; grid-template-columns: minmax(0,1fr) 28px minmax(0,1fr); align-items: center; padding: 14px; }
+.photo-frame { position: relative; overflow: hidden; border: 1px solid rgba(49,87,213,.13); border-radius: 14px; background: #dff3fb; }
+.photo-frame.end { border-color: rgba(238,185,0,.34); }.photo-frame img { width: 100%; height: auto; display: block; aspect-ratio: 1; object-fit: cover; }
+.photo-frame > span { position: absolute; z-index: 1; left: 9px; top: 9px; border-radius: 999px; background: rgba(49,46,129,.92); color: white; padding: 5px 8px; font-size: 9px; font-weight: 850; box-shadow: 0 3px 9px rgba(37,35,91,.16); }
+.photo-frame.end > span { background: rgba(244,194,0,.94); color: #493900; }.photo-frames > i { color: var(--indigo); font: 900 22px/1 ui-sans-serif, sans-serif; text-align: center; }
+.photo-diagram.single .photo-frames { display: block; }.photo-diagram.single .photo-frame { max-width: 310px; margin: auto; }
+.photo-diagram figcaption { display: grid; gap: 3px; border-top: 1px solid rgba(49,87,213,.11); padding: 12px 16px 14px; background: white; text-align: center; }.photo-diagram figcaption strong { color: var(--indigo-deep); font-size: 13px; }.photo-diagram figcaption small { color: var(--muted); font-size: 9px; }
 .detail-copy { min-width: 0; }.equipment-tag { display: inline-flex; margin-bottom: 19px; border-radius: 999px; background: var(--yellow-soft); color: #885f00; padding: 7px 11px; font-size: 10px; font-weight: 800; }
 .detail-copy section { margin-bottom: 19px; }.detail-copy h5 { margin: 0 0 7px; color: var(--indigo-deep); font-size: 12px; }.detail-copy p, .detail-copy li { color: var(--ink-soft); font-size: 12px; line-height: 1.7; }
 .detail-copy section > p { margin: 0; }.detail-copy ol { margin: 0; padding-left: 19px; }.detail-copy li { padding-left: 4px; }
@@ -183,7 +194,7 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
 .form-alert p:last-child { border-color: #e45858; background: #fff1f1; }.form-alert b { display: block; margin-bottom: 2px; color: var(--ink); font-size: 10px; }
 .video-link { display: flex; justify-content: space-between; align-items: center; border-radius: 11px; background: var(--indigo); color: white; padding: 12px 14px; text-decoration: none; font-size: 11px; font-weight: 850; }.video-link span { color: var(--yellow); font-size: 17px; }
 .plan-footer { padding: 25px 34px 28px; display: block; border: 0; background: var(--indigo-deep); color: white; }
-.plan-footer p { margin: 0 0 10px; font-size: 12px; line-height: 1.65; }.plan-footer span { display: block; color: rgba(255,255,255,.58); font-size: 9px; line-height: 1.6; }
+.plan-footer p { margin: 0 0 10px; font-size: 12px; line-height: 1.65; }.plan-footer span { display: block; color: rgba(255,255,255,.58); font-size: 9px; line-height: 1.6; }.plan-footer a { color: #ffe26b; text-underline-offset: 2px; }
 
 .insights-section { padding: 95px 5vw; background: #eef1fb; color: var(--ink); }
 .section-title.light p { color: var(--muted); }

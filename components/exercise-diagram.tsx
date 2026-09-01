@@ -1,26 +1,84 @@
+import Image from "next/image";
 import type { DiagramKind } from "@/lib/training-plan";
 
-export function ExerciseDiagram({ kind }: { kind: DiagramKind }) {
+const MEDIA: Partial<Record<DiagramKind, { start: string; peak?: string }>> = {
+  push: { start: "chest-press-machine-start.webp", peak: "chest-press-machine-peak.webp" },
+  fly: { start: "machine-chest-fly-start.webp", peak: "machine-chest-fly-peak.webp" },
+  "rear-fly": { start: "rear-delt-fly-start.webp", peak: "rear-delt-fly-peak.webp" },
+  overhead: { start: "machine-shoulder-press-start.webp", peak: "machine-shoulder-press-peak.webp" },
+  pressdown: { start: "tricep-pushdown-start.webp", peak: "tricep-pushdown-peak.webp" },
+  "leg-press": { start: "leg-press-start.webp", peak: "leg-press-peak.webp" },
+  "leg-curl": { start: "seated-leg-curl-start.webp", peak: "seated-leg-curl-peak.webp" },
+  "leg-extension": { start: "leg-extension-start.webp", peak: "leg-extension-peak.webp" },
+  bridge: { start: "glute-bridge-start.webp", peak: "glute-bridge-peak.webp" },
+  squat: { start: "bodyweight-squat-start.webp", peak: "bodyweight-squat-peak.webp" },
+  abduction: { start: "hip-abduction-start.webp", peak: "hip-abduction-peak.webp" },
+  pulldown: { start: "lat-pulldown-start.webp", peak: "lat-pulldown-peak.webp" },
+  row: { start: "seated-cable-row-start.webp", peak: "seated-cable-row-peak.webp" },
+  lateral: { start: "plate-loaded-lateral-raise-start.webp", peak: "plate-loaded-lateral-raise-peak.webp" },
+  cardio: { start: "incline-treadmill-walk-main.webp" },
+  "chest-stretch": { start: "doorway-chest-stretch-main.webp" },
+  "hip-stretch": { start: "kneeling-hip-flexor-stretch-main.webp" },
+  "hamstring-stretch": { start: "bench-hamstring-stretch-main.webp" },
+  "glute-stretch": { start: "bench-figure-4-glute-stretch-main.webp" },
+  "lat-stretch": { start: "bench-lat-stretch-main.webp" },
+  "arm-stretch": { start: "overhead-triceps-stretch-main.webp" },
+};
+
+const MEDIA_BY_NAME: Record<string, { start: string; peak?: string }> = {
+  "墙面俯卧撑": { start: "wall-push-ups-start.webp", peak: "wall-push-ups-peak.webp" },
+  "上斜推胸机": { start: "smith-machine-incline-bench-press-start.webp", peak: "smith-machine-incline-bench-press-peak.webp" },
+  "固定自行车": { start: "stationary-bike-main.webp" },
+  "臀推机": { start: "smith-machine-hip-thrust-start.webp", peak: "smith-machine-hip-thrust-peak.webp" },
+  "仰卧 4 字臀肌拉伸": { start: "banded-figure-4-stretch-main.webp" },
+  "划船机轻划": { start: "rowing-machine-start.webp", peak: "rowing-machine-peak.webp" },
+  "弹力带拉开": { start: "band-pull-apart-start.webp", peak: "band-pull-apart-peak.webp" },
+  "轻重量直臂下压": { start: "straight-arm-pulldown-start.webp", peak: "straight-arm-pulldown-peak.webp" },
+  "胸托划船机": { start: "chest-supported-db-row-start.webp", peak: "chest-supported-db-row-peak.webp" },
+  "横跨身体肩后侧拉伸": { start: "cross-body-shoulder-stretch-main.webp" },
+};
+
+export function ExerciseDiagram({ kind, name }: { kind: DiagramKind; name: string }) {
+  const media = MEDIA_BY_NAME[name] ?? MEDIA[kind];
+  if (media) {
+    const path = "/exercises/repdb/";
+    return (
+      <figure className={`exercise-diagram photo-diagram ${media.peak ? "paired" : "single"}`} aria-label={`${name}动作姿势图解`}>
+        <div className="photo-frames">
+          <div className="photo-frame"><span>起始姿势</span><Image src={`${path}${media.start}`} alt={`${name}起始姿势`} width={512} height={512} unoptimized /></div>
+          {media.peak && <><i aria-hidden="true">→</i><div className="photo-frame end"><span>结束姿势</span><Image src={`${path}${media.peak}`} alt={`${name}结束姿势`} width={512} height={512} unoptimized /></div></>}
+        </div>
+        <figcaption><strong>{name}</strong><small>{media.peak ? "对照两张图，慢速完成整个动作路线" : "保持图中姿势，温和拉伸，不要弹震"}</small></figcaption>
+      </figure>
+    );
+  }
+
   return (
-    <div className="exercise-diagram" role="img" aria-label="动作起始与结束姿势图解">
-      <svg viewBox="0 0 320 150" aria-hidden="true">
-        <rect className="diagram-panel" x="2" y="2" width="146" height="126" rx="15" />
-        <rect className="diagram-panel end" x="172" y="2" width="146" height="126" rx="15" />
-        <text x="15" y="20">起始</text><text x="185" y="20">结束</text>
-        <Pose kind={kind} end={false} offset={0} />
-        <path className="diagram-arrow" d="M151 65h15m-5-5 5 5-5 5" />
-        <Pose kind={kind} end offset={170} />
-        <text className="diagram-caption" x="160" y="146" textAnchor="middle">慢速移动 · 保持控制 · 疼痛即停</text>
+    <figure className="exercise-diagram" role="img" aria-label={`${name}动作起始与结束姿势图解`}>
+      <svg viewBox="0 0 520 300" aria-hidden="true">
+        <rect className="diagram-panel" x="2" y="2" width="245" height="246" rx="22" />
+        <rect className="diagram-panel end" x="273" y="2" width="245" height="246" rx="22" />
+        <g className="frame-label"><rect x="18" y="18" width="57" height="25" rx="12" /><text x="46.5" y="34" textAnchor="middle">起始姿势</text></g>
+        <g className="frame-label end"><rect x="289" y="18" width="57" height="25" rx="12" /><text x="317.5" y="34" textAnchor="middle">结束姿势</text></g>
+        <g transform="translate(14 45) scale(1.48)"><Pose kind={kind} end={false} /></g>
+        <path className="diagram-arrow" d="M251 123h17m-6-6 6 6-6 6" />
+        <g transform="translate(285 45) scale(1.48)"><Pose kind={kind} end /></g>
+        <text className="diagram-title" x="260" y="272" textAnchor="middle">{name}</text>
+        <text className="diagram-caption" x="260" y="290" textAnchor="middle">沿黄色箭头慢速移动 · 身体保持稳定 · 疼痛立即停止</text>
       </svg>
-    </div>
+    </figure>
   );
 }
 
-function Pose({ kind, end, offset }: { kind: DiagramKind; end: boolean; offset: number }) {
-  const p = `translate(${offset} 0)`;
-  const head = <circle className="figure-head" cx="75" cy="41" r="9" />;
-  const seatedBase = <><path className="equipment" d="M45 102h58M52 71v50M50 103h-9" /><path className="figure" d="M75 51v40M75 91h24l17 27M75 91 61 119" />{head}</>;
-  const standingBase = <><path className="ground" d="M35 122h80" /><path className="figure" d="M75 51v39M75 90 58 121M75 90 92 121" />{head}</>;
+function Head({ cx = 75, cy = 41, r = 9 }: { cx?: number; cy?: number; r?: number }) {
+  return <g className="human-head"><circle className="figure-head" cx={cx} cy={cy} r={r} /><path className="hair" d={`M${cx-r+1} ${cy-2}q2-${r-2} ${r-1}-${r-1}q${r-1} 0 ${r-1} ${r-2}q-${r-2}-3-${(r*2)-2}-1`} /><circle className="face-eye" cx={cx + r * .38} cy={cy} r="1" /></g>;
+}
+
+function Pose({ kind, end }: { kind: DiagramKind; end: boolean }) {
+  const p = undefined;
+  const head = <Head />;
+  const seatedBase = <><path className="equipment" d="M45 102h58M52 71v50M50 103h-9" /><path className="seat-pad" d="M44 98h55" /><path className="body-shirt" d="M67 50q8-5 16 0l7 38q-15 7-30 0z" /><path className="figure leg" d="M75 91h24l17 27M75 91 61 119" /><path className="shoe" d="M112 117h12M55 120h12" />{head}</>;
+  const standingBase = <><path className="ground" d="M35 122h80" /><path className="body-shirt" d="M67 50q8-5 16 0l7 38q-15 7-30 0z" /><path className="body-shorts" d="M61 85h28l-3 12-11-6-11 6z" /><path className="figure leg" d="M68 92 58 121M82 92 92 121" /><path className="shoe" d="M51 122h13M86 122h13" />{head}</>;
 
   if (kind === "push") return <g transform={p}>{seatedBase}<path className="equipment" d="M116 47v66" /><path className="figure accent" d={end ? "M75 58 111 64M75 58 111 55" : "M75 58 91 66 107 58M75 58 91 50 107 58"} /><path className="motion" d={end ? "M93 38h22" : "M99 38h13"} /></g>;
   if (kind === "fly" || kind === "rear-fly") return <g transform={p}>{standingBase}<path className="figure accent" d={end ? "M75 58 37 66M75 58 113 66" : "M75 58 59 77M75 58 91 77"} /><path className="motion" d={end ? "M48 48 35 58M102 48l13 10" : "M49 79h16M101 79H85"} /></g>;

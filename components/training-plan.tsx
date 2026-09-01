@@ -46,7 +46,7 @@ export function TrainingPlan({ selectedDate, onAddExercises }: { selectedDate: s
                   <span className="exercise-index">{String(index + 1).padStart(2, "0")}</span><span className="exercise-name"><strong>{item.name}</strong><small>{item.englishName} · {item.target}</small></span><b>{item.dose}</b>{item.rest && <em>休 {item.rest}</em>}<i>{open ? "−" : "＋"}</i>
                 </button>
                 {open && <div className="exercise-detail">
-                  <ExerciseDiagram kind={item.diagram} />
+                  <ExerciseDiagram kind={item.diagram} name={item.name} />
                   <div className="detail-copy">
                     <div className="equipment-tag">器械：{item.equipment}</div>
                     <section><h5>先调整</h5><p>{item.setup}</p></section>
@@ -60,7 +60,7 @@ export function TrainingPlan({ selectedDate, onAddExercises }: { selectedDate: s
             })}</div>
           </section>;
         })}
-        <footer className="plan-footer"><p><strong>一堂课的节奏：</strong>热身不喘 → 器械组间按时休息 → 拉伸不忍痛。总时长超出很多，通常是重量太重或组间刷手机太久。</p><span>计划参考 ACE 动作库与 PureGym 专业动作示范；它是通用入门计划，不能替代医生、康复师或现场教练的个体评估。</span></footer>
+        <footer className="plan-footer"><p><strong>一堂课的节奏：</strong>热身不喘 → 器械组间按时休息 → 拉伸不忍痛。总时长超出很多，通常是重量太重或组间刷手机太久。</p><span>计划参考 ACE 动作库与 PureGym 专业动作示范；动作插图由 <a href="https://repdb.co" target="_blank" rel="noreferrer">RepDB</a> 提供。它是通用入门计划，不能替代医生、康复师或现场教练的个体评估。</span></footer>
       </article>
     </section>
   );
