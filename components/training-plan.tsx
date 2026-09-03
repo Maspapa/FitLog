@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { ExerciseDiagram } from "./exercise-diagram";
+import { lyftaExerciseUrl } from "@/lib/lyfta-links";
 import { PHASE_LABELS, TRAINING_DAYS, type PlanExercise, type TrainingDay, type TrainingPhase } from "@/lib/training-plan";
 
 const PHASES: TrainingPhase[] = ["warmup", "main", "stretch"];
@@ -14,19 +14,24 @@ function suggestedDay(date: string): TrainingDay["id"] {
 }
 
 function ExerciseCard({ item, index, open, onToggle, onAdd }: { item: PlanExercise; index: number; open: boolean; onToggle: () => void; onAdd?: () => void }) {
+  const lyftaUrl = lyftaExerciseUrl(item.englishName);
   return <article className={`exercise-card ${open ? "open" : ""}`}>
     <button className="exercise-summary" type="button" aria-expanded={open} onClick={onToggle}>
       <span className="exercise-index">{String(index + 1).padStart(2, "0")}</span><span className="exercise-name"><strong>{item.name}</strong><small>{item.englishName} · {item.target}</small></span><b>{item.dose}</b>{item.rest && <em>休 {item.rest}</em>}<i>{open ? "−" : "＋"}</i>
     </button>
     {open && <div className="exercise-detail">
-      <ExerciseDiagram kind={item.diagram} name={item.name} />
+      <aside className="lyfta-guide">
+        <div className="lyfta-brand"><b>LYFTA</b><span>动作指导</span></div>
+        <div className="lyfta-preview"><i aria-hidden="true">▶</i><strong>查看真人动态示范</strong><small>{item.englishName}</small></div>
+        <a href={lyftaUrl} target="_blank" rel="noreferrer">在 Lyfta 打开这个动作 <span>↗</span></a>
+      </aside>
       <div className="detail-copy">
         <div className="equipment-tag">器械：{item.equipment}</div>
         <section><h5>先调整</h5><p>{item.setup}</p></section>
         <section><h5>怎么做</h5><ol>{item.steps.map((step) => <li key={step}>{step}</li>)}</ol></section>
         <section className="cue-block"><h5>记住这三个词</h5><div>{item.cues.map((cue) => <span key={cue}>{cue}</span>)}</div></section>
         <div className="form-alert"><p><b>常见错误</b>{item.mistake}</p><p><b>安全提示</b>{item.safety}</p></div>
-        <div className="detail-actions">{item.guideUrl && <a className="video-link" href={item.guideUrl} target="_blank" rel="noreferrer">查看专业图文 / 视频示范 <span>↗</span></a>}{onAdd && <button type="button" onClick={onAdd}>＋ 加入当天打卡</button>}</div>
+        {onAdd && <div className="detail-actions"><button type="button" onClick={onAdd}>＋ 加入当天打卡</button></div>}
       </div>
     </div>}
   </article>;
@@ -67,7 +72,7 @@ export function TrainingPlan({ selectedDate, onAddExercises }: { selectedDate: s
             </section>;
           })}</div>
         </section>
-        <footer className="plan-footer"><p><strong>一堂课的节奏：</strong>热身不喘 → 器械组间按时休息 → 拉伸不忍痛。总时长超出很多，通常是重量太重或组间刷手机太久。</p><span>计划参考 ACE 动作库与 PureGym 专业动作示范；动作插图由 <a href="https://repdb.co" target="_blank" rel="noreferrer">RepDB</a> 提供。它是通用入门计划，不能替代医生、康复师或现场教练的个体评估。</span></footer>
+        <footer className="plan-footer"><p><strong>一堂课的节奏：</strong>热身不喘 → 器械组间按时休息 → 拉伸不忍痛。总时长超出很多，通常是重量太重或组间刷手机太久。</p><span>真人动作演示由 <a href="https://www.lyfta.app/exercises" target="_blank" rel="noreferrer">Lyfta 动作库</a>提供；本站保留中文要点与安全提示。通用入门计划不能替代医生、康复师或现场教练的个体评估。</span></footer>
       </article>
     </section>
   );
