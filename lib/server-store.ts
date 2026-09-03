@@ -1,11 +1,11 @@
 import "server-only";
-import { createHash } from "node:crypto";
 import { mkdirSync } from "node:fs";
 import path from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { FitDataSchema, type FitData } from "./schemas";
 
 const TOKEN_PATTERN = /^[A-Za-z0-9_-]{40,128}$/;
+const SHARED_VAULT_HASH = "shared-v1";
 
 declare global {
   var __fitlogDatabase: DatabaseSync | undefined;
@@ -43,34 +43,73 @@ export function tokenFromRequest(request: Request): string | null {
   return TOKEN_PATTERN.test(token) ? token : null;
 }
 
-function tokenHash(token: string): string { return createHash("sha256").update(token).digest("hex"); }
+function ensureSharedVault(db: DatabaseSync): void {
+  const existing = db.prepare("SELECT 1 FROM vaults WHERE id_hash = ?").get(SHARED_VAULT_HASH);
+  if (existing) return;
+
+  db.exec("BEGIN IMMEDIATE");
+  try {
+    const current = db.prepare("SELECT 1 FROM vaults WHERE id_hash = ?").get(SHARED_VAULT_HASH);
+    if (!current) {
+      const latest = db.prepare(`
+        SELECT profile, created_at
+        FROM vaults
+        WHERE EXISTS (SELECT 1 FROM daily_logs WHERE vault_hash = vaults.id_hash)
+        ORDER BY updated_at DESC
+        LIMIT 1
+      `).get() as { profile: string; created_at: string } | undefined;
+      const now = new Date().toISOString();
+      const profile = latest ? JSON.parse(latest.profile) : { goal: "fat_loss", createdAt: now };
+      db.prepare("INSERT INTO vaults (id_hash, profile, created_at, updated_at) VALUES (?, ?, ?, ?)")
+        .run(SHARED_VAULT_HASH, JSON.stringify(profile), latest?.created_at ?? now, now);
+
+      const legacyLogs = db.prepare(`
+        SELECT log_date, payload, updated_at
+        FROM daily_logs
+        WHERE vault_hash <> ?
+        ORDER BY updated_at
+      `).all(SHARED_VAULT_HASH) as Array<{ log_date: string; payload: string; updated_at: string }>;
+      const merge = db.prepare(`
+        INSERT INTO daily_logs (vault_hash, log_date, payload, updated_at) VALUES (?, ?, ?, ?)
+        ON CONFLICT(vault_hash, log_date) DO UPDATE SET
+          payload = excluded.payload,
+          updated_at = excluded.updated_at
+        WHERE excluded.updated_at >= daily_logs.updated_at
+      `);
+      for (const log of legacyLogs) merge.run(SHARED_VAULT_HASH, log.log_date, log.payload, log.updated_at);
+    }
+    db.exec("COMMIT");
+  } catch (error) { db.exec("ROLLBACK"); throw error; }
+}
 
 export function getFitData(token: string): FitData {
-  const db = database(); const hash = tokenHash(token);
-  const row = db.prepare("SELECT profile FROM vaults WHERE id_hash = ?").get(hash) as { profile: string } | undefined;
-  if (!row) {
-    const now = new Date().toISOString();
-    const profile = { goal: "fat_loss" as const, createdAt: now };
-    db.prepare("INSERT INTO vaults (id_hash, profile, created_at, updated_at) VALUES (?, ?, ?, ?)").run(hash, JSON.stringify(profile), now, now);
-    return { version: 1, profile, logs: [] };
-  }
-  const logs = db.prepare("SELECT payload FROM daily_logs WHERE vault_hash = ? ORDER BY log_date").all(hash) as Array<{ payload: string }>;
+  void token;
+  const db = database();
+  ensureSharedVault(db);
+  const row = db.prepare("SELECT profile FROM vaults WHERE id_hash = ?").get(SHARED_VAULT_HASH) as { profile: string };
+  const logs = db.prepare("SELECT payload FROM daily_logs WHERE vault_hash = ? ORDER BY log_date").all(SHARED_VAULT_HASH) as Array<{ payload: string }>;
   return FitDataSchema.parse({ version: 1, profile: JSON.parse(row.profile), logs: logs.map((item) => JSON.parse(item.payload)) });
 }
 
 export function replaceFitData(token: string, input: FitData): FitData {
-  const data = FitDataSchema.parse(input); const db = database(); const hash = tokenHash(token); const now = new Date().toISOString();
+  const data = FitDataSchema.parse(input); const db = database(); const now = new Date().toISOString();
+  ensureSharedVault(db);
   db.exec("BEGIN IMMEDIATE");
   try {
     db.prepare(`INSERT INTO vaults (id_hash, profile, created_at, updated_at) VALUES (?, ?, ?, ?)
       ON CONFLICT(id_hash) DO UPDATE SET profile=excluded.profile, updated_at=excluded.updated_at`)
-      .run(hash, JSON.stringify(data.profile), data.profile.createdAt, now);
-    db.prepare("DELETE FROM daily_logs WHERE vault_hash = ?").run(hash);
-    const insert = db.prepare("INSERT INTO daily_logs (vault_hash, log_date, payload, updated_at) VALUES (?, ?, ?, ?)");
-    for (const log of data.logs) insert.run(hash, log.date, JSON.stringify(log), log.updatedAt);
+      .run(SHARED_VAULT_HASH, JSON.stringify(data.profile), data.profile.createdAt, now);
+    const merge = db.prepare(`
+      INSERT INTO daily_logs (vault_hash, log_date, payload, updated_at) VALUES (?, ?, ?, ?)
+      ON CONFLICT(vault_hash, log_date) DO UPDATE SET
+        payload = excluded.payload,
+        updated_at = excluded.updated_at
+      WHERE excluded.updated_at >= daily_logs.updated_at
+    `);
+    for (const log of data.logs) merge.run(SHARED_VAULT_HASH, log.date, JSON.stringify(log), log.updatedAt);
     db.exec("COMMIT");
-    return data;
   } catch (error) { db.exec("ROLLBACK"); throw error; }
+  return getFitData(token);
 }
 
 export function checkDatabase(): boolean { database().prepare("SELECT 1 AS ok").get(); return true; }
