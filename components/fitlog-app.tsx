@@ -77,10 +77,8 @@ export function FitLogApp() {
   return <main>
     <nav className="topbar"><a href="#top" className="brand"><i>FL</i>FitLog</a><div><a className="topbar-plan" href="#training-plan">训练计划</a><a className="topbar-primary" href="#daily">今日打卡</a><button type="button" onClick={() => exportData(data)}>导出备份</button><button type="button" onClick={() => importRef.current?.click()}>导入</button><input ref={importRef} hidden type="file" accept="application/json" onChange={onImport} /></div></nav>
 
-    <header className="hero" id="top">
+    <header className="dashboard-bar" id="top">
       <div className="hero-meta"><span>{new Date().toLocaleDateString("zh-CN", { month: "long", day: "numeric", weekday: "long" })}</span><label>目标<select value={data.profile.goal} onChange={(e) => changeGoal(e.target.value as Goal)}>{Object.entries(GOALS).map(([value,label]) => <option value={value} key={value}>{label}</option>)}</select></label></div>
-      <h1>今天，过得怎么样？</h1>
-      <p>选一个项目开始记录。不用全部填满，也不用追求完美。</p>
       <div className="date-control"><button type="button" onClick={() => { const date = new Date(`${selectedDate}T12:00:00`); date.setDate(date.getDate()-1); changeDate(dateKey(date)); }}>←</button><input aria-label="打卡日期" type="date" max={dateKey()} value={selectedDate} onChange={(e) => changeDate(e.target.value)} /><button type="button" disabled={selectedDate === dateKey()} onClick={() => { const date = new Date(`${selectedDate}T12:00:00`); date.setDate(date.getDate()+1); changeDate(dateKey(date)); }}>→</button></div>
     </header>
 
@@ -98,14 +96,14 @@ export function FitLogApp() {
     <TrainingPlan selectedDate={selectedDate} onAddExercises={addPlanExercises} />
 
     <section className="insights-section">
-      <div className="section-title light"><span>LONG GAME</span><h2>别盯着一天，看趋势。</h2><p>单日体重会受水分、盐分和作息影响。曲线比数字更诚实。</p></div>
+      <div className="section-title light"><h2>趋势与复盘</h2></div>
       <div className="insight-grid"><article className="chart-card"><div><span>最近30次记录</span><h3>体重趋势</h3></div><TrendChart logs={data.logs} /></article>
         <article className="coach-card"><span>WEEKLY COACH</span><h3>让 AI 帮你复盘这段记录</h3><p>它不会猜热量，只会根据你实际写下的训练、饮食和恢复寻找规律。</p><button type="button" disabled={!last14.length || coachLoading} onClick={generateReport}>{coachLoading ? "正在整理这两周…" : last14.length ? `分析最近 ${last14.length} 天` : "先完成一次打卡"}<b>↗</b></button><small>每个 IP 每小时最多生成 10 次</small></article>
       </div>
       {report && <CoachReport report={report} />}
     </section>
 
-    {data.logs.length > 0 && <section className="logbook"><div className="section-title"><span>LOGBOOK</span><h2>最近记录</h2></div><div className="log-list">{[...data.logs].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,14).map((log) => <button type="button" key={log.date} onClick={() => { changeDate(log.date); document.querySelector(".editor-section")?.scrollIntoView({behavior:"smooth"}); }}><time>{log.date.slice(5).replace("-","/")}</time><span>{log.workouts.length ? log.workouts.map((item)=>item.name).join("、") : "休息 / 未记录训练"}</span><b>{log.weight ? `${log.weight}kg` : "--"}</b></button>)}</div></section>}
+    {data.logs.length > 0 && <section className="logbook"><div className="section-title"><h2>最近记录</h2></div><div className="log-list">{[...data.logs].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,14).map((log) => <button type="button" key={log.date} onClick={() => { changeDate(log.date); document.querySelector(".editor-section")?.scrollIntoView({behavior:"smooth"}); }}><time>{log.date.slice(5).replace("-","/")}</time><span>{log.workouts.length ? log.workouts.map((item)=>item.name).join("、") : "休息 / 未记录训练"}</span><b>{log.weight ? `${log.weight}kg` : "--"}</b></button>)}</div></section>}
 
     <footer><b>FitLog</b><span>记录保存在你的服务器 · 当前浏览器持有访问凭证 · 建议定期导出备份</span></footer>
     {message && <div className="toast" role="status">{message}</div>}

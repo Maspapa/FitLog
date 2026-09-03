@@ -40,13 +40,8 @@ export function TrainingPlan({ selectedDate, onAddExercises }: { selectedDate: s
 
   return (
     <section className="plan-section" id="training-plan">
-      <div className="section-title plan-title"><span>BEGINNER PROGRAM</span><h2>到健身房，照着做就行。</h2><p>从热身到拉伸都排好了。先看图，再看动作要领；第一次使用陌生器械，先请巡场教练帮你调一次座椅。</p></div>
-      <div className="plan-principles">
-        <div><b>01</b><strong>前两周减量</strong><span>所有器械先做 2 组；第 3 周起状态良好再做完整组数。</span></div>
-        <div><b>02</b><strong>重量怎么选</strong><span>做完目标次数，感觉还能规范完成 2–3 次，就是合适重量。</span></div>
-        <div><b>03</b><strong>什么时候加重</strong><span>连续两次训练都做到次数上限且动作稳定，再加最小一档。</span></div>
-        <div><b>04</b><strong>疼痛不是训练感</strong><span>肌肉酸胀可以；关节锐痛、麻木、眩晕或胸闷必须停止。</span></div>
-      </div>
+      <div className="section-title plan-title"><h2>训练计划</h2></div>
+      <div className="plan-note"><strong>新手提示</strong><span>前两周每项 2 组 · 留 2–3 次余力 · 动作稳定再加重 · 关节疼痛立即停止</span></div>
 
       <div className="day-tabs" role="tablist" aria-label="每周训练日">
         {TRAINING_DAYS.map((item) => <button role="tab" aria-selected={item.id === day.id} className={item.id === day.id ? "active" : ""} type="button" key={item.id} onClick={() => { setDayId(item.id); setOpenId(null); }}><span>{item.weekday}</span><strong>{item.title}</strong><small>{item.focus}</small></button>)}

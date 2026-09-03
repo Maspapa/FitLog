@@ -21,10 +21,10 @@ export function DailyEditor({ initial, onSave }: { initial: DailyLog; onSave: (l
 
   return (
     <section className="editor-section" id="daily">
-      <div className="section-title"><span>DAILY CHECK-IN</span><h2>今天想记录什么？</h2><p>按需填写即可，空着的项目不会影响保存。</p></div>
+      <div className="section-title"><h2>今日打卡</h2></div>
       <div className="editor-grid">
         <article className="entry-card body-card" id="body-card">
-          <div className="entry-number">01</div><h3>身体数据</h3><p className="card-subtitle">体重可每天记录，腰围每周一次就够。</p>
+          <div className="entry-number">01</div><h3>身体数据</h3>
           <div className="measure-grid">
             <label><span>体重</span><div><input type="number" inputMode="decimal" step="0.1" value={log.weight ?? ""} onChange={(e) => field("weight", numberOrNull(e.target.value))} placeholder="--" /><b>kg</b></div></label>
             <label><span>腰围</span><div><input type="number" inputMode="decimal" step="0.1" value={log.waist ?? ""} onChange={(e) => field("waist", numberOrNull(e.target.value))} placeholder="--" /><b>cm</b></div></label>
@@ -32,7 +32,7 @@ export function DailyEditor({ initial, onSave }: { initial: DailyLog; onSave: (l
         </article>
 
         <article className="entry-card workout-card" id="workout-card">
-          <div className="entry-number">02</div><div className="card-heading"><div><h3>训练</h3><p className="card-subtitle">记录动作、次数或运动时长。</p></div><button type="button" onClick={addWorkout}>＋ 添加训练</button></div>
+          <div className="entry-number">02</div><div className="card-heading"><h3>训练</h3><button type="button" onClick={addWorkout}>＋ 添加训练</button></div>
           {log.workouts.length === 0 && <button className="empty-action" type="button" onClick={addWorkout}>＋ 记录一项训练</button>}
           <div className="workout-list">{log.workouts.map((workout) => (
             <div className="workout-row" key={workout.id}>
@@ -50,12 +50,12 @@ export function DailyEditor({ initial, onSave }: { initial: DailyLog; onSave: (l
         </article>
 
         <article className="entry-card food-card" id="food-card">
-          <div className="entry-number">03</div><h3>饮食</h3><p className="card-subtitle">不用计算热量，简单写下吃了什么。</p>
+          <div className="entry-number">03</div><h3>饮食</h3>
           <div className="meal-grid">{Object.entries(MEALS).map(([key, label]) => <label key={key}><span>{label}</span><textarea rows={2} value={log.meals[key as keyof DailyLog["meals"]]} onChange={(e) => field("meals", { ...log.meals, [key]: e.target.value })} placeholder="例如：米饭、鸡腿、青菜" /></label>)}</div>
         </article>
 
         <article className="entry-card state-card" id="state-card">
-          <div className="entry-number">04</div><h3>恢复与状态</h3><p className="card-subtitle">睡眠、精神和酸痛能解释训练之外的变化。</p>
+          <div className="entry-number">04</div><h3>恢复与状态</h3>
           <div className="state-grid">
             <label>睡眠（小时）<input type="number" step="0.5" value={log.sleepHours ?? ""} onChange={(e) => field("sleepHours", numberOrNull(e.target.value))} placeholder="7.5" /></label>
             <label>步数<input type="number" value={log.steps ?? ""} onChange={(e) => field("steps", numberOrNull(e.target.value))} placeholder="8000" /></label>
