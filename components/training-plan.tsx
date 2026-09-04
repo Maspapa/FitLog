@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { lyftaExerciseUrl } from "@/lib/lyfta-links";
+import { lyftaExerciseMedia } from "@/lib/lyfta-links";
 import { PHASE_LABELS, TRAINING_DAYS, type PlanExercise, type TrainingDay, type TrainingPhase } from "@/lib/training-plan";
 
 const PHASES: TrainingPhase[] = ["warmup", "main", "stretch"];
@@ -14,7 +14,8 @@ function suggestedDay(date: string): TrainingDay["id"] {
 }
 
 function ExerciseCard({ item, index, open, onToggle, onAdd }: { item: PlanExercise; index: number; open: boolean; onToggle: () => void; onAdd?: () => void }) {
-  const lyftaUrl = lyftaExerciseUrl(item.englishName);
+  const [mediaFailed, setMediaFailed] = useState(false);
+  const lyfta = lyftaExerciseMedia(item.englishName);
   return <article className={`exercise-card ${open ? "open" : ""}`}>
     <button className="exercise-summary" type="button" aria-expanded={open} onClick={onToggle}>
       <span className="exercise-index">{String(index + 1).padStart(2, "0")}</span><span className="exercise-name"><strong>{item.name}</strong><small>{item.englishName} · {item.target}</small></span><b>{item.dose}</b>{item.rest && <em>休 {item.rest}</em>}<i>{open ? "−" : "＋"}</i>
@@ -22,8 +23,15 @@ function ExerciseCard({ item, index, open, onToggle, onAdd }: { item: PlanExerci
     {open && <div className="exercise-detail">
       <aside className="lyfta-guide">
         <div className="lyfta-brand"><b>LYFTA</b><span>动作指导</span></div>
-        <div className="lyfta-preview"><i aria-hidden="true">▶</i><strong>查看真人动态示范</strong><small>{item.englishName}</small></div>
-        <a href={lyftaUrl} target="_blank" rel="noreferrer">在 Lyfta 打开这个动作 <span>↗</span></a>
+        <div className="lyfta-preview">
+          {lyfta.video && !mediaFailed
+            ? <video src={lyfta.video} autoPlay loop muted playsInline preload="metadata" aria-label={`${item.name}动态动作示范`} onError={() => setMediaFailed(true)} />
+            : lyfta.poster && !mediaFailed
+              ? <div className="lyfta-poster" role="img" aria-label={`${item.name}动作姿势示范`} style={{ backgroundImage: `url("${lyfta.poster}")` }} />
+              : <div className="lyfta-fallback"><i aria-hidden="true">▶</i><span>演示加载失败</span></div>}
+          <div className="lyfta-caption"><strong>{lyfta.video ? "真人动态示范" : "动作姿势示范"}</strong><small>{item.englishName}</small></div>
+        </div>
+        <a href={lyfta.page} target="_blank" rel="noreferrer">在 Lyfta 打开这个动作 <span>↗</span></a>
       </aside>
       <div className="detail-copy">
         <div className="equipment-tag">器械：{item.equipment}</div>

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { lyftaExerciseUrl } from "../lib/lyfta-links";
+import { lyftaExerciseMedia, lyftaExerciseUrl } from "../lib/lyfta-links";
 import { TRAINING_DAYS } from "../lib/training-plan";
 
 describe("beginner training plan", () => {
@@ -45,10 +45,18 @@ describe("beginner training plan", () => {
 
   it("routes every movement to the Lyfta exercise library", () => {
     const exercises = TRAINING_DAYS.flatMap((day) => [...day.exercises, ...day.alternatives]);
+    let videoCount = 0;
     for (const item of exercises) {
       const url = new URL(lyftaExerciseUrl(item.englishName));
       expect(url.origin).toBe("https://www.lyfta.app");
       expect(url.pathname).toMatch(/^\/exercise\/[a-z0-9-]+$/);
+      const media = lyftaExerciseMedia(item.englishName);
+      expect(media.video || media.poster, item.englishName).toBeTruthy();
+      if (media.video) {
+        expect(new URL(media.video).hostname).toBe("apilyfta.com");
+        videoCount += 1;
+      }
     }
+    expect(videoCount).toBeGreaterThan(40);
   });
 });

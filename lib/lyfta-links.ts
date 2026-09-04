@@ -63,6 +63,88 @@ const LYFTA_EXERCISE_LINKS: Record<string, string> = {
   "Neck side stretch": "https://www.lyfta.app/exercise/neck-side-stretch-79z",
 };
 
+const LYFTA_EXERCISE_VIDEOS: Record<string, string> = {
+  "Easy cardio": "https://apilyfta.com/static/GymvisualMP4/21921201-Elliptical-Machine-Walk_Cardio.mp4",
+  "Wall push-up": "https://apilyfta.com/static/GymvisualMP4/34911201-Decline-Push-Up-against-Wall_Chest.mp4",
+  "Machine fly": "https://apilyfta.com/static/GymvisualMP4/05961201-Lever-Seated-Fly_Chest-FIX_.mp4",
+  "Incline chest press machine": "https://apilyfta.com/static/GymvisualMP4/12991201-Lever-Incline-Chest-Press_Chest-FIX2_.mp4",
+  "Shoulder press machine": "https://apilyfta.com/static/GymvisualMP4/08691201-Lever-Shoulder-Press-(plate-loaded)-(VERSION-2)_Shoulders_.mp4",
+  "Triceps pushdown": "https://apilyfta.com/static/GymvisualMP4/02411201-Cable-Triceps-Pushdown-(V-bar-attachment)_Upper-Arms.mp4",
+  "Doorway chest stretch": "https://apilyfta.com/static/GymvisualMP4/75531201-Doorway-Chest-Stretch-(male)_Chest_.mp4",
+  "Overhead triceps stretch": "https://apilyfta.com/static/GymvisualMP4/06431201-Overhead-Triceps-Stretch_Upper-Arms.mp4",
+  "Easy rowing warm-up": "https://apilyfta.com/static/GymvisualMP4/11611201-Rowing-(with-rowing-machine)_Cardio.mp4",
+  "Incline push-up": "https://apilyfta.com/static/GymvisualMP4/04931201-Incline-Push-up_Chest.mp4",
+  "Smith incline bench press": "https://apilyfta.com/static/GymvisualMP4/07571201-Smith-Incline-Bench-Press_Chest-FIX_.mp4",
+  "Dumbbell bench press": "https://apilyfta.com/static/GymvisualMP4/02891201-Dumbbell-Bench-Press_Chest-FIX_.mp4",
+  "Machine triceps extension": "https://apilyfta.com/static/GymvisualMP4/06071201-Lever-Triceps-Extension_Upper-Arms.mp4",
+  "Banded shoulder stretch": "https://apilyfta.com/static/GymvisualMP4/35131201-Resistance-Band-Shoulder-Stretch-Behind-the-Back_Shoulders_.mp4",
+  "Cross-body shoulder stretch": "https://apilyfta.com/static/GymvisualMP4/18461201-Band-Warm-up-Shoulder-Stretch-(female)_Chest.mp4",
+  "Stationary bike": "https://apilyfta.com/static/GymvisualMP4/22791201-Stationary-Bike-Run-(version-4)_Cardio.mp4",
+  "Glute bridge": "https://apilyfta.com/static/GymvisualMP4/34271201-Dumbbell-Glute-Bridge-(female)_Hips_.mp4",
+  "Seated leg press": "https://apilyfta.com/static/GymvisualMP4/22671201-Lever-Seated-Leg-Press_Thighs.mp4",
+  "Seated leg curl": "https://apilyfta.com/static/GymvisualMP4/05991201-Lever-Seated-Leg-Curl_Thighs.mp4",
+  "Leg extension": "https://apilyfta.com/static/GymvisualMP4/05851201-Lever-Leg-Extension_Thighs.mp4",
+  "Hip thrust machine": "https://apilyfta.com/static/GymvisualMP4/35491201-Lever-Hip-Thrust-(plate-loaded)-(female)_Hips_.mp4",
+  "Seated hip abduction": "https://apilyfta.com/static/GymvisualMP4/05971201-Lever-Seated-Hip-Abduction_Hips.mp4",
+  "Kneeling hip-flexor stretch": "https://apilyfta.com/static/GymvisualMP4/10531201-Kneeling-Hip-Flexor-Stretch_Hips_.mp4",
+  "Figure-four stretch": "https://apilyfta.com/static/GymvisualMP4/10561201-Lying-Glute-Stretch_Hips-(female).mp4",
+  "Incline treadmill walk": "https://apilyfta.com/static/GymvisualMP4/36661201-Walking-on-Incline-Treadmill_Cardio_.mp4",
+  "Banded lateral walk": "https://apilyfta.com/static/GymvisualMP4/24601201-Resistance-Band-Lateral-Walk-(female)_Hips_.mp4",
+  "Hack squat": "https://apilyfta.com/static/GymvisualMP4/23841201-Sled-Hack-Squat-(female)_Thighs.mp4",
+  "Smith machine squat": "https://apilyfta.com/static/GymvisualMP4/07701201-Smith-Squat_Hips_.mp4",
+  "Lying leg curl": "https://apilyfta.com/static/GymvisualMP4/05861201-Lever-Lying-Leg-Curl_Thighs.mp4",
+  "Seated hip adduction": "https://apilyfta.com/static/GymvisualMP4/05981201-Lever-Seated-Hip-Adduction_Thighs.mp4",
+  "Standing quad stretch": "https://apilyfta.com/static/GymvisualMP4/10591201-Standing-Quadriceps-Stretch_Thighs_.mp4",
+  "Standing calf stretch": "https://apilyfta.com/static/GymvisualMP4/15991201-Standing-Hamstring-and-Calf-Stretch-with-Starp_Thighs.mp4",
+  "Bench adductor stretch": "https://apilyfta.com/static/GymvisualMP4/09361201-Adductor-Stretch-(female)_Hips.mp4",
+  "Easy rowing": "https://apilyfta.com/static/GymvisualMP4/11611201-Rowing-(with-rowing-machine)_Cardio.mp4",
+  "Band pull-apart": "https://apilyfta.com/static/GymvisualMP4/45681201-Resistance-Band-Pull-Apart_Shoulders_.mp4",
+  "Straight-arm pulldown warm-up": "https://apilyfta.com/static/GymvisualMP4/02371201-Cable-Straight-Arm-Pulldown-(with-rope)_Back.mp4",
+  "Lat pulldown": "https://apilyfta.com/static/GymvisualMP4/22911201-Cable-Wide-Grip-Lat-Pulldown-(female)_Back.mp4",
+  "Seated cable row": "https://apilyfta.com/static/GymvisualMP4/08611201-Cable-Seated-Row_Back-FIX_.mp4",
+  "Chest-supported row": "https://apilyfta.com/static/GymvisualMP4/28851201-Lever-T-bar-Row-(plate-loaded)-(female)_Back.mp4",
+  "Reverse pec deck": "https://apilyfta.com/static/GymvisualMP4/06021201-Lever-Seated-Reverse-Fly_Shoulders.mp4",
+  "Lateral raise machine": "https://apilyfta.com/static/GymvisualMP4/05841201-Lever-Lateral-Raise_shoulder.mp4",
+  "Easy stationary bike": "https://apilyfta.com/static/GymvisualMP4/22791201-Stationary-Bike-Run-(version-4)_Cardio.mp4",
+  "Scapular pull-up": "https://apilyfta.com/static/GymvisualMP4/06881201-Scapular-Pull-Up_Back_.mp4",
+  "Cat-cow": "https://apilyfta.com/static/GymvisualMP4/45801201-Cat-Cow-Stretch_Stretching_.mp4",
+  "Single-arm lat pulldown": "https://apilyfta.com/static/GymvisualMP4/12041201-Cable-one-arm-lat-pulldown_back.mp4",
+  "Cable face pull": "https://apilyfta.com/static/GymvisualMP4/56091201-Cable-Standing-Face-Pull_Shoulders_.mp4",
+  "Dumbbell lateral raise": "https://apilyfta.com/static/GymvisualMP4/03341201-Dumbbell-Lateral-Raise_shoulder-FIX_.mp4",
+  "Machine back extension": "https://apilyfta.com/static/GymvisualMP4/22661201-Lever-Back-Extension-(version-2)_Back.mp4",
+  "Bench child's pose": "https://apilyfta.com/static/GymvisualMP4/09451201-Child-Pose-(female)_Stretching_.mp4",
+  "Neck side stretch": "https://apilyfta.com/static/GymvisualMP4/14031201-Neck-Side-Stretch_Neck.mp4",
+};
+
+const LYFTA_STATIC_POSTERS: Record<string, string> = {
+  "Shoulder circles": "https://apilyfta.com/static/GymvisualPNG/43951101-Shoulder-Circle_Back_small.png",
+  "Seated chest press": "https://apilyfta.com/static/GymvisualPNG/21441101-Cable-Seated-Chest-Press_Chest_small.png",
+  "Cable external rotation": "https://apilyfta.com/static/GymvisualPNG/26751101-Cable-Standing-Shoulder-External-Rotation-(female)_Back_small.png",
+  "Cable fly": "https://apilyfta.com/static/GymvisualPNG/38681101-Cable-Fly-with-Chest-Supported_Chest_small.png",
+  "Machine assisted dip": "https://apilyfta.com/static/GymvisualPNG/00191101-Assisted-Triceps-Dip-(kneeling)_Upper-Arms_small.png",
+  "Thread the needle": "https://apilyfta.com/static/GymvisualPNG/59041101-Thread-the-Needle-Pose%20-(female)_Stretching_small.png",
+  "Box squat": "https://apilyfta.com/static/GymvisualPNG/36921101-Dumbbell-Goblet-Box-Squat_Thighs_small.png",
+  "Seated hamstring stretch": "https://apilyfta.com/static/GymvisualPNG/15601101-Exercise-Ball-Seated-Hamstring-Stretch_Thighs_small.png",
+  "Bodyweight good morning": "https://apilyfta.com/static/GymvisualPNG/55551101-Bodyweight-Good-Morning_Hips_small.png",
+  "Machine calf raise": "https://apilyfta.com/static/GymvisualPNG/12201101-Lever-Calf-Raise-(bench-press-machine)_Calves_small.png",
+  "Bench lat stretch": "https://apilyfta.com/static/GymvisualPNG/18011101-One-arm-Lat-Stretch_Back_small.png",
+  "Assisted pull-up": "https://apilyfta.com/static/GymvisualPNG/00171101-Assisted-Pull-up_Back_small.png",
+};
+
+export interface LyftaExerciseMedia {
+  page: string;
+  video?: string;
+  poster?: string;
+}
+
 export function lyftaExerciseUrl(englishName: string): string {
   return LYFTA_EXERCISE_LINKS[englishName] ?? "https://www.lyfta.app/exercises";
+}
+
+export function lyftaExerciseMedia(englishName: string): LyftaExerciseMedia {
+  return {
+    page: lyftaExerciseUrl(englishName),
+    video: LYFTA_EXERCISE_VIDEOS[englishName],
+    poster: LYFTA_STATIC_POSTERS[englishName],
+  };
 }
