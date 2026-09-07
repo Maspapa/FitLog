@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { lyftaExerciseMedia, lyftaExerciseUrl } from "../lib/lyfta-links";
 import { TRAINING_DAYS } from "../lib/training-plan";
+import { GYM_EQUIPMENT } from "../lib/gym-equipment";
+import { buildCoachPrompt } from "../lib/ai";
 
 describe("beginner training plan", () => {
   it("covers the fixed Monday, Wednesday and Friday schedule", () => {
@@ -33,7 +35,7 @@ describe("beginner training plan", () => {
 
   it("offers warm-up, machine and stretch replacements without inflating the base workout", () => {
     for (const day of TRAINING_DAYS) {
-      expect(day.alternatives.length).toBeGreaterThanOrEqual(11);
+      expect(day.alternatives.length).toBeGreaterThanOrEqual(8);
       expect(day.exercises.filter((item) => item.phase === "main").length).toBeLessThanOrEqual(5);
       for (const phase of ["warmup", "main", "stretch"] as const) {
         expect(day.alternatives.filter((item) => item.phase === phase).length).toBeGreaterThanOrEqual(3);
@@ -43,15 +45,38 @@ describe("beginner training plan", () => {
     }
   });
 
-  it("routes every movement to the Lyfta exercise library", () => {
+  it("uses only confirmed equipment in every phase, including alternatives", () => {
+    const allowed = new Set<string>([...GYM_EQUIPMENT, "无需器械"]);
+    for (const day of TRAINING_DAYS) {
+      const all = [...day.exercises, ...day.alternatives];
+      for (const item of all) {
+        expect(allowed.has(item.equipment), `${item.id}: ${item.equipment}`).toBe(true);
+        expect(JSON.stringify(item)).not.toMatch(/自行车|哈克|蝴蝶机|提踵机|弹力带|长凳|平凳|上斜凳|瑜伽垫|高位下拉机/);
+      }
+      const cardio = all.filter((item) => item.diagram === "cardio");
+      expect(cardio.every((item) => ["跑步机", "椭圆机"].includes(item.equipment))).toBe(true);
+    }
+  });
+
+  it("passes the same complete equipment inventory and fixed schedule to the coach", () => {
+    const prompt = buildCoachPrompt("fat_loss", []);
+    for (const equipment of GYM_EQUIPMENT) expect(prompt).toContain(equipment);
+    expect(prompt).toContain("周一练胸与推、周三练腿与臀、周五练背与肩");
+    expect(prompt).toContain("有氧热身只用跑步机或椭圆机");
+    expect(prompt).toContain("旧记录里出现清单外器械，也不能据此推荐继续使用");
+  });
+
+  it("provides matching exercise guides, allowing explicit text-only guides", () => {
     const exercises = TRAINING_DAYS.flatMap((day) => [...day.exercises, ...day.alternatives]);
     let videoCount = 0;
     for (const item of exercises) {
       const url = new URL(lyftaExerciseUrl(item.englishName));
-      expect(url.origin).toBe("https://www.lyfta.app");
-      expect(url.pathname).toMatch(/^\/exercise\/[a-z0-9-]+$/);
+      expect(["https://www.lyfta.app", "https://shop.lifefitness.com"]).toContain(url.origin);
+      expect(url.pathname).toMatch(/^\/(exercise|products)\/[a-z0-9-]+$/);
       const media = lyftaExerciseMedia(item.englishName);
-      expect(media.video || media.poster, item.englishName).toBeTruthy();
+      if (!["Smith incline push-up", "D.Y. row"].includes(item.englishName)) {
+        expect(media.video || media.poster, item.englishName).toBeTruthy();
+      }
       if (media.video) {
         expect(new URL(media.video).hostname).toBe("apilyfta.com");
         videoCount += 1;

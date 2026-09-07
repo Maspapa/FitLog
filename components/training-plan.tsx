@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { lyftaExerciseMedia } from "@/lib/lyfta-links";
+import { GYM_EQUIPMENT } from "@/lib/gym-equipment";
 import { PHASE_LABELS, TRAINING_DAYS, type PlanExercise, type TrainingDay, type TrainingPhase } from "@/lib/training-plan";
 
 const PHASES: TrainingPhase[] = ["warmup", "main", "stretch"];
@@ -22,19 +23,19 @@ function ExerciseCard({ item, index, open, onToggle, onAdd }: { item: PlanExerci
     </button>
     {open && <div className="exercise-detail">
       <aside className="lyfta-guide">
-        <div className="lyfta-brand"><b>LYFTA</b><span>动作指导</span></div>
+        <div className="lyfta-brand"><b>{lyfta.source}</b><span>动作指导</span></div>
         <div className="lyfta-preview">
           {lyfta.video && !mediaFailed
             ? <video src={lyfta.video} autoPlay loop muted playsInline preload="metadata" aria-label={`${item.name}动态动作示范`} onError={() => setMediaFailed(true)} />
             : lyfta.poster && !mediaFailed
               ? <div className="lyfta-poster" role="img" aria-label={`${item.name}动作姿势示范`} style={{ backgroundImage: `url("${lyfta.poster}")` }} />
-              : <div className="lyfta-fallback"><i aria-hidden="true">▶</i><span>演示加载失败</span></div>}
-          <div className="lyfta-caption"><strong>{lyfta.video ? "真人动态示范" : "动作姿势示范"}</strong><small>{item.englishName}</small></div>
+              : <div className="lyfta-fallback"><i aria-hidden="true">↗</i><span>{mediaFailed ? "演示加载失败，可打开原站" : "按文字步骤练习 · 原站查看指导"}</span></div>}
+          <div className="lyfta-caption"><strong>{lyfta.video ? "动态动作示范" : lyfta.poster ? "动作姿势示范" : "动作指导"}</strong><small>{item.englishName}</small></div>
         </div>
-        <a href={lyfta.page} target="_blank" rel="noreferrer">在 Lyfta 打开这个动作 <span>↗</span></a>
+        <a href={lyfta.page} target="_blank" rel="noreferrer">在 {lyfta.source} 查看指导 <span>↗</span></a>
       </aside>
       <div className="detail-copy">
-        <div className="equipment-tag">器械：{item.equipment}</div>
+        <div className="equipment-tag">器械：{item.equipment}{item.rest && <> · 组间休息：{item.rest}</>}</div>
         <section><h5>先调整</h5><p>{item.setup}</p></section>
         <section><h5>怎么做</h5><ol>{item.steps.map((step) => <li key={step}>{step}</li>)}</ol></section>
         <section className="cue-block"><h5>记住这三个词</h5><div>{item.cues.map((cue) => <span key={cue}>{cue}</span>)}</div></section>
@@ -54,6 +55,7 @@ export function TrainingPlan({ selectedDate, onAddExercises }: { selectedDate: s
   return (
     <section className="plan-section" id="training-plan">
       <div className="section-title plan-title"><h2>训练计划</h2></div>
+      <details className="gym-equipment"><summary>我的健身房 · {GYM_EQUIPMENT.length} 种设备</summary><div>{GYM_EQUIPMENT.map((equipment) => <span key={equipment}>{equipment}</span>)}</div></details>
       <div className="plan-note"><strong>新手提示</strong><span>前两周每项 2 组 · 留 2–3 次余力 · 动作稳定再加重 · 关节疼痛立即停止</span></div>
 
       <div className="day-tabs" role="tablist" aria-label="每周训练日">
@@ -70,7 +72,7 @@ export function TrainingPlan({ selectedDate, onAddExercises }: { selectedDate: s
           </section>;
         })}
         <section className="plan-phase alternatives-phase">
-          <div className="phase-heading"><b>＋</b><div><h4>更多常见动作</h4><p>热身、器械、拉伸都有备选；按当天器械和身体状态替换</p></div><span>{day.alternatives.length} 个可选</span></div>
+          <div className="phase-heading"><b>＋</b><div><h4>可替换动作</h4><p>均可在当前健身房完成</p></div><span>{day.alternatives.length} 个可选</span></div>
           <div className="alternative-note"><strong>怎么用：</strong>热身和拉伸各挑 1–3 个；器械动作挑 1–2 个替换同部位动作。同一天的器械训练总数尽量控制在 5–6 个，不要把整库全部做完。</div>
           <div className="alternative-groups">{PHASES.map((phase) => {
             const items = day.alternatives.filter((item) => item.phase === phase);
