@@ -123,7 +123,7 @@ export const TRAINING_DAYS: TrainingDay[] = [
         dose: "2 组 × 8–12 次",
         rest: "60–90 秒",
         target: "胸、肱三头肌、肩胛稳定",
-        equipment: "史密斯深蹲机",
+        equipment: "史密斯机",
         setup: "把史密斯杠挂在胸口附近高度，确认两侧挂钩锁牢、杠不会转动脱钩；双手略宽于肩，后退至身体成直线。",
         steps: ["收腹夹臀，肩膀保持远离耳朵。","吸气屈肘，让胸口而不是下巴靠近支撑面。","呼气推回起点，手肘不完全锁死。"],
         cues: ["身体整块移动","肘部约 45°","支撑必须稳固"],
@@ -154,16 +154,16 @@ export const TRAINING_DAYS: TrainingDay[] = [
       {
         id: "m-alt-triceps-machine",
         phase: "main",
-        name: "三头肌训练器伸展",
-        englishName: "Machine triceps extension",
+        name: "绳索站三头肌下压",
+        englishName: "Triceps pushdown",
         dose: "2 组 × 10–15 次",
         rest: "60 秒",
         target: "肱三头肌",
-        equipment: "三头肌训练器",
-        setup: "调座椅让肘关节对准器械转轴，胸口或背部贴稳靠垫；手腕保持自然直线。",
-        steps: ["上臂贴住支撑垫，吸气准备。","呼气伸直肘部，底部不要猛烈锁死。","吸气慢慢回到肘部弯曲、仍能控制的位置。"],
-        cues: ["肘轴对准转轴","上臂不抬","回程慢"],
-        mistake: "座椅高度错误，或用肩膀和身体压动握把。",
+        equipment: "二头/三头绳索训练站",
+        setup: "面对训练站的高位滑轮站稳，检查现有握把连接牢固；肘部贴近身体两侧，手腕保持中立，先用轻重量。",
+        steps: ["双脚站稳，收腹，上臂固定在身体两侧。","呼气伸肘把握把压向大腿前，不用身体重量往下压。","吸气缓慢屈肘回程，肘部位置不前后摆动。"],
+        cues: ["站姿稳固","肘贴身侧","回程慢"],
+        mistake: "身体反复前倾下压，或用肩膀摆动代替肘关节伸展。",
         safety: "肘尖疼痛时减重并缩短伸直幅度。",
         diagram: "pressdown",
         guideUrl: "https://www.puregym.com/exercises/arms-and-shoulders/tricep-extension/",
@@ -174,7 +174,7 @@ export const TRAINING_DAYS: TrainingDay[] = [
         phase: "main",
         name: "腹部训练器卷腹",
         englishName: "Lever seated crunch",
-        equipment: "腹部训练器",
+        equipment: "腹部/背部训练器",
         target: "腹直肌",
         setup: "按机身图示调节座椅和胸垫，脚踩稳；选择最轻档，先找到肋骨靠近骨盆的短程动作。",
         steps: ["吸气准备，骨盆保持稳定，双手轻握把手。","呼气收腹，让胸廓缓慢靠近骨盆，不用手臂猛拽。","吸气缓慢回到起始位置，腰部不过度后仰。"],
@@ -221,6 +221,35 @@ export const TRAINING_DAYS: TrainingDay[] = [
       },
     ],
     alternatives: [
+      {
+        "phase": "main",
+        "dose": "2 组 × 10–15 次",
+        "rest": "60–90 秒",
+        "log": {
+          "sets": 2,
+          "reps": 12
+        },
+        "id": "m-photo-fly",
+        "name": "器械夹胸",
+        "englishName": "Machine fly",
+        "equipment": "双臂外展训练机",
+        "target": "胸大肌",
+        "setup": "按机身夹胸图示设置两侧起始档位，背部贴垫坐稳；调座椅使握把在胸肩附近高度，肘部微屈，从轻重量开始。",
+        "steps": [
+          "双脚踩稳，保持背部贴垫和肩膀放松。",
+          "呼气让双臂沿弧线在胸前合拢，肘部角度基本不变。",
+          "吸气慢慢打开，到肩部舒适位置即止，不强行向后拉。"
+        ],
+        "cues": [
+          "背部贴垫",
+          "肘微屈",
+          "慢慢打开"
+        ],
+        "mistake": "把飞鸟做成屈伸肘推举，或为了拉伸胸部把手臂过度向后打开。",
+        "safety": "调节档位时让配重落稳；肩前侧夹痛立即停止，不追求最大幅度。",
+        "diagram": "fly",
+        "guideUrl": "https://www.lyfta.app/exercise/lever-seated-fly-18"
+      },
       {
         id: "m-alt-treadmill",
         phase: "warmup",
@@ -615,7 +644,7 @@ export const TRAINING_DAYS: TrainingDay[] = [
         dose: "3 组 × 8–12 次",
         rest: "90–120 秒",
         target: "股四头肌、臀肌",
-        equipment: "史密斯深蹲机",
+        equipment: "史密斯机",
         setup: "杠铃放在斜方肌上部而不是颈椎，双脚略向前；先用空杆确认旋转挂钩和两侧安全限位。",
         steps: ["吸气收紧腹部，旋开挂钩。","臀部向后下方移动，膝盖始终跟随脚尖。","呼气踩稳全脚掌站起，稳定后转腕重新挂钩。"],
         cues: ["空杆先练挂钩","杠不压颈部","脚掌不抬"],
@@ -861,12 +890,12 @@ export const TRAINING_DAYS: TrainingDay[] = [
       {
         id: "f-biceps",
         phase: "main",
-        name: "二头肌训练器弯举",
-        englishName: "Lever biceps curl",
-        equipment: "二头肌训练器",
+        name: "绳索站二头肌弯举",
+        englishName: "Cable curl",
+        equipment: "二头/三头绳索训练站",
         target: "肱二头肌",
-        setup: "调整座椅，使上臂自然贴在支撑垫上、肘轴接近器械转轴；轻握把手，肩膀放松，从最轻档开始。",
-        steps: ["上臂贴稳，吸气准备，肘部不离开支撑。","呼气弯曲肘关节，把握把向肩前方向卷起。","吸气缓慢伸肘回程，接近伸直即止，不锁死。"],
+        setup: "面对训练站低位滑轮站立，检查现有握把连接牢固；双脚与髋同宽，掌心向上握住握把，上臂贴近身侧，先用轻重量。",
+        steps: ["站稳收腹，肩膀放松，上臂保持在身体两侧。","呼气屈肘，把握把卷向肩前，不抬肩也不后仰。","吸气缓慢伸肘回程，保持绳索受力，不突然放开握把。"],
         cues: ["上臂不抬","手腕保持直","下放两秒"],
         mistake: "通过抬肩和身体后仰拉起重量，或下放时突然把肘部拉直。",
         safety: "肘窝或肘尖疼痛时减重并缩短幅度，持续疼痛就停止。",
@@ -910,6 +939,93 @@ export const TRAINING_DAYS: TrainingDay[] = [
       },
     ],
     alternatives: [
+      {
+        "phase": "main",
+        "dose": "2 组 × 10–15 次",
+        "rest": "60–90 秒",
+        "log": {
+          "sets": 2,
+          "reps": 12
+        },
+        "id": "f-photo-reverse-fly",
+        "name": "器械反向飞鸟",
+        "englishName": "Reverse pec deck",
+        "equipment": "双臂外展训练机",
+        "target": "肩后束、上背",
+        "setup": "切换到反向飞鸟起始档位，面向靠垫坐好、胸口贴垫；调座椅让握把约在肩高，选轻重量，肘部微屈。",
+        "steps": [
+          "双脚稳定，胸口贴垫，肩膀不耸起。",
+          "呼气向两侧打开双臂，到上臂接近躯干平面即可。",
+          "吸气缓慢回到前方，保持控制，不让配重撞击。"
+        ],
+        "cues": [
+          "胸口贴垫",
+          "肘角固定",
+          "不向后甩"
+        ],
+        "mistake": "屈肘拉成划船，或借后仰和甩动把把手拉到身体后面。",
+        "safety": "不要把手臂拉得过分靠后；首次请场馆人员演示档位切换，疼痛即停。",
+        "diagram": "rear-fly",
+        "guideUrl": "https://www.lyfta.app/exercise/lever-seated-reverse-fly-12"
+      },
+      {
+        "phase": "main",
+        "dose": "2 组 × 10–15 次",
+        "rest": "60–90 秒",
+        "log": {
+          "sets": 2,
+          "reps": 12
+        },
+        "id": "f-photo-pulldown",
+        "name": "高位下拉",
+        "englishName": "Lat pulldown",
+        "equipment": "高拉/低拉划船机",
+        "target": "背阔肌、肱二头肌",
+        "setup": "使用组合机高拉工位，调压腿垫固定大腿，双脚踩稳；握住现有下拉杆，选择舒适握距，先用轻重量。",
+        "steps": [
+          "坐直收腹，身体只轻微后倾，肩膀远离耳朵。",
+          "呼气把肘部向下带，让杆靠近上胸前方，不拉到颈后。",
+          "吸气控制伸臂回程，不让配重突然拉起身体。"
+        ],
+        "cues": [
+          "拉向胸前",
+          "肘向下",
+          "身体不摆"
+        ],
+        "mistake": "反复大幅后仰借力，或把杆拉到颈后、用低头去够杆。",
+        "safety": "无法固定大腿时不加重；肩关节不适就缩小幅度，持续疼痛停止。",
+        "diagram": "pulldown",
+        "guideUrl": "https://www.lyfta.app/exercise/cable-wide-grip-lat-pulldown-7v7"
+      },
+      {
+        "phase": "main",
+        "dose": "2 组 × 10–15 次",
+        "rest": "60–90 秒",
+        "log": {
+          "sets": 2,
+          "reps": 12
+        },
+        "id": "f-photo-low-row",
+        "name": "坐姿低位绳索划船",
+        "englishName": "Seated cable row",
+        "equipment": "高拉/低拉划船机",
+        "target": "中上背、背阔肌",
+        "setup": "使用组合机低拉工位，坐稳并把脚踩在配套踏板上，膝盖微屈；握住现有握把，背部自然伸展，从轻重量开始。",
+        "steps": [
+          "收腹坐稳，伸臂时肩胛可以自然前移，腰背不弓起。",
+          "呼气将肘部向后拉，握把靠近腹部，不耸肩。",
+          "吸气慢慢伸臂回程，躯干基本保持稳定。"
+        ],
+        "cues": [
+          "脚踩稳",
+          "肘向后",
+          "不前后甩"
+        ],
+        "mistake": "通过大幅弯腰后仰拖动重量，或耸肩卷腕代替背部发力。",
+        "safety": "保持膝盖微屈，不用腰部甩动；找不到稳定坐姿时请场馆人员协助调整。",
+        "diagram": "row",
+        "guideUrl": "https://www.lyfta.app/exercise/cable-seated-row-6x3"
+      },
       {
         id: "f-alt-treadmill",
         phase: "warmup",

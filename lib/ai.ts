@@ -1,5 +1,5 @@
 import type { DailyLog, Goal } from "./schemas";
-import { GYM_EQUIPMENT } from "./gym-equipment";
+import { GYM_EQUIPMENT, GYM_EQUIPMENT_NOTES } from "./gym-equipment";
 
 const GOALS: Record<Goal, string> = { fat_loss: "减脂", muscle_gain: "增肌", maintenance: "保持体型", performance: "提升运动表现" };
 
@@ -25,5 +25,5 @@ ${JSON.stringify(compact)}
 6. 每个判断引用具体日期、次数或记录作为证据，不做空泛鼓励；证据不足就直接说明，不要推测“不足”。
 7. 下周只给一个最值得执行的重点，要求足够小、可以衡量。不要为了填充内容而把“多记录一个字段”当成健身建议。
 8. 用户固定周一练胸与推、周三练腿与臀、周五练背与肩。训练建议只能使用无需器械的动作，或以下已确认设备：${GYM_EQUIPMENT.join("、")}。这是完整清单，禁止新增或假设其他器械、长凳、弹力带及附件；独立划船机、D.Y.划船机和高位划船机均按力量器械处理。有氧热身只用跑步机或椭圆机。旧记录里出现清单外器械，也不能据此推荐继续使用。设备名称不能确定具体结构时，优先推荐清单内功能明确的设备，不猜测多功能用途。
-9. 只输出包含 headline、summary、wins、patterns、nextWeekFocus、caution 的 JSON 对象。patterns 每项包含 title、evidence、suggestion。`;
+照片确认的结构与限制：\n${GYM_EQUIPMENT_NOTES}\n9. 只输出包含 headline、summary、wins、patterns、nextWeekFocus、caution 的 JSON 对象。patterns 每项包含 title、evidence、suggestion。`;
 }

@@ -7,6 +7,11 @@ export interface LyftaExerciseMedia {
 
 // 2026-09-07 按当前动作核对来源。没有对应素材时保留文字与原站入口，不混用其他器械演示。
 const EXERCISE_MEDIA: Record<string, LyftaExerciseMedia> = {
+  "Cable curl": {"page":"https://www.lyfta.app/exercise/cable-curl-6xk","source":"Lyfta","video":"https://apilyfta.com/static/GymvisualMP4/08681201-Cable-Curl-(male)_Upper-Arms-FIX_.mp4"},
+  "Machine fly": {"page":"https://www.lyfta.app/exercise/lever-seated-fly-18","source":"Lyfta","video":"https://apilyfta.com/static/GymvisualMP4/05961201-Lever-Seated-Fly_Chest-FIX_.mp4"},
+  "Reverse pec deck": {"page":"https://www.lyfta.app/exercise/lever-seated-reverse-fly-12","source":"Lyfta","video":"https://apilyfta.com/static/GymvisualMP4/06021201-Lever-Seated-Reverse-Fly_Shoulders.mp4"},
+  "Lat pulldown": {"page":"https://www.lyfta.app/exercise/cable-wide-grip-lat-pulldown-7v7","source":"Lyfta","video":"https://apilyfta.com/static/GymvisualMP4/22911201-Cable-Wide-Grip-Lat-Pulldown-(female)_Back.mp4"},
+  "Seated cable row": {"page":"https://www.lyfta.app/exercise/cable-seated-row-6x3","source":"Lyfta","video":"https://apilyfta.com/static/GymvisualMP4/08611201-Cable-Seated-Row_Back-FIX_.mp4"},
   "Easy cardio": {
     "page": "https://www.lyfta.app/exercise/elliptical-machine-walk-7sl",
     "source": "Lyfta",
@@ -18,10 +23,9 @@ const EXERCISE_MEDIA: Record<string, LyftaExerciseMedia> = {
     "poster": "https://apilyfta.com/static/GymvisualPNG/43951101-Shoulder-Circle_Back_small.png"
   },
   "Lever chest press": {
-    "page": "https://www.lyfta.app/exercise/lever-chest-press-0t",
+    "page": "https://www.lyfta.app/exercise/lever-chest-press-0u",
     "source": "Lyfta",
-    "video": "https://apilyfta.com/static/GymvisualMP4/05761201-Lever-Chest-Press-(plate-loaded)_Chest-FIX_.mp4",
-    "poster": "https://apilyfta.com/static/GymvisualPNG/05761101-Lever-Chest-Press-(plate-loaded)_Chest_small.png"
+    "video": "https://apilyfta.com/static/GymvisualMP4/05771201-Lever-Chest-Press_Chest.mp4"
   },
   "Smith incline push-up": {
     "page": "https://www.lyfta.app/exercise/incline-push-up-on-a-smith-bar-male-qsm",
@@ -31,11 +35,6 @@ const EXERCISE_MEDIA: Record<string, LyftaExerciseMedia> = {
     "page": "https://www.lyfta.app/exercise/lever-shoulder-press-2q",
     "source": "Lyfta",
     "video": "https://apilyfta.com/static/GymvisualMP4/08691201-Lever-Shoulder-Press-(plate-loaded)-(VERSION-2)_Shoulders_.mp4"
-  },
-  "Machine triceps extension": {
-    "page": "https://www.lyfta.app/exercise/lever-triceps-extension-1g",
-    "source": "Lyfta",
-    "video": "https://apilyfta.com/static/GymvisualMP4/06071201-Lever-Triceps-Extension_Upper-Arms.mp4"
   },
   "Lever seated crunch": {
     "page": "https://www.lyfta.app/exercise/lever-seated-crunch-70a",
@@ -198,12 +197,6 @@ const EXERCISE_MEDIA: Record<string, LyftaExerciseMedia> = {
     "page": "https://www.lyfta.app/exercise/cable-standing-face-pull-qi1",
     "source": "Lyfta",
     "video": "https://apilyfta.com/static/GymvisualMP4/56091201-Cable-Standing-Face-Pull_Shoulders_.mp4"
-  },
-  "Lever biceps curl": {
-    "page": "https://www.lyfta.app/exercise/lever-biceps-curl-94v",
-    "source": "Lyfta",
-    "video": "https://apilyfta.com/static/GymvisualMP4/43361201-Lever-Biceps-Curl_Upper-Arms_.mp4",
-    "poster": "https://apilyfta.com/static/GymvisualPNG/43361101-Lever-Biceps-Curl_Upper-Arms_small.png"
   },
   "Dynamic back stretch": {
     "page": "https://www.lyfta.app/exercise/dynamic-back-stretch-6lo",

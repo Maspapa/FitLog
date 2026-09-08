@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { lyftaExerciseMedia, lyftaExerciseUrl } from "../lib/lyfta-links";
 import { TRAINING_DAYS } from "../lib/training-plan";
-import { GYM_EQUIPMENT } from "../lib/gym-equipment";
+import { GYM_EQUIPMENT, GYM_EQUIPMENT_NOTES } from "../lib/gym-equipment";
 import { buildCoachPrompt } from "../lib/ai";
 
 describe("beginner training plan", () => {
@@ -51,7 +51,7 @@ describe("beginner training plan", () => {
       const all = [...day.exercises, ...day.alternatives];
       for (const item of all) {
         expect(allowed.has(item.equipment), `${item.id}: ${item.equipment}`).toBe(true);
-        expect(JSON.stringify(item)).not.toMatch(/自行车|哈克|蝴蝶机|提踵机|弹力带|长凳|平凳|上斜凳|瑜伽垫|高位下拉机/);
+        expect(JSON.stringify(item)).not.toMatch(/自行车|哈克|提踵机|弹力带|长凳|平凳|上斜凳|瑜伽垫/);
       }
       const cardio = all.filter((item) => item.diagram === "cardio");
       expect(cardio.every((item) => ["跑步机", "椭圆机"].includes(item.equipment))).toBe(true);
@@ -60,10 +60,30 @@ describe("beginner training plan", () => {
 
   it("passes the same complete equipment inventory and fixed schedule to the coach", () => {
     const prompt = buildCoachPrompt("fat_loss", []);
+    expect(prompt).toContain(GYM_EQUIPMENT_NOTES);
     for (const equipment of GYM_EQUIPMENT) expect(prompt).toContain(equipment);
     expect(prompt).toContain("周一练胸与推、周三练腿与臀、周五练背与肩");
     expect(prompt).toContain("有氧热身只用跑步机或椭圆机");
     expect(prompt).toContain("旧记录里出现清单外器械，也不能据此推荐继续使用");
+  });
+
+  it("matches the photographed combination machines rather than assuming seated arm machines", () => {
+    const all = TRAINING_DAYS.flatMap((day) => [...day.exercises, ...day.alternatives]);
+    const arms = all.filter((item) => item.equipment === "二头/三头绳索训练站");
+    expect(arms).toHaveLength(2);
+    expect(arms.map((item) => item.englishName)).toEqual(["Triceps pushdown", "Cable curl"]);
+    for (const arm of arms) {
+      expect(arm.setup).toContain("站");
+      expect(arm.setup).not.toMatch(/座椅|支撑垫|转轴/);
+      expect(lyftaExerciseMedia(arm.englishName).video).toContain("Cable-");
+    }
+    expect(all.filter((item) => item.equipment === "双臂外展训练机").map((item) => item.englishName)).toEqual(["Machine fly", "Reverse pec deck"]);
+    expect(all.filter((item) => item.equipment === "高拉/低拉划船机").map((item) => item.englishName)).toEqual(["Lat pulldown", "Seated cable row"]);
+    expect(GYM_EQUIPMENT).toContain("史密斯机");
+    expect(GYM_EQUIPMENT).not.toContain("史密斯推肩机");
+    expect(GYM_EQUIPMENT).toContain("罗马椅");
+    expect(GYM_EQUIPMENT).toContain("反向挺身机");
+    expect(GYM_EQUIPMENT).toContain("腹部/背部训练器");
   });
 
   it("provides matching exercise guides, allowing explicit text-only guides", () => {
