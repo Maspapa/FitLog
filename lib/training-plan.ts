@@ -764,7 +764,7 @@ export const TRAINING_DAYS: TrainingDay[] = [
     title: "背与肩",
     focus: "背阔肌 · 菱形肌 · 三角肌中后束",
     duration: "约 50–65 分钟",
-    summary: "高位划船与独立划船练背，再练肩后侧、肩中束和二头肌。D.Y.划船可替换独立划船，不用把几种划船全部加做。",
+    summary: "高位下拉与独立划船练背，再练肩后侧、肩中束和二头肌。高位划船、D.Y.划船作为替换动作，不额外加做。",
     exercises: [
       {
         id: "f-elliptical",
@@ -799,39 +799,58 @@ export const TRAINING_DAYS: TrainingDay[] = [
         guideUrl: "https://www.acefitness.org/resources/everyone/exercise-library/",
       },
       {
-        id: "f-row-warmup",
-        phase: "warmup",
-        name: "独立划船",
-        englishName: "Lever row",
-        dose: "很轻重量 10–12 次 × 1–2 组",
-        rest: "30–45 秒",
-        target: "中上背、菱形肌",
-        equipment: "独立划船机",
-        setup: "调座椅使握把位于下胸附近，胸垫稳稳支撑胸部；两侧选相同轻重量，脚踩稳，先试拉确认活动范围。",
-        steps: ["伸臂时肩胛可自然前移，但胸口不离垫。","呼气把肘部向后拉，手腕与前臂保持一线。","顶端停 1 秒，吸气控制回程。"],
-        cues: ["胸贴垫","肩膀远离耳朵","肘部向后"],
-        mistake: "为了拉得更远而抬胸离垫，或用手腕勾动重量。",
-        safety: "胸垫压迫不适时调低重量和位置；无法调整就换坐姿划船。",
-        diagram: "row",
-        guideUrl: "https://www.puregym.com/exercises/back/rows/incline-row/",
+        "phase": "warmup",
+        "dose": "很轻重量 10–12 次 × 1–2 组",
+        "rest": "30–45 秒",
+        "id": "f-pulldown-warmup",
+        "name": "高位下拉",
+        "englishName": "Lat pulldown",
+        "equipment": "高拉/低拉划船机",
+        "target": "背阔肌、肱二头肌",
+        "setup": "使用组合机高拉工位，调压腿垫固定大腿，双脚踩稳；握住现有下拉杆，选择舒适握距，先用轻重量。",
+        "steps": [
+          "坐直收腹，身体只轻微后倾，肩膀远离耳朵。",
+          "呼气把肘部向下带，让杆靠近上胸前方，不拉到颈后。",
+          "吸气控制伸臂回程，不让配重突然拉起身体。"
+        ],
+        "cues": [
+          "拉向胸前",
+          "肘向下",
+          "身体不摆"
+        ],
+        "mistake": "反复大幅后仰借力，或把杆拉到颈后、用低头去够杆。",
+        "safety": "无法固定大腿时不加重；肩关节不适就缩小幅度，持续疼痛停止。",
+        "diagram": "pulldown",
+        "guideUrl": "https://www.lyfta.app/exercise/cable-wide-grip-lat-pulldown-7v7"
       },
       {
-        id: "f-high-row",
-        phase: "main",
-        name: "高位划船",
-        englishName: "Lever high row",
-        equipment: "高位划船机",
-        target: "背阔肌、上背、肱二头肌",
-        setup: "调座椅使胸垫贴住胸部，双脚稳固；握住上方把手，选择两侧相同轻重量，回程不让肩被强行拉起。",
-        steps: ["胸口保持贴垫，先让肩膀远离耳朵。","呼气沿机器轨迹把肘部拉向身体两侧下方。","吸气缓慢伸臂回程，保持身体稳定，不松手砸落。"],
-        cues: ["胸口贴垫","肘向下后","回程慢"],
-        mistake: "耸肩用手臂猛拉，或离开胸垫大幅后仰来完成重量。",
-        safety: "调整座椅和起点到无痛范围；肩部夹痛时减重或停止。",
-        diagram: "row",
-        dose: "3 组 × 8–12 次",
-        rest: "90 秒",
-        log: {"sets":3,"reps":12},
-        guideUrl: "https://www.lyfta.app/exercises",
+        "phase": "main",
+        "dose": "3 组 × 8–12 次",
+        "rest": "90 秒",
+        "log": {
+          "sets": 3,
+          "reps": 12
+        },
+        "id": "f-photo-pulldown",
+        "name": "高位下拉",
+        "englishName": "Lat pulldown",
+        "equipment": "高拉/低拉划船机",
+        "target": "背阔肌、肱二头肌",
+        "setup": "使用组合机高拉工位，调压腿垫固定大腿，双脚踩稳；握住现有下拉杆，选择舒适握距，先用轻重量。",
+        "steps": [
+          "坐直收腹，身体只轻微后倾，肩膀远离耳朵。",
+          "呼气把肘部向下带，让杆靠近上胸前方，不拉到颈后。",
+          "吸气控制伸臂回程，不让配重突然拉起身体。"
+        ],
+        "cues": [
+          "拉向胸前",
+          "肘向下",
+          "身体不摆"
+        ],
+        "mistake": "反复大幅后仰借力，或把杆拉到颈后、用低头去够杆。",
+        "safety": "无法固定大腿时不加重；肩关节不适就缩小幅度，持续疼痛停止。",
+        "diagram": "pulldown",
+        "guideUrl": "https://www.lyfta.app/exercise/cable-wide-grip-lat-pulldown-7v7"
       },
       {
         id: "f-supported-row",
@@ -969,33 +988,22 @@ export const TRAINING_DAYS: TrainingDay[] = [
         "guideUrl": "https://www.lyfta.app/exercise/lever-seated-reverse-fly-12"
       },
       {
-        "phase": "main",
-        "dose": "2 组 × 10–15 次",
-        "rest": "60–90 秒",
-        "log": {
-          "sets": 2,
-          "reps": 12
-        },
-        "id": "f-photo-pulldown",
-        "name": "高位下拉",
-        "englishName": "Lat pulldown",
-        "equipment": "高拉/低拉划船机",
-        "target": "背阔肌、肱二头肌",
-        "setup": "使用组合机高拉工位，调压腿垫固定大腿，双脚踩稳；握住现有下拉杆，选择舒适握距，先用轻重量。",
-        "steps": [
-          "坐直收腹，身体只轻微后倾，肩膀远离耳朵。",
-          "呼气把肘部向下带，让杆靠近上胸前方，不拉到颈后。",
-          "吸气控制伸臂回程，不让配重突然拉起身体。"
-        ],
-        "cues": [
-          "拉向胸前",
-          "肘向下",
-          "身体不摆"
-        ],
-        "mistake": "反复大幅后仰借力，或把杆拉到颈后、用低头去够杆。",
-        "safety": "无法固定大腿时不加重；肩关节不适就缩小幅度，持续疼痛停止。",
-        "diagram": "pulldown",
-        "guideUrl": "https://www.lyfta.app/exercise/cable-wide-grip-lat-pulldown-7v7"
+        id: "f-high-row",
+        phase: "main",
+        name: "高位划船",
+        englishName: "Lever high row",
+        equipment: "高位划船机",
+        target: "背阔肌、上背、肱二头肌",
+        setup: "调座椅使胸垫贴住胸部，双脚稳固；握住上方把手，选择两侧相同轻重量，回程不让肩被强行拉起。",
+        steps: ["胸口保持贴垫，先让肩膀远离耳朵。","呼气沿机器轨迹把肘部拉向身体两侧下方。","吸气缓慢伸臂回程，保持身体稳定，不松手砸落。"],
+        cues: ["胸口贴垫","肘向下后","回程慢"],
+        mistake: "耸肩用手臂猛拉，或离开胸垫大幅后仰来完成重量。",
+        safety: "调整座椅和起点到无痛范围；肩部夹痛时减重或停止。",
+        diagram: "row",
+        dose: "3 组 × 8–12 次",
+        rest: "90 秒",
+        log: {"sets":3,"reps":12},
+        guideUrl: "https://www.lyfta.app/exercises",
       },
       {
         "phase": "main",

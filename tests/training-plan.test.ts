@@ -78,12 +78,21 @@ describe("beginner training plan", () => {
       expect(lyftaExerciseMedia(arm.englishName).video).toContain("Cable-");
     }
     expect(all.filter((item) => item.equipment === "双臂外展训练机").map((item) => item.englishName)).toEqual(["Machine fly", "Reverse pec deck"]);
-    expect(all.filter((item) => item.equipment === "高拉/低拉划船机").map((item) => item.englishName)).toEqual(["Lat pulldown", "Seated cable row"]);
+    expect(new Set(all.filter((item) => item.equipment === "高拉/低拉划船机").map((item) => item.englishName))).toEqual(new Set(["Lat pulldown", "Seated cable row"]));
     expect(GYM_EQUIPMENT).toContain("史密斯机");
     expect(GYM_EQUIPMENT).not.toContain("史密斯推肩机");
     expect(GYM_EQUIPMENT).toContain("罗马椅");
     expect(GYM_EQUIPMENT).toContain("反向挺身机");
     expect(GYM_EQUIPMENT).toContain("腹部/背部训练器");
+  });
+
+  it("pairs Friday pulldowns with rows without adding training volume", () => {
+    const friday = TRAINING_DAYS.find((day) => day.id === "friday")!;
+    const main = friday.exercises.filter((item) => item.phase === "main");
+    expect(main.map((item) => item.englishName)).toEqual(["Lat pulldown", "Lever row", "Cable face pull", "Dumbbell lateral raise", "Cable curl"]);
+    expect(main.map((item) => item.log?.sets)).toEqual([3, 3, 2, 2, 2]);
+    expect(friday.exercises.some((item) => item.phase === "warmup" && item.englishName === "Lat pulldown")).toBe(true);
+    expect(friday.alternatives.some((item) => item.englishName === "Lever high row" && item.phase === "main")).toBe(true);
   });
 
   it("provides matching exercise guides, allowing explicit text-only guides", () => {
