@@ -7,7 +7,8 @@ import { TrainingPlan } from "./training-plan";
 import { TrendChart } from "./trend-chart";
 import { calculateStreak, dateKey, latestMeasurement, recentLogs, weightAverage, workoutsThisWeek } from "@/lib/metrics";
 import { createData, exportData, getOrCreateDeviceToken, importData, loadData, saveData, upsertLog } from "@/lib/storage";
-import type { AiReport, FitData, Goal } from "@/lib/schemas";
+import { workoutFromPlan } from "@/lib/workout-history";
+import type { AiReport, DailyLog, FitData, Goal } from "@/lib/schemas";
 import type { PlanExercise, TrainingDay } from "@/lib/training-plan";
 
 const GOALS: Record<Goal, string> = { fat_loss: "减脂", muscle_gain: "增肌", maintenance: "保持体型", performance: "提升运动表现" };
@@ -20,6 +21,9 @@ export function FitLogApp() {
   const [report, setReport] = useState<AiReport | null>(null);
   const [coachLoading, setCoachLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [adding, setAdding] = useState(false);
+  const addingRef = useRef(false);
+  const draftRef = useRef<DailyLog | null>(null);
   const importRef = useRef<HTMLInputElement>(null);
   const tokenRef = useRef("");
 
@@ -42,19 +46,29 @@ export function FitLogApp() {
     window.setTimeout(() => setMessage(""), 2500);
   }
   function saveLog(log: typeof selectedLog) { void persist(upsertLog(data, log)); setEditorKey((key) => key + 1); }
-  function addPlanExercises(items: PlanExercise[], day: TrainingDay) {
-    const existing = new Set(selectedLog.workouts.map((item) => item.name.trim()));
-    const additions = items.filter((item) => !existing.has(item.name)).map((item) => ({
-      id: crypto.randomUUID(), name: item.name, category: "strength" as const, sets: item.log?.sets ?? null,
-      reps: item.log?.reps ?? null, weight: null, duration: null, intensity: null,
-    }));
-    if (!additions.length) { setMessage(`${day.title}已经在当天训练里了`); window.setTimeout(() => setMessage(""), 2500); return; }
-    const nextLog = { ...selectedLog, workouts: [...selectedLog.workouts, ...additions], updatedAt: new Date().toISOString() };
-    void persist(upsertLog(data, nextLog), `已把「${day.title}」${additions.length} 个器械动作加入当天打卡`);
-    setEditorKey((key) => key + 1);
-    requestAnimationFrame(() => document.querySelector("#workout-card")?.scrollIntoView({ behavior: "smooth", block: "start" }));
+  async function addPlanExercises(items: PlanExercise[], day: TrainingDay) {
+    if (addingRef.current) return;
+    const today = dateKey();
+    const todayLog = (draftRef.current?.date === today ? draftRef.current : data.logs.find((log) => log.date === today)) || freshLog(today);
+    const existing = new Set(todayLog.workouts.map((item) => item.name.trim()));
+    const additions = items.filter((item) => {
+      if (existing.has(item.name.trim())) return false;
+      existing.add(item.name.trim()); return true;
+    }).map((item) => workoutFromPlan(item, data.logs, today));
+    if (!additions.length) { setMessage("这些动作已在今天的训练里"); return; }
+    if (todayLog.workouts.length + additions.length > 20) { setMessage("每天最多记录 20 项运动"); return; }
+    addingRef.current = true; setAdding(true);
+    const nextLog = { ...todayLog, workouts: [...todayLog.workouts.filter((item) => item.name.trim()), ...additions], updatedAt: new Date().toISOString() };
+    const next = upsertLog(data, nextLog);
+    try {
+      const saved = await saveData(tokenRef.current, next);
+      setData(saved);
+      if (selectedDate === today) { draftRef.current = saved.logs.find((log) => log.date === today) ?? nextLog; setEditorKey((key) => key + 1); }
+      setMessage(`已将 ${additions.length === 1 ? additions[0].name : day.title} 加入今天，可在今日记录中修改数值`);
+    } catch (error) { setMessage(error instanceof Error ? error.message : "添加失败，请重试"); }
+    finally { addingRef.current = false; setAdding(false); }
   }
-  function changeDate(value: string) { setSelectedDate(value); setEditorKey((key) => key + 1); }
+  function changeDate(value: string) { draftRef.current = null; setSelectedDate(value); setEditorKey((key) => key + 1); }
   function changeGoal(goal: Goal) { void persist({ ...data, profile: { ...data.profile, goal } }); }
   async function onImport(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0]; if (!file) return;
@@ -74,7 +88,7 @@ export function FitLogApp() {
   }
 
   if (!ready) return <div className="loading-screen"><span>FITLOG</span><i /></div>;
-  return <main>
+  return <main><fieldset className="app-fields" disabled={adding} aria-busy={adding}>
     <nav className="topbar"><a href="#top" className="brand"><i>FL</i>FitLog</a><div><a className="topbar-plan" href="#training-plan">训练计划</a><a className="topbar-primary" href="#daily">今日打卡</a><button type="button" onClick={() => exportData(data)}>导出备份</button><button type="button" onClick={() => importRef.current?.click()}>导入</button><input ref={importRef} hidden type="file" accept="application/json" onChange={onImport} /></div></nav>
 
     <header className="dashboard-bar" id="top">
@@ -91,9 +105,9 @@ export function FitLogApp() {
 
     <nav className="quick-nav" aria-label="打卡快捷入口"><span>快速记录</span><a href="#body-card"><b>01</b>身体</a><a href="#workout-card"><b>02</b>训练</a></nav>
 
-    <DailyEditor key={`${selectedDate}-${editorKey}`} initial={selectedLog} onSave={saveLog} />
+    <DailyEditor key={`${selectedDate}-${editorKey}`} initial={selectedLog} onDraftChange={(log) => { draftRef.current = log; }} onSave={saveLog} />
 
-    <TrainingPlan selectedDate={selectedDate} onAddExercises={addPlanExercises} />
+    <TrainingPlan selectedDate={selectedDate} logs={data.logs} saving={adding} onAddExercises={addPlanExercises} />
 
     <section className="insights-section">
       <div className="section-title light"><h2>趋势与复盘</h2></div>
@@ -107,7 +121,7 @@ export function FitLogApp() {
 
     <footer><b>FitLog</b><span>记录保存在你的服务器 · 当前浏览器持有访问凭证 · 建议定期导出备份</span></footer>
     {message && <div className="toast" role="status">{message}</div>}
-  </main>;
+  </fieldset></main>;
 }
 
 function Stat({ value, unit, label }: { value: string; unit: string; label: string }) { return <div className="stat"><strong>{value}</strong><span>{unit}</span><p>{label}</p></div>; }

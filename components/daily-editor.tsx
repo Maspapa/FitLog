@@ -6,10 +6,10 @@ const CATEGORIES = { strength: "力量", cardio: "有氧", mobility: "拉伸", s
 
 function numberOrNull(value: string): number | null { return value === "" ? null : Number(value); }
 
-export function DailyEditor({ initial, onSave }: { initial: DailyLog; onSave: (log: DailyLog) => void }) {
+export function DailyEditor({ initial, onDraftChange, onSave }: { initial: DailyLog; onDraftChange: (log: DailyLog) => void; onSave: (log: DailyLog) => void }) {
   const [log, setLog] = useState(initial);
   const [saved, setSaved] = useState(false);
-  function field<K extends keyof DailyLog>(key: K, value: DailyLog[K]) { setLog((current) => ({ ...current, [key]: value })); setSaved(false); }
+  function field<K extends keyof DailyLog>(key: K, value: DailyLog[K]) { const next = { ...log, [key]: value }; setLog(next); onDraftChange(next); setSaved(false); }
   function addWorkout() {
     const workout: Workout = { id: crypto.randomUUID(), name: "", category: "strength", sets: null, reps: null, weight: null, duration: null, intensity: null };
     field("workouts", [...log.workouts, workout]);

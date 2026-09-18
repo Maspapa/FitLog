@@ -5,6 +5,10 @@ import { lyftaExerciseMedia } from "@/lib/lyfta-links";
 import { GYM_EQUIPMENT } from "@/lib/gym-equipment";
 import { PHASE_LABELS, TRAINING_DAYS, type PlanExercise, type TrainingDay, type TrainingPhase } from "@/lib/training-plan";
 
+import type { DailyLog } from "@/lib/schemas";
+import { lastWorkout, workoutSummary } from "@/lib/workout-history";
+import { dateKey } from "@/lib/metrics";
+
 const PHASES: TrainingPhase[] = ["warmup", "main", "stretch"];
 
 function suggestedDay(date: string): TrainingDay["id"] {
@@ -14,13 +18,14 @@ function suggestedDay(date: string): TrainingDay["id"] {
   return "monday";
 }
 
-function ExerciseCard({ item, index, open, onToggle, onAdd }: { item: PlanExercise; index: number; open: boolean; onToggle: () => void; onAdd?: () => void }) {
+function ExerciseCard({ item, index, open, onToggle, onAdd, previous, added, saving }: { item: PlanExercise; index: number; open: boolean; onToggle: () => void; onAdd: () => void; previous: ReturnType<typeof lastWorkout>; added: boolean; saving: boolean }) {
   const [mediaFailed, setMediaFailed] = useState(false);
   const lyfta = lyftaExerciseMedia(item.englishName);
   return <article className={`exercise-card ${open ? "open" : ""}`}>
-    <button className="exercise-summary" type="button" aria-expanded={open} onClick={onToggle}>
-      <span className="exercise-index">{String(index + 1).padStart(2, "0")}</span><span className="exercise-name"><strong>{item.name}</strong><small>{item.englishName} · {item.target}</small></span><b>{item.dose}</b>{item.rest && <em>休 {item.rest}</em>}<i>{open ? "−" : "＋"}</i>
-    </button>
+    <div className="exercise-heading"><button className="exercise-summary" type="button" aria-expanded={open} onClick={onToggle}>
+      <span className="exercise-index">{String(index + 1).padStart(2, "0")}</span><span className="exercise-name"><strong>{item.name}</strong><small>{item.englishName} · {item.target}</small></span><b>{item.dose}</b>{item.rest && <em>休 {item.rest}</em>}<i aria-hidden="true">{open ? "⌃" : "⌄"}</i>
+      <span className="exercise-history">{previous ? `上次 ${previous.date} · ${workoutSummary(previous.workout)}` : "暂无历史记录"}</span>
+    </button><button className="exercise-add" type="button" disabled={added || saving} aria-label={added ? `${item.name}已加入今天` : `添加${item.name}到今天`} onClick={onAdd}>{added ? "✓" : "＋"}</button></div>
     {open && <div className="exercise-detail">
       <aside className="lyfta-guide">
         <div className="lyfta-brand"><b>{lyfta.source}</b><span>动作指导</span></div>
@@ -40,16 +45,18 @@ function ExerciseCard({ item, index, open, onToggle, onAdd }: { item: PlanExerci
         <section><h5>怎么做</h5><ol>{item.steps.map((step) => <li key={step}>{step}</li>)}</ol></section>
         <section className="cue-block"><h5>记住这三个词</h5><div>{item.cues.map((cue) => <span key={cue}>{cue}</span>)}</div></section>
         <div className="form-alert"><p><b>常见错误</b>{item.mistake}</p><p><b>安全提示</b>{item.safety}</p></div>
-        {onAdd && <div className="detail-actions"><button type="button" onClick={onAdd}>＋ 加入当天打卡</button></div>}
       </div>
     </div>}
   </article>;
 }
 
-export function TrainingPlan({ selectedDate, onAddExercises }: { selectedDate: string; onAddExercises: (items: PlanExercise[], day: TrainingDay) => void }) {
+export function TrainingPlan({ selectedDate, logs, saving, onAddExercises }: { selectedDate: string; logs: DailyLog[]; saving: boolean; onAddExercises: (items: PlanExercise[], day: TrainingDay) => void }) {
   const [dayId, setDayId] = useState<TrainingDay["id"]>(() => suggestedDay(selectedDate));
   const [openId, setOpenId] = useState<string | null>(null);
   const day = useMemo(() => TRAINING_DAYS.find((item) => item.id === dayId) || TRAINING_DAYS[0], [dayId]);
+  const today = dateKey();
+  const todayNames = new Set(logs.find((log) => log.date === today)?.workouts.map((item) => item.name.trim()) ?? []);
+  const card = (item: PlanExercise, index: number) => <ExerciseCard key={item.id} item={item} index={index} open={openId === item.id} onToggle={() => setOpenId(openId === item.id ? null : item.id)} onAdd={() => onAddExercises([item], day)} previous={lastWorkout(logs, item.name, today)} added={todayNames.has(item.name.trim())} saving={saving} />;
   const mainExercises = day.exercises.filter((item) => item.phase === "main");
 
   return (
@@ -63,12 +70,12 @@ export function TrainingPlan({ selectedDate, onAddExercises }: { selectedDate: s
       </div>
 
       <article className="plan-day">
-        <header><div><span>{day.weekday} · {day.duration}</span><h3>{day.title}</h3><p>{day.summary}</p></div><button type="button" onClick={() => onAddExercises(mainExercises, day)}>＋ 加入 {selectedDate.slice(5).replace("-", "/")} 的打卡</button></header>
+        <header><div><span>{day.weekday} · {day.duration}</span><h3>{day.title}</h3><p>{day.summary}</p></div><button type="button" disabled={saving} onClick={() => onAddExercises(mainExercises, day)}>＋ 全部加入今天</button></header>
         {PHASES.map((phase, phaseIndex) => {
           const items = day.exercises.filter((item) => item.phase === phase);
           return <section className={`plan-phase phase-${phase}`} key={phase}>
             <div className="phase-heading"><b>0{phaseIndex + 1}</b><div><h4>{PHASE_LABELS[phase].title}</h4><p>{PHASE_LABELS[phase].subtitle}</p></div><span>{items.length} 个动作</span></div>
-            <div className="exercise-list">{items.map((item, index) => <ExerciseCard key={item.id} item={item} index={index} open={openId === item.id} onToggle={() => setOpenId(openId === item.id ? null : item.id)} />)}</div>
+            <div className="exercise-list">{items.map(card)}</div>
           </section>;
         })}
         <section className="plan-phase alternatives-phase">
@@ -78,7 +85,7 @@ export function TrainingPlan({ selectedDate, onAddExercises }: { selectedDate: s
             const items = day.alternatives.filter((item) => item.phase === phase);
             return <section className={`alternative-group alt-${phase}`} key={phase}>
               <header><div><span>{phase === "warmup" ? "WARM UP" : phase === "main" ? "EQUIPMENT" : "COOL DOWN"}</span><h5>{PHASE_LABELS[phase].title}备选</h5></div><b>{items.length} 个</b></header>
-              <div className="exercise-list">{items.map((item, index) => <ExerciseCard key={item.id} item={item} index={index} open={openId === item.id} onToggle={() => setOpenId(openId === item.id ? null : item.id)} onAdd={item.log ? () => onAddExercises([item], day) : undefined} />)}</div>
+              <div className="exercise-list">{items.map(card)}</div>
             </section>;
           })}</div>
         </section>
