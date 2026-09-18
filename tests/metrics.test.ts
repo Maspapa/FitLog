@@ -20,10 +20,15 @@ describe("fitness metrics", () => {
     const monday = { ...log("2026-08-24"), workouts: [{ id:"1", name:"深蹲", category:"strength" as const, sets:3, reps:5, weight:80, duration:null, intensity:"hard" as const }] };
     expect(workoutsThisWeek([monday], new Date(2026, 7, 24))).toBe(1);
   });
-  it("tells the coach not to require calories or portions", () => {
-    const prompt = buildCoachPrompt("fat_loss", [log("2026-08-24", 78)]);
-    expect(prompt).toContain("不要猜测卡路里、份量、克数");
-    expect(prompt).toContain("不能因为没有份量而称其“不完整”");
-    expect(prompt).toContain("青菜、番茄");
+  it("only sends exercise and measurements to the coach, even for old records", () => {
+    const old = { ...log("2026-08-24", 78), waist: 85, meals: { breakfast: "历史早餐", lunch: "", dinner: "", snacks: "" }, sleepHours: 7, notes: "历史备注" };
+    const prompt = buildCoachPrompt("fat_loss", [old]);
+    expect(prompt).toContain("用户只记录运动、体重和腰围");
+    expect(prompt).toContain("都是选填");
+    expect(prompt).toContain('"weight":78');
+    expect(prompt).toContain('"waist":85');
+    for (const field of ["meals", "sleepHours", "fatigue", "mood", "soreness", "steps", "waterGlasses", "alcohol", "notes", "intensity"]) expect(prompt).not.toContain('"' + field + '":');
+    expect(prompt).not.toContain("历史早餐");
+    expect(prompt).not.toContain("历史备注");
   });
 });

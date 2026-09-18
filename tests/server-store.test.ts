@@ -38,6 +38,15 @@ afterEach(() => {
 });
 
 describe("shared FitLog storage", () => {
+  it("preserves hidden legacy fields when only measurements are edited", () => {
+    const old = { ...log("2026-09-01", "2026-09-01T08:00:00.000Z", "旧备注"), meals: { breakfast: "旧早餐", lunch: "", dinner: "", snacks: "" }, sleepHours: 7, fatigue: 2, mood: 4, soreness: 1, waterGlasses: 6, steps: 8000, alcohol: true };
+    replaceFitData(TOKEN_A, data([old]));
+    const loaded = getFitData(TOKEN_A);
+    const edited = { ...loaded.logs[0], weight: 78, waist: 85, updatedAt: "2026-09-02T08:00:00.000Z" };
+    replaceFitData(TOKEN_A, { ...loaded, logs: [edited] });
+    expect(getFitData(TOKEN_B).logs[0]).toEqual({ ...old, weight: 78, waist: 85, updatedAt: edited.updatedAt });
+  });
+
   it("merges legacy device vaults and returns the same data to every device", () => {
     const db = new DatabaseSync(process.env.FITLOG_DB_PATH!);
     const insertVault = db.prepare("INSERT INTO vaults (id_hash, profile, created_at, updated_at) VALUES (?, ?, ?, ?)");

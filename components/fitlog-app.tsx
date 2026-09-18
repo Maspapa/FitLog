@@ -46,7 +46,7 @@ export function FitLogApp() {
     const existing = new Set(selectedLog.workouts.map((item) => item.name.trim()));
     const additions = items.filter((item) => !existing.has(item.name)).map((item) => ({
       id: crypto.randomUUID(), name: item.name, category: "strength" as const, sets: item.log?.sets ?? null,
-      reps: item.log?.reps ?? null, weight: null, duration: null, intensity: "moderate" as const,
+      reps: item.log?.reps ?? null, weight: null, duration: null, intensity: null,
     }));
     if (!additions.length) { setMessage(`${day.title}已经在当天训练里了`); window.setTimeout(() => setMessage(""), 2500); return; }
     const nextLog = { ...selectedLog, workouts: [...selectedLog.workouts, ...additions], updatedAt: new Date().toISOString() };
@@ -89,7 +89,7 @@ export function FitLogApp() {
       <Stat value={String(stats.streak)} unit="天" label="连续记录" />
     </section>
 
-    <nav className="quick-nav" aria-label="打卡快捷入口"><span>快速记录</span><a href="#body-card"><b>01</b>身体</a><a href="#workout-card"><b>02</b>训练</a><a href="#food-card"><b>03</b>饮食</a><a href="#state-card"><b>04</b>恢复</a></nav>
+    <nav className="quick-nav" aria-label="打卡快捷入口"><span>快速记录</span><a href="#body-card"><b>01</b>身体</a><a href="#workout-card"><b>02</b>训练</a></nav>
 
     <DailyEditor key={`${selectedDate}-${editorKey}`} initial={selectedLog} onSave={saveLog} />
 
@@ -98,7 +98,7 @@ export function FitLogApp() {
     <section className="insights-section">
       <div className="section-title light"><h2>趋势与复盘</h2></div>
       <div className="insight-grid"><article className="chart-card"><div><span>最近30次记录</span><h3>体重趋势</h3></div><TrendChart logs={data.logs} /></article>
-        <article className="coach-card"><span>WEEKLY COACH</span><h3>让 AI 帮你复盘这段记录</h3><p>它不会猜热量，只会根据你实际写下的训练、饮食和恢复寻找规律。</p><button type="button" disabled={!last14.length || coachLoading} onClick={generateReport}>{coachLoading ? "正在整理这两周…" : last14.length ? `分析最近 ${last14.length} 天` : "先完成一次打卡"}<b>↗</b></button><small>每个 IP 每小时最多生成 10 次</small></article>
+        <article className="coach-card"><span>WEEKLY COACH</span><h3>让 AI 帮你复盘这段记录</h3><p>根据运动记录、体重和腰围，看看最近的变化。</p><button type="button" disabled={!last14.length || coachLoading} onClick={generateReport}>{coachLoading ? "正在整理这两周…" : last14.length ? `分析最近 ${last14.length} 天` : "先完成一次打卡"}<b>↗</b></button><small>每个 IP 每小时最多生成 10 次</small></article>
       </div>
       {report && <CoachReport report={report} />}
     </section>
