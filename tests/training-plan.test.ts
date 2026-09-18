@@ -5,15 +5,28 @@ import { GYM_EQUIPMENT, GYM_EQUIPMENT_NOTES } from "../lib/gym-equipment";
 import { buildCoachPrompt } from "../lib/ai";
 
 describe("beginner training plan", () => {
+  it("keeps agreed working volume and movement-specific warmups", () => {
+    expect(TRAINING_DAYS.map((day) => day.exercises.filter((item) => item.phase === "main").length)).toEqual([4, 5, 5]);
+    expect(TRAINING_DAYS.map((day) => day.exercises.filter((item) => item.phase === "main").reduce((sum, item) => sum + (item.log?.sets ?? 0), 0))).toEqual([9, 11, 11]);
+    for (const day of TRAINING_DAYS) {
+      const first = day.exercises.find((item) => item.phase === "main")!;
+      expect(day.exercises.some((item) => item.phase === "warmup" && item.englishName === first.englishName)).toBe(true);
+      expect(day.exercises.some((item) => item.diagram === "cardio")).toBe(false);
+      for (const item of [...day.exercises, ...day.alternatives].filter((item) => item.phase === "warmup")) {
+        expect(item.name).toContain("（热身）");
+        expect(item.log).toBeUndefined();
+      }
+    }
+  });
   it("covers the fixed Monday, Wednesday and Friday schedule", () => {
     expect(TRAINING_DAYS.map((day) => day.id)).toEqual(["monday", "wednesday", "friday"]);
-    expect(TRAINING_DAYS.map((day) => day.title)).toEqual(["胸与推", "腿与臀", "背与肩"]);
+    expect(TRAINING_DAYS.map((day) => day.title)).toEqual(["胸与三头", "腿与臀", "背与肩"]);
   });
 
   it("includes warm-up, machine work and stretching every day", () => {
     for (const day of TRAINING_DAYS) {
       expect(new Set(day.exercises.map((item) => item.phase))).toEqual(new Set(["warmup", "main", "stretch"]));
-      expect(day.exercises.filter((item) => item.phase === "main").length).toBeGreaterThanOrEqual(5);
+      expect(day.exercises.filter((item) => item.phase === "main").length).toBeGreaterThanOrEqual(4);
     }
   });
 
@@ -62,7 +75,7 @@ describe("beginner training plan", () => {
     const prompt = buildCoachPrompt("fat_loss", []);
     expect(prompt).toContain(GYM_EQUIPMENT_NOTES);
     for (const equipment of GYM_EQUIPMENT) expect(prompt).toContain(equipment);
-    expect(prompt).toContain("周一练胸与推、周三练腿与臀、周五练背与肩");
+    expect(prompt).toContain("周一练胸与三头、周三练腿与臀、周五练背与肩");
     expect(prompt).toContain("有氧热身只用跑步机或椭圆机");
     expect(prompt).toContain("旧记录里出现清单外器械，也不能据此推荐继续使用");
   });
@@ -89,8 +102,8 @@ describe("beginner training plan", () => {
   it("pairs Friday pulldowns with rows without adding training volume", () => {
     const friday = TRAINING_DAYS.find((day) => day.id === "friday")!;
     const main = friday.exercises.filter((item) => item.phase === "main");
-    expect(main.map((item) => item.englishName)).toEqual(["Lat pulldown", "Lever row", "Cable face pull", "Dumbbell lateral raise", "Cable curl"]);
-    expect(main.map((item) => item.log?.sets)).toEqual([3, 3, 2, 2, 2]);
+    expect(main.map((item) => item.englishName)).toEqual(["Lat pulldown", "Lever row", "Shoulder press machine", "Dumbbell lateral raise", "Reverse pec deck"]);
+    expect(main.map((item) => item.log?.sets)).toEqual([3, 2, 2, 2, 2]);
     expect(friday.exercises.some((item) => item.phase === "warmup" && item.englishName === "Lat pulldown")).toBe(true);
     expect(friday.alternatives.some((item) => item.englishName === "Lever high row" && item.phase === "main")).toBe(true);
   });

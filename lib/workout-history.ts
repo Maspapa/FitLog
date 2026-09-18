@@ -20,7 +20,8 @@ export function workoutSummary(workout: Workout): string {
 }
 
 export function workoutFromPlan(item: PlanExercise, logs: DailyLog[], today: string): Workout {
-  const previous = lastWorkout(logs, item.name, today)?.workout;
+  // 热身从轻重量开始，不自动复制历史负重。
+  const previous = item.phase === "warmup" ? undefined : lastWorkout(logs, item.name, today)?.workout;
   return {
     id: crypto.randomUUID(), name: item.name,
     category: previous?.category ?? (item.diagram === "cardio" ? "cardio" : item.phase === "stretch" ? "mobility" : "strength"),

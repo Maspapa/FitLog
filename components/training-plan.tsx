@@ -63,7 +63,7 @@ export function TrainingPlan({ selectedDate, logs, saving, onAddExercises }: { s
     <section className="plan-section" id="training-plan">
       <div className="section-title plan-title"><h2>训练计划</h2></div>
       <details className="gym-equipment"><summary>我的健身房 · {GYM_EQUIPMENT.length} 种设备</summary><div>{GYM_EQUIPMENT.map((equipment) => <span key={equipment}>{equipment}</span>)}</div></details>
-      <div className="plan-note"><strong>新手提示</strong><span>前两周每项 2 组 · 留 2–3 次余力 · 动作稳定再加重 · 关节疼痛立即停止</span></div>
+      <div className="plan-note"><strong>新手提示</strong><span>留 2–3 次余力 · 连续两次达到次数上限再小幅加重 · 关节疼痛立即停止</span></div>
 
       <div className="day-tabs" role="tablist" aria-label="每周训练日">
         {TRAINING_DAYS.map((item) => <button role="tab" aria-selected={item.id === day.id} className={item.id === day.id ? "active" : ""} type="button" key={item.id} onClick={() => { setDayId(item.id); setOpenId(null); }}><span>{item.weekday}</span><strong>{item.title}</strong><small>{item.focus}</small></button>)}
@@ -80,7 +80,7 @@ export function TrainingPlan({ selectedDate, logs, saving, onAddExercises }: { s
         })}
         <section className="plan-phase alternatives-phase">
           <div className="phase-heading"><b>＋</b><div><h4>可替换动作</h4><p>均可在当前健身房完成</p></div><span>{day.alternatives.length} 个可选</span></div>
-          <div className="alternative-note"><strong>怎么用：</strong>热身和拉伸各挑 1–3 个；器械动作挑 1–2 个替换同部位动作。同一天的器械训练总数尽量控制在 5–6 个，不要把整库全部做完。</div>
+          <div className="alternative-note"><strong>怎么用：</strong>有氧升温按需选择；备选动作只替换同部位动作，不额外加练。热身用轻重量，不沿用正式负重。</div>
           <div className="alternative-groups">{PHASES.map((phase) => {
             const items = day.alternatives.filter((item) => item.phase === phase);
             return <section className={`alternative-group alt-${phase}`} key={phase}>
@@ -89,7 +89,7 @@ export function TrainingPlan({ selectedDate, logs, saving, onAddExercises }: { s
             </section>;
           })}</div>
         </section>
-        <footer className="plan-footer"><p><strong>一堂课的节奏：</strong>热身不喘 → 器械组间按时休息 → 拉伸不忍痛。总时长超出很多，通常是重量太重或组间刷手机太久。</p><span>真人动作演示由 <a href="https://www.lyfta.app/exercises" target="_blank" rel="noreferrer">Lyfta 动作库</a>提供；本站保留中文要点与安全提示。通用入门计划不能替代医生、康复师或现场教练的个体评估。</span></footer>
+        <footer className="plan-footer"><p><strong>一堂课的节奏：</strong>轻重量热身 → 按标注休息 → 轻松走动与按需拉伸约 5 分钟。时长不含等器械；不要为赶时间省掉热身或主动作休息。</p><span>真人动作演示由 <a href="https://www.lyfta.app/exercises" target="_blank" rel="noreferrer">Lyfta 动作库</a>提供；本站保留中文要点与安全提示。通用入门计划不能替代医生、康复师或现场教练的个体评估。</span></footer>
       </article>
     </section>
   );

@@ -8,6 +8,11 @@ const workout = { id: "old", name: item.name, category: "strength" as const, set
 const record = (date: string, weight = 25) => ({ ...emptyLog(date), workouts: [{ ...workout, weight }] });
 
 describe("exercise history quick add", () => {
+  it("never copies historical load into warm-up sets", () => {
+    const warmup = TRAINING_DAYS[0].exercises.find((exercise) => exercise.phase === "warmup")!;
+    const log = { ...record("2026-09-16"), workouts: [{ ...workout, name: warmup.name }] };
+    expect(workoutFromPlan(warmup, [log], "2026-09-18")).toMatchObject({ weight: null, sets: null, reps: null });
+  });
   it("finds the latest matching past date, excluding today and future records", () => {
     const logs = [record("2026-09-18", 99), record("2026-09-10"), record("2026-09-20", 100), record("2026-09-16", 30)];
     expect(lastWorkout(logs, item.name, "2026-09-18")?.workout.weight).toBe(30);
@@ -28,7 +33,7 @@ describe("exercise history quick add", () => {
   });
   it("uses plan defaults only without history and supports cardio duration", () => {
     expect(workoutFromPlan(item, [], "2026-09-18")).toMatchObject({ sets: item.log?.sets, reps: item.log?.reps, weight: null });
-    const cardio = TRAINING_DAYS[0].exercises[0];
+    const cardio = { ...TRAINING_DAYS[0].alternatives.find((item) => item.diagram === "cardio")!, phase: "main" as const };
     const log = { ...emptyLog("2026-09-16"), workouts: [{ ...workout, name: cardio.name, category: "cardio" as const, sets: null, reps: null, weight: null, duration: 20 }] };
     expect(workoutFromPlan(cardio, [log], "2026-09-18")).toMatchObject({ category: "cardio", duration: 20 });
     expect(workoutSummary(log.workouts[0])).toBe("20 分钟");
