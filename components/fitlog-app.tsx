@@ -89,37 +89,34 @@ export function FitLogApp() {
 
   if (!ready) return <div className="loading-screen"><span>FITLOG</span><i /></div>;
   return <main><fieldset className="app-fields" disabled={adding} aria-busy={adding}>
-    <nav className="topbar"><a href="#top" className="brand"><i>FL</i>FitLog</a><div><a className="topbar-plan" href="#training-plan">训练计划</a><a className="topbar-primary" href="#daily">今日打卡</a><button type="button" onClick={() => exportData(data)}>导出备份</button><button type="button" onClick={() => importRef.current?.click()}>导入</button><input ref={importRef} hidden type="file" accept="application/json" onChange={onImport} /></div></nav>
+    <nav className="topbar"><a href="#top" className="brand">FitLog</a><div><a className="topbar-plan" href="#training-plan">计划</a><a className="topbar-primary" href="#daily">记录</a><details className="settings-menu"><summary>更多</summary><div><label>训练目标<select value={data.profile.goal} onChange={(e) => changeGoal(e.target.value as Goal)}>{Object.entries(GOALS).map(([value,label]) => <option value={value} key={value}>{label}</option>)}</select></label><button type="button" onClick={() => exportData(data)}>导出备份</button><button type="button" onClick={() => importRef.current?.click()}>导入备份</button></div></details><input ref={importRef} hidden type="file" accept="application/json" onChange={onImport} /></div></nav>
 
     <header className="dashboard-bar" id="top">
-      <div className="hero-meta"><span>{new Date().toLocaleDateString("zh-CN", { month: "long", day: "numeric", weekday: "long" })}</span><label>目标<select value={data.profile.goal} onChange={(e) => changeGoal(e.target.value as Goal)}>{Object.entries(GOALS).map(([value,label]) => <option value={value} key={value}>{label}</option>)}</select></label></div>
+      <span className="record-date-label">{selectedDate === dateKey() ? "今天" : "历史记录"}</span>
       <div className="date-control"><button type="button" onClick={() => { const date = new Date(`${selectedDate}T12:00:00`); date.setDate(date.getDate()-1); changeDate(dateKey(date)); }}>←</button><input aria-label="打卡日期" type="date" max={dateKey()} value={selectedDate} onChange={(e) => changeDate(e.target.value)} /><button type="button" disabled={selectedDate === dateKey()} onClick={() => { const date = new Date(`${selectedDate}T12:00:00`); date.setDate(date.getDate()+1); changeDate(dateKey(date)); }}>→</button></div>
     </header>
 
-    <section className="stats-strip">
+    <details className="compact-disclosure stats-disclosure"><summary>数据概览</summary><section className="stats-strip">
       <Stat value={stats.average === null ? "--" : stats.average.toFixed(1)} unit="kg" label="近7日平均体重" />
       <Stat value={stats.waist === null ? "--" : stats.waist.toFixed(1)} unit="cm" label="最近腰围" />
       <Stat value={String(stats.workouts)} unit="项" label="本周训练" />
       <Stat value={String(stats.streak)} unit="天" label="连续记录" />
-    </section>
-
-    <nav className="quick-nav" aria-label="打卡快捷入口"><span>快速记录</span><a href="#body-card"><b>01</b>身体</a><a href="#workout-card"><b>02</b>训练</a></nav>
+    </section></details>
 
     <DailyEditor key={`${selectedDate}-${editorKey}`} initial={selectedLog} onDraftChange={(log) => { draftRef.current = log; }} onSave={saveLog} />
 
     <TrainingPlan selectedDate={selectedDate} logs={data.logs} saving={adding} onAddExercises={addPlanExercises} />
 
-    <section className="insights-section">
-      <div className="section-title light"><h2>趋势与复盘</h2></div>
+    <details className="compact-disclosure"><summary>趋势与 AI 复盘</summary><section className="insights-section">
       <div className="insight-grid"><article className="chart-card"><div><span>最近30次记录</span><h3>体重趋势</h3></div><TrendChart logs={data.logs} /></article>
-        <article className="coach-card"><span>WEEKLY COACH</span><h3>让 AI 帮你复盘这段记录</h3><p>根据运动记录、体重和腰围，看看最近的变化。</p><button type="button" disabled={!last14.length || coachLoading} onClick={generateReport}>{coachLoading ? "正在整理这两周…" : last14.length ? `分析最近 ${last14.length} 天` : "先完成一次打卡"}<b>↗</b></button><small>每个 IP 每小时最多生成 10 次</small></article>
+        <article className="coach-card"><h3>AI 复盘</h3><button type="button" disabled={!last14.length || coachLoading} onClick={generateReport}>{coachLoading ? "分析中…" : last14.length ? `分析最近 ${last14.length} 天` : "先记录一次训练"}<b>↗</b></button></article>
       </div>
       {report && <CoachReport report={report} />}
-    </section>
+    </section></details>
 
-    {data.logs.length > 0 && <section className="logbook"><div className="section-title"><h2>最近记录</h2></div><div className="log-list">{[...data.logs].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,14).map((log) => <button type="button" key={log.date} onClick={() => { changeDate(log.date); document.querySelector(".editor-section")?.scrollIntoView({behavior:"smooth"}); }}><time>{log.date.slice(5).replace("-","/")}</time><span>{log.workouts.length ? log.workouts.map((item)=>item.name).join("、") : "休息 / 未记录训练"}</span><b>{log.weight ? `${log.weight}kg` : "--"}</b></button>)}</div></section>}
+    {data.logs.length > 0 && <details className="compact-disclosure"><summary>历史记录</summary><section className="logbook"><div className="log-list">{[...data.logs].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,14).map((log) => <button type="button" key={log.date} onClick={() => { changeDate(log.date); document.querySelector(".editor-section")?.scrollIntoView({behavior:"smooth"}); }}><time>{log.date.slice(5).replace("-","/")}</time><span>{log.workouts.length ? log.workouts.map((item)=>item.name).join("、") : "休息 / 未记录训练"}</span><b>{log.weight ? `${log.weight}kg` : "--"}</b></button>)}</div></section></details>}
 
-    <footer><b>FitLog</b><span>记录保存在你的服务器 · 当前浏览器持有访问凭证 · 建议定期导出备份</span></footer>
+    <footer><span>数据保存在你的服务器</span></footer>
     {message && <div className="toast" role="status">{message}</div>}
   </fieldset></main>;
 }

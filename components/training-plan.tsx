@@ -23,8 +23,8 @@ function ExerciseCard({ item, index, open, onToggle, onAdd, previous, added, sav
   const lyfta = lyftaExerciseMedia(item.englishName);
   return <article className={`exercise-card ${open ? "open" : ""}`}>
     <div className="exercise-heading"><button className="exercise-summary" type="button" aria-expanded={open} onClick={onToggle}>
-      <span className="exercise-index">{String(index + 1).padStart(2, "0")}</span><span className="exercise-name"><strong>{item.name}</strong><small>{item.englishName} · {item.target}</small></span><b>{item.dose}</b>{item.rest && <em>休 {item.rest}</em>}<i aria-hidden="true">{open ? "⌃" : "⌄"}</i>
-      <span className="exercise-history">{previous ? `上次 ${previous.date} · ${workoutSummary(previous.workout)}` : "暂无历史记录"}</span>
+      <span className="exercise-index">{String(index + 1).padStart(2, "0")}</span><span className="exercise-name"><strong>{item.name}</strong></span><b>{item.dose}</b>{item.rest && <em>休 {item.rest}</em>}<i aria-hidden="true">{open ? "⌃" : "⌄"}</i>
+      {previous && <span className="exercise-history">上次 {previous.date} · {workoutSummary(previous.workout)}</span>}
     </button><button className="exercise-add" type="button" disabled={added || saving} aria-label={added ? `${item.name}已加入今天` : `添加${item.name}到今天`} onClick={onAdd}>{added ? "✓" : "＋"}</button></div>
     {open && <div className="exercise-detail">
       <aside className="lyfta-guide">
@@ -33,6 +33,7 @@ function ExerciseCard({ item, index, open, onToggle, onAdd, previous, added, sav
         <a href={lyfta.page} target="_blank" rel="noreferrer">在 {lyfta.source} 查看指导 <span>↗</span></a>
       </aside>
       <div className="detail-copy">
+        <p className="hint">{item.englishName} · {item.target}</p>
         <div className="equipment-tag">器械：{item.equipment}{item.rest && <> · 组间休息：{item.rest}</>}</div>
         <section><h5>先调整</h5><p>{item.setup}</p></section>
         <section><h5>怎么做</h5><ol>{item.steps.map((step) => <li key={step}>{step}</li>)}</ol></section>
@@ -56,19 +57,18 @@ export function TrainingPlan({ selectedDate, logs, saving, onAddExercises }: { s
   return (
     <section className="plan-section" id="training-plan">
       <div className="section-title plan-title"><h2>训练计划</h2></div>
-      <details className="gym-equipment"><summary>我的健身房 · {GYM_EQUIPMENT.length} 种设备</summary><div>{GYM_EQUIPMENT.map((equipment) => <span key={equipment}>{equipment}</span>)}</div></details>
-      <div className="plan-note"><strong>新手提示</strong><span>留 2–3 次余力 · 连续两次达到次数上限再小幅加重 · 关节疼痛立即停止</span></div>
+      <details className="plan-help"><summary>须知与设备</summary><p>留 2–3 次余力 · 连续两次达到次数上限再小幅加重 · 关节疼痛立即停止</p><div className="gym-equipment">{GYM_EQUIPMENT.join(" · ")}</div></details>
 
       <div className="day-tabs" role="tablist" aria-label="每周训练日">
         {TRAINING_DAYS.map((item) => <button role="tab" aria-selected={item.id === day.id} className={item.id === day.id ? "active" : ""} type="button" key={item.id} onClick={() => { setDayId(item.id); setOpenId(null); setAlternativesOpen(false); }}><span>{item.weekday}</span><strong>{item.title}</strong><small>{item.focus}</small></button>)}
       </div>
 
       <article className="plan-day">
-        <header><div><span>{day.weekday} · {day.duration}</span><h3>{day.title}</h3><p>{day.summary}</p></div><button type="button" disabled={saving} onClick={() => onAddExercises(mainExercises, day)}>＋ 全部加入今天</button></header>
+        <header><div><span>{day.duration}</span><details className="plan-help"><summary>安排说明</summary><p>{day.summary}</p></details></div><button type="button" disabled={saving} onClick={() => onAddExercises(mainExercises, day)}>＋ 全部加入今天</button></header>
         {PHASES.map((phase, phaseIndex) => {
           const items = day.exercises.filter((item) => item.phase === phase);
           return <section className={`plan-phase phase-${phase}`} key={phase}>
-            <div className="phase-heading"><b>0{phaseIndex + 1}</b><div><h4>{PHASE_LABELS[phase].title}</h4><p>{PHASE_LABELS[phase].subtitle}</p></div><span>{items.length} 个动作</span></div>
+            <div className="phase-heading"><b>0{phaseIndex + 1}</b><div><h4>{PHASE_LABELS[phase].title}</h4><details className="phase-help"><summary>提示</summary><p>{PHASE_LABELS[phase].subtitle}</p></details></div><span>{items.length} 个动作</span></div>
             <div className="exercise-list">{items.map(card)}</div>
           </section>;
         })}
@@ -85,7 +85,7 @@ export function TrainingPlan({ selectedDate, logs, saving, onAddExercises }: { s
           })}</div>
           </div>}
         </section>
-        <footer className="plan-footer"><p><strong>一堂课的节奏：</strong>轻重量热身 → 按标注休息 → 轻松走动与按需拉伸约 5 分钟。时长不含等器械；不要为赶时间省掉热身或主动作休息。</p><span>真人动作演示由 <a href="https://www.lyfta.app/exercises" target="_blank" rel="noreferrer">Lyfta 动作库</a>提供；本站保留中文要点与安全提示。通用入门计划不能替代医生、康复师或现场教练的个体评估。</span></footer>
+        <details className="plan-footer"><summary>训练提醒与演示来源</summary><p><strong>一堂课的节奏：</strong>轻重量热身 → 按标注休息 → 轻松走动与按需拉伸约 5 分钟。时长不含等器械；不要为赶时间省掉热身或主动作休息。</p><span>真人动作演示由 <a href="https://www.lyfta.app/exercises" target="_blank" rel="noreferrer">Lyfta 动作库</a>提供；本站保留中文要点与安全提示。通用入门计划不能替代医生、康复师或现场教练的个体评估。</span></details>
       </article>
     </section>
   );

@@ -19,10 +19,8 @@ export function DailyEditor({ initial, onDraftChange, onSave }: { initial: Daily
 
   return (
     <section className="editor-section" id="daily">
-      <div className="section-title"><h2>今日打卡</h2></div>
       <div className="editor-grid">
         <article className="entry-card body-card" id="body-card">
-          <div className="entry-number">01</div><h3>身体数据</h3>
           <div className="measure-grid">
             <label><span>体重</span><div><input type="number" inputMode="decimal" step="0.1" value={log.weight ?? ""} onChange={(e) => field("weight", numberOrNull(e.target.value))} placeholder="--" /><b>kg</b></div></label>
             <label><span>腰围</span><div><input type="number" inputMode="decimal" step="0.1" value={log.waist ?? ""} onChange={(e) => field("waist", numberOrNull(e.target.value))} placeholder="--" /><b>cm</b></div></label>
@@ -30,8 +28,8 @@ export function DailyEditor({ initial, onDraftChange, onSave }: { initial: Daily
         </article>
 
         <article className="entry-card workout-card" id="workout-card">
-          <div className="entry-number">02</div><div className="card-heading"><h3>训练</h3><button type="button" onClick={addWorkout}>＋ 添加训练</button></div>
-          {log.workouts.length === 0 && <button className="empty-action" type="button" onClick={addWorkout}>＋ 记录一项训练</button>}
+          <div className="card-heading"><h3>训练</h3><button type="button" onClick={addWorkout}>＋ 添加</button></div>
+          {log.workouts.length === 0 && <p className="hint">还没有训练，可手动添加或从下方计划选择。</p>}
           <div className="workout-list">{log.workouts.map((workout) => (
             <div className="workout-row" key={workout.id}>
               <input className="workout-name" value={workout.name} onChange={(e) => updateWorkout(workout.id, { name: e.target.value })} placeholder="动作或运动名称" />
@@ -47,7 +45,7 @@ export function DailyEditor({ initial, onDraftChange, onSave }: { initial: Daily
         </article>
 
       </div>
-      <button className={`save-button ${saved ? "saved" : ""}`} type="button" onClick={submit}>{saved ? "✓ 今天已记录" : "完成今日打卡"}<span>→</span></button>
+      <button className={`save-button ${saved ? "saved" : ""}`} type="button" onClick={submit}>{saved ? "✓ 已保存" : "保存记录"}</button>
     </section>
   );
 }
