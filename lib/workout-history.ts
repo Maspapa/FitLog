@@ -1,6 +1,22 @@
 import type { DailyLog, Workout } from "./schemas";
 import type { PlanExercise } from "./training-plan";
 
+export type WorkoutNumbers = Pick<Workout, "sets" | "reps" | "weight" | "duration">;
+
+export function mergePlanWorkouts(existing: Workout[], items: PlanExercise[], logs: DailyLog[], today: string, values: Record<string, WorkoutNumbers> = {}) {
+  const workouts = existing.filter((workout) => workout.name.trim()).map((workout) => ({ ...workout }));
+  let changed = 0;
+  for (const item of items) {
+    const index = workouts.findIndex((workout) => workout.name.trim() === item.name.trim());
+    if (index >= 0) {
+      if (values[item.id]) { workouts[index] = { ...workouts[index], ...values[item.id] }; changed++; }
+    } else {
+      workouts.push({ ...workoutFromPlan(item, logs, today), ...values[item.id] }); changed++;
+    }
+  }
+  return { workouts, changed };
+}
+
 export function lastWorkout(logs: DailyLog[], name: string, before: string) {
   for (const log of [...logs].filter((log) => log.date < before).sort((a, b) => b.date.localeCompare(a.date))) {
     const workout = [...log.workouts].reverse().find((item) => item.name.trim() === name.trim());

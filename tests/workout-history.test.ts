@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { emptyLog } from "../lib/metrics";
-import { lastWorkout, workoutFromPlan, workoutSummary } from "../lib/workout-history";
+import { lastWorkout, workoutFromPlan, workoutSummary, mergePlanWorkouts } from "../lib/workout-history";
 import { TRAINING_DAYS } from "../lib/training-plan";
 
 const item = TRAINING_DAYS[0].exercises.find((item) => item.phase === "main")!;
@@ -8,6 +8,16 @@ const workout = { id: "old", name: item.name, category: "strength" as const, set
 const record = (date: string, weight = 25) => ({ ...emptyLog(date), workouts: [{ ...workout, weight }] });
 
 describe("exercise history quick add", () => {
+  it("adds entered numbers and updates today's existing entry without duplicates", () => {
+    const values = { sets: 2, reps: 9, weight: 0, duration: null };
+    const added = mergePlanWorkouts([], [item], [], "2026-09-20", { [item.id]: values });
+    expect(added.workouts[0]).toMatchObject(values);
+    const updated = mergePlanWorkouts(added.workouts, [item], [], "2026-09-20", { [item.id]: { ...values, weight: 30 } });
+    expect(updated.workouts).toHaveLength(1);
+    expect(updated.workouts[0]).toMatchObject({ id: added.workouts[0].id, weight: 30 });
+    expect(added.workouts[0].weight).toBe(0);
+    expect(mergePlanWorkouts(updated.workouts, [item], [], "2026-09-20").changed).toBe(0);
+  });
   it("never copies historical load into warm-up sets", () => {
     const warmup = TRAINING_DAYS[0].exercises.find((exercise) => exercise.phase === "warmup")!;
     const log = { ...record("2026-09-16"), workouts: [{ ...workout, name: warmup.name }] };

@@ -325,3 +325,18 @@ footer { padding: 38px 5vw; border-top: 1px solid var(--line); background: white
   .workout-row label { min-width: 0; }
   .duration-field { grid-column: 1 / -1; }
 }
+.exercise-summary { grid-template-columns: 24px minmax(120px, 1fr) 150px 85px; }
+.exercise-inline-record { margin: 0 52px 12px 36px; }
+.exercise-inline-record .exercise-history { display: block; margin-bottom: 5px; }
+.inline-fields { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.inline-fields label { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--muted); }
+.inline-fields input { width: 64px; min-height: 38px; padding: 7px; background: white; border: 1px solid var(--line); border-radius: 7px; }
+.inline-fields input:focus { outline: 2px solid var(--ultramarine); outline-offset: 1px; }
+.inline-fields small { color: var(--muted); font-size: 11px; }
+.exercise-add { font-size: 16px; }
+@media(max-width: 640px) {
+  .exercise-summary { grid-template-columns: 18px minmax(0, 1fr); }
+  .exercise-inline-record { margin: 0 12px 12px 28px; }
+  .inline-fields { gap: 7px; }
+  .inline-fields input { width: 52px; }
+}

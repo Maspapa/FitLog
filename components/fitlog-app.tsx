@@ -7,7 +7,7 @@ import { TrainingPlan } from "./training-plan";
 import { TrendChart } from "./trend-chart";
 import { calculateStreak, dateKey, latestMeasurement, recentLogs, weightAverage, workoutsThisWeek } from "@/lib/metrics";
 import { createData, exportData, getOrCreateDeviceToken, importData, loadData, saveData, upsertLog } from "@/lib/storage";
-import { workoutFromPlan } from "@/lib/workout-history";
+import { mergePlanWorkouts, type WorkoutNumbers } from "@/lib/workout-history";
 import type { AiReport, DailyLog, FitData, Goal } from "@/lib/schemas";
 import type { PlanExercise, TrainingDay } from "@/lib/training-plan";
 
@@ -46,26 +46,23 @@ export function FitLogApp() {
     window.setTimeout(() => setMessage(""), 2500);
   }
   function saveLog(log: typeof selectedLog) { void persist(upsertLog(data, log)); setEditorKey((key) => key + 1); }
-  async function addPlanExercises(items: PlanExercise[], day: TrainingDay) {
-    if (addingRef.current) return;
+  async function addPlanExercises(items: PlanExercise[], day: TrainingDay, values: Record<string, WorkoutNumbers> = {}) {
+    if (addingRef.current) return false;
     const today = dateKey();
     const todayLog = (draftRef.current?.date === today ? draftRef.current : data.logs.find((log) => log.date === today)) || freshLog(today);
-    const existing = new Set(todayLog.workouts.map((item) => item.name.trim()));
-    const additions = items.filter((item) => {
-      if (existing.has(item.name.trim())) return false;
-      existing.add(item.name.trim()); return true;
-    }).map((item) => workoutFromPlan(item, data.logs, today));
-    if (!additions.length) { setMessage("这些动作已在今天的训练里"); return; }
-    if (todayLog.workouts.length + additions.length > 20) { setMessage("每天最多记录 20 项运动"); return; }
+    const { workouts, changed } = mergePlanWorkouts(todayLog.workouts, items, data.logs, today, values);
+    if (!changed) { setMessage("这些动作已在今天的训练里"); return false; }
+    if (workouts.length > 20) { setMessage("每天最多记录 20 项运动"); return false; }
     addingRef.current = true; setAdding(true);
-    const nextLog = { ...todayLog, workouts: [...todayLog.workouts.filter((item) => item.name.trim()), ...additions], updatedAt: new Date().toISOString() };
+    const nextLog = { ...todayLog, workouts, updatedAt: new Date().toISOString() };
     const next = upsertLog(data, nextLog);
     try {
       const saved = await saveData(tokenRef.current, next);
       setData(saved);
       if (selectedDate === today) { draftRef.current = saved.logs.find((log) => log.date === today) ?? nextLog; setEditorKey((key) => key + 1); }
-      setMessage(`已将 ${additions.length === 1 ? additions[0].name : day.title} 加入今天，可在今日记录中修改数值`);
-    } catch (error) { setMessage(error instanceof Error ? error.message : "添加失败，请重试"); }
+      setMessage(`已保存今天的${items.length === 1 ? items[0].name : day.title}记录`);
+      return true;
+    } catch (error) { setMessage(error instanceof Error ? error.message : "保存失败，请重试"); return false; }
     finally { addingRef.current = false; setAdding(false); }
   }
   function changeDate(value: string) { draftRef.current = null; setSelectedDate(value); setEditorKey((key) => key + 1); }
