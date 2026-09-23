@@ -7,6 +7,24 @@ export interface LyftaExerciseMedia {
 
 // 2026-09-07 按当前动作核对来源。没有对应素材时保留文字与原站入口，不混用其他器械演示。
 const EXERCISE_MEDIA: Record<string, LyftaExerciseMedia> = {
+  "Cable standing chest press": {
+    page: "https://www.lyfta.app/exercise/cable-standing-chest-press-6ci",
+    source: "Lyfta",
+    video: "https://apilyfta.com/static/GymvisualMP4/10661201-Cable-Standing-Chest-Press_Chest.mp4",
+    poster: "https://apilyfta.com/static/GymvisualPNG/10661101-Cable-Standing-Chest-Press-(female)_Chest-FIX_small.png",
+  },
+  "Dumbbell rear lunge": {
+    page: "https://www.lyfta.app/exercise/dumbbell-rear-lunge-6jb",
+    source: "Lyfta",
+    video: "https://apilyfta.com/static/GymvisualMP4/03811201-Dumbbell-Rear-Lunge_Thighs.mp4",
+    poster: "https://apilyfta.com/static/GymvisualPNG/03811101-Dumbbell-Rear-Lunge_Thighs_small.png",
+  },
+  "Dumbbell bent over row": {
+    page: "https://www.lyfta.app/exercise/dumbbell-bent-over-row-6hl",
+    source: "Lyfta",
+    video: "https://apilyfta.com/static/GymvisualMP4/02931201-Dumbbell-Bent-Over-Row_Back-FIX_.mp4",
+    poster: "https://apilyfta.com/static/GymvisualPNG/02931101-Dumbbell-Bent-Over-Row_Back-FIX_small.png",
+  },
   "Cable curl": {"page":"https://www.lyfta.app/exercise/cable-curl-6xk","source":"Lyfta","video":"https://apilyfta.com/static/GymvisualMP4/08681201-Cable-Curl-(male)_Upper-Arms-FIX_.mp4"},
   "Machine fly": {"page":"https://www.lyfta.app/exercise/lever-seated-fly-18","source":"Lyfta","video":"https://apilyfta.com/static/GymvisualMP4/05961201-Lever-Seated-Fly_Chest-FIX_.mp4"},
   "Reverse pec deck": {"page":"https://www.lyfta.app/exercise/lever-seated-reverse-fly-12","source":"Lyfta","video":"https://apilyfta.com/static/GymvisualMP4/06021201-Lever-Seated-Reverse-Fly_Shoulders.mp4"},

@@ -5,6 +5,20 @@ import { GYM_EQUIPMENT, GYM_EQUIPMENT_NOTES } from "../lib/gym-equipment";
 import { buildCoachPrompt } from "../lib/ai";
 
 describe("beginner training plan", () => {
+  it("offers compound alternatives with matching demonstrations without adding mandatory volume", () => {
+    const ids = ["m-cable-chest-press", "w-db-reverse-lunge", "f-db-bent-over-row"];
+    TRAINING_DAYS.forEach((day, index) => {
+      const exercise = day.alternatives.find((item) => item.id === ids[index])!;
+      expect(exercise.phase).toBe("main");
+      expect(exercise.target).toContain("复合动作");
+      expect(exercise.setup).toContain("不额外叠加");
+      expect(day.exercises.some((item) => item.id === exercise.id)).toBe(false);
+      const media = lyftaExerciseMedia(exercise.englishName);
+      expect(media.page).toBe(exercise.guideUrl);
+      expect(media.video).toMatch(/\.mp4$/);
+      expect(media.poster).toMatch(/\.png$/);
+    });
+  });
   it("keeps agreed working volume and movement-specific warmups", () => {
     expect(TRAINING_DAYS.map((day) => day.exercises.filter((item) => item.phase === "main").length)).toEqual([4, 5, 5]);
     expect(TRAINING_DAYS.map((day) => day.exercises.filter((item) => item.phase === "main").reduce((sum, item) => sum + (item.log?.sets ?? 0), 0))).toEqual([9, 11, 11]);
