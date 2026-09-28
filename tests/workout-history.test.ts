@@ -29,12 +29,16 @@ describe("exercise history quick add", () => {
     expect(lastWorkout(logs, "其他动作", "2026-09-18")).toBeNull();
     expect(logs[0].date).toBe("2026-09-18");
   });
-  it("copies the previous values with a new id and does not mutate history", () => {
+  it("caps historical sets at the current plan but preserves other values and history", () => {
     const logs = [record("2026-09-16")];
     const added = workoutFromPlan(item, logs, "2026-09-18");
-    expect(added).toMatchObject({ sets: 4, reps: 10, weight: 25, duration: null });
+    expect(added).toMatchObject({ sets: 2, reps: 10, weight: 25, duration: null });
     expect(added.id).not.toBe("old");
     expect(logs[0].workouts[0].id).toBe("old");
+    expect(logs[0].workouts[0].sets).toBe(4);
+    const lower = { ...logs[0], workouts: [{ ...workout, sets: 1 }] };
+    expect(workoutFromPlan(item, [lower], "2026-09-18").sets).toBe(1);
+    expect(mergePlanWorkouts([workout], [item], logs, "2026-09-18").workouts[0].sets).toBe(4);
   });
   it("preserves missing values and zero rather than replacing them with suggested values", () => {
     const log = { ...record("2026-09-16"), workouts: [{ ...workout, sets: null, reps: null, weight: 0 }] };
