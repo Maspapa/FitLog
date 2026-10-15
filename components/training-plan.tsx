@@ -11,6 +11,7 @@ import { lastWorkout, workoutSummary, workoutFromPlan, type WorkoutNumbers } fro
 import { dateKey } from "@/lib/metrics";
 
 const PHASES: TrainingPhase[] = ["warmup", "main", "stretch"];
+const ROLE_LABELS = { primary: "主练", secondary: "副练", accessory: "辅助" };
 
 function suggestedDay(date: string): TrainingDay["id"] {
   const day = new Date(`${date}T12:00:00`).getDay();
@@ -26,7 +27,7 @@ function ExerciseCard({ item, index, open, onToggle, onAdd, previous, added, sav
   const labels = { sets: "组", reps: "次", weight: item.englishName === "Pull-up" ? "额外负重 kg" : "kg", duration: "分钟" };
   return <article className={`exercise-card ${open ? "open" : ""}`}>
     <div className="exercise-heading"><button className="exercise-summary" type="button" aria-expanded={open} onClick={onToggle}>
-      <span className="exercise-index">{String(index + 1).padStart(2, "0")}</span><span className="exercise-name"><strong>{item.name}</strong></span><b>{item.dose}</b>{item.rest && <em>休 {item.rest}</em>}
+      <span className="exercise-index">{String(index + 1).padStart(2, "0")}</span><span className="exercise-name"><strong>{item.role && `${ROLE_LABELS[item.role]} · `}{item.name}</strong></span><b>{item.dose}</b>{item.rest && <em>休 {item.rest}</em>}
     </button><button className="exercise-add" form={`record-${item.id}`} type="submit" disabled={(added && !dirty) || saving} aria-label={added ? dirty ? `保存${item.name}修改` : `${item.name}已加入今天` : `添加${item.name}到今天`}>{added ? dirty ? "保存" : "✓" : "＋"}</button></div>
     <form className="exercise-inline-record" id={`record-${item.id}`} onSubmit={(event) => { event.preventDefault(); onAdd(); }}>
       {previous && <span className="exercise-history">上次 {previous.date} · {workoutSummary(previous.workout)}</span>}

@@ -22,13 +22,13 @@ describe("beginner training plan", () => {
       expect(day.exercises.some((item) => item.id === fallbackIds[index])).toBe(false);
     });
   });
-  it("includes compound exercises in the main plan with matching demonstrations", () => {
+  it("retains compound demonstrations while moving lunges to alternatives", () => {
     const ids = ["m-cable-chest-press", "w-db-reverse-lunge", "f-db-bent-over-row"];
     TRAINING_DAYS.forEach((day, index) => {
-      const exercise = day.exercises.find((item) => item.id === ids[index])!;
+      const exercise = [...day.exercises, ...day.alternatives].find((item) => item.id === ids[index])!;
       expect(exercise.phase).toBe("main");
       expect(exercise.target).toContain("复合动作");
-      expect(day.alternatives.some((item) => item.id === exercise.id)).toBe(false);
+      expect(day.alternatives.some((item) => item.id === exercise.id)).toBe(index === 1);
       const media = lyftaExerciseMedia(exercise.englishName);
       expect(media.page).toBe(exercise.guideUrl);
       expect(media.video).toMatch(/\.mp4$/);
@@ -36,8 +36,8 @@ describe("beginner training plan", () => {
     });
   });
   it("keeps agreed working volume and movement-specific warmups", () => {
-    expect(TRAINING_DAYS.map((day) => day.exercises.filter((item) => item.phase === "main").length)).toEqual([5, 5, 5]);
-    expect(TRAINING_DAYS.map((day) => day.exercises.filter((item) => item.phase === "main").reduce((sum, item) => sum + (item.log?.sets ?? 0), 0))).toEqual([10, 10, 10]);
+    expect(TRAINING_DAYS.map((day) => day.exercises.filter((item) => item.phase === "main").length)).toEqual([5, 4, 4]);
+    expect(TRAINING_DAYS.map((day) => day.exercises.filter((item) => item.phase === "main").reduce((sum, item) => sum + (item.log?.sets ?? 0), 0))).toEqual([10, 8, 8]);
     for (const day of TRAINING_DAYS) {
       const first = day.exercises.find((item) => item.phase === "main")!;
       const warmupName = first.englishName === "Pull-up" ? "Lat pulldown" : first.englishName;
@@ -57,20 +57,24 @@ describe("beginner training plan", () => {
   it("spaces the pressing work and removes duplicate main exercises", () => {
     const [monday, wednesday] = TRAINING_DAYS;
     expect(monday.exercises.filter((item) => item.phase === "main").map((item) => item.id)).toEqual([
-      "m-smith-bench", "m-abs", "m-cable-chest-press", "f-hammer", "m-alt-triceps-machine",
+      "m-smith-bench", "m-cable-chest-press", "f-hammer", "m-alt-triceps-machine", "m-abs",
     ]);
     expect(wednesday.exercises.filter((item) => item.phase === "main").map((item) => item.id)).toEqual([
-      "w-alt-smith-squat", "w-leg-curl", "w-db-reverse-lunge", "w-hip-thrust", "w-abduction",
+      "w-alt-smith-squat", "w-hip-thrust", "w-leg-curl", "w-abduction",
     ]);
     expect(monday.alternatives.some((item) => item.id === "m-photo-fly")).toBe(true);
     expect(wednesday.alternatives.some((item) => item.id === "w-leg-extension")).toBe(true);
     for (const day of TRAINING_DAYS) {
+      const main = day.exercises.filter((item) => item.phase === "main");
+      expect(main.map((item) => item.role)).toEqual(["primary", "secondary", ...main.slice(2).map(() => "accessory")]);
+      expect(day.alternatives.every((item) => !item.role)).toBe(true);
       for (const item of day.exercises.filter((item) => item.phase === "main")) {
         expect(item.log?.sets).toBe(2);
         expect(item.rest).toMatch(/2–3 分钟|90–120 秒/);
       }
     }
     expect(buildCoachPrompt("fat_loss", [])).toContain("共 10 组");
+    expect(buildCoachPrompt("fat_loss", [])).toContain("各 8 组");
   });
 
   it("includes warm-up, machine work and stretching every day", () => {
@@ -152,8 +156,9 @@ describe("beginner training plan", () => {
   it("pairs Friday pulldowns with rows without adding training volume", () => {
     const friday = TRAINING_DAYS.find((day) => day.id === "friday")!;
     const main = friday.exercises.filter((item) => item.phase === "main");
-    expect(main.map((item) => item.englishName)).toEqual(["Pull-up", "Shoulder press machine", "Dumbbell bent over row", "Dumbbell lateral raise", "Reverse pec deck"]);
-    expect(main.map((item) => item.log?.sets)).toEqual([2, 2, 2, 2, 2]);
+    expect(main.map((item) => item.englishName)).toEqual(["Pull-up", "Dumbbell bent over row", "Dumbbell lateral raise", "Reverse pec deck"]);
+    expect(main.map((item) => item.log?.sets)).toEqual([2, 2, 2, 2]);
+    expect(friday.alternatives.some((item) => item.englishName === "Shoulder press machine")).toBe(true);
     expect(friday.exercises.some((item) => item.phase === "warmup" && item.englishName === "Lat pulldown")).toBe(true);
     expect(friday.alternatives.some((item) => item.englishName === "Lever high row" && item.phase === "main")).toBe(true);
   });
