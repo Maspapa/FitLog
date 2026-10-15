@@ -23,7 +23,7 @@ function ExerciseCard({ item, index, open, onToggle, onAdd, previous, added, sav
   const lyfta = lyftaExerciseMedia(item.englishName);
   const fields = item.diagram === "cardio" || item.phase === "stretch"
     ? (["duration"] as const) : (["sets", "reps", "weight"] as const);
-  const labels = { sets: "组", reps: "次", weight: "kg", duration: "分钟" };
+  const labels = { sets: "组", reps: "次", weight: item.englishName === "Pull-up" ? "额外负重 kg" : "kg", duration: "分钟" };
   return <article className={`exercise-card ${open ? "open" : ""}`}>
     <div className="exercise-heading"><button className="exercise-summary" type="button" aria-expanded={open} onClick={onToggle}>
       <span className="exercise-index">{String(index + 1).padStart(2, "0")}</span><span className="exercise-name"><strong>{item.name}</strong></span><b>{item.dose}</b>{item.rest && <em>休 {item.rest}</em>}

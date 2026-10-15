@@ -7,6 +7,18 @@ export interface LyftaExerciseMedia {
 
 // 2026-09-07 按当前动作核对来源。没有对应素材时保留文字与原站入口，不混用其他器械演示。
 const EXERCISE_MEDIA: Record<string, LyftaExerciseMedia> = {
+  "Smith bench press": {
+    page: "https://www.lyfta.app/exercise/smith-bench-press-1u",
+    source: "Lyfta",
+    video: "https://apilyfta.com/static/GymvisualMP4/07481201-Smith-Bench-Press_Chest-FIX_.mp4",
+    poster: "https://apilyfta.com/static/GymvisualPNG/07481101-Smith-Bench-Press_Chest-FIX_small.png",
+  },
+  "Pull-up": {
+    page: "https://www.lyfta.app/exercise/pull-up-1i",
+    source: "Lyfta",
+    video: "https://apilyfta.com/static/GymvisualMP4/06521201-Pull-up_Back-FIX_.mp4",
+    poster: "https://apilyfta.com/static/GymvisualPNG/06521101-Pull-up_Back_small.png",
+  },
   "Cable standing chest press": {
     page: "https://www.lyfta.app/exercise/cable-standing-chest-press-6ci",
     source: "Lyfta",

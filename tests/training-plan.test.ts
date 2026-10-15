@@ -5,6 +5,23 @@ import { GYM_EQUIPMENT, GYM_EQUIPMENT_NOTES } from "../lib/gym-equipment";
 import { buildCoachPrompt } from "../lib/ai";
 
 describe("beginner training plan", () => {
+  it("prioritizes bench, squat and pull-ups with protection and fallback instructions", () => {
+    const main = TRAINING_DAYS.map((day) => day.exercises.find((item) => item.phase === "main")!);
+    expect(main.map((item) => item.englishName)).toEqual(["Smith bench press", "Smith machine squat", "Pull-up"]);
+    for (const item of main.slice(0, 2)) {
+      expect(item.setup).toContain("限位");
+      expect(item.setup).toContain("不含机器杆阻力");
+    }
+    expect(main[2].setup).toContain("高位下拉替换");
+    expect(main[2].setup).toContain("不填体重或助力重量");
+    expect(main[2].safety).toContain("不加额外负重");
+    expect(GYM_EQUIPMENT).toContain("卧推凳");
+    const fallbackIds = ["m-chest-press", "w-leg-press", "f-photo-pulldown"];
+    TRAINING_DAYS.forEach((day, index) => {
+      expect(day.alternatives.some((item) => item.id === fallbackIds[index])).toBe(true);
+      expect(day.exercises.some((item) => item.id === fallbackIds[index])).toBe(false);
+    });
+  });
   it("includes compound exercises in the main plan with matching demonstrations", () => {
     const ids = ["m-cable-chest-press", "w-db-reverse-lunge", "f-db-bent-over-row"];
     TRAINING_DAYS.forEach((day, index) => {
@@ -23,7 +40,8 @@ describe("beginner training plan", () => {
     expect(TRAINING_DAYS.map((day) => day.exercises.filter((item) => item.phase === "main").reduce((sum, item) => sum + (item.log?.sets ?? 0), 0))).toEqual([10, 10, 10]);
     for (const day of TRAINING_DAYS) {
       const first = day.exercises.find((item) => item.phase === "main")!;
-      expect(day.exercises.some((item) => item.phase === "warmup" && item.englishName === first.englishName)).toBe(true);
+      const warmupName = first.englishName === "Pull-up" ? "Lat pulldown" : first.englishName;
+      expect(day.exercises.some((item) => item.phase === "warmup" && item.englishName === warmupName)).toBe(true);
       expect(day.exercises.some((item) => item.diagram === "cardio")).toBe(false);
       for (const item of [...day.exercises, ...day.alternatives].filter((item) => item.phase === "warmup")) {
         expect(item.name).toContain("（热身）");
@@ -39,10 +57,10 @@ describe("beginner training plan", () => {
   it("spaces the pressing work and removes duplicate main exercises", () => {
     const [monday, wednesday] = TRAINING_DAYS;
     expect(monday.exercises.filter((item) => item.phase === "main").map((item) => item.id)).toEqual([
-      "m-chest-press", "m-abs", "m-cable-chest-press", "f-hammer", "m-alt-triceps-machine",
+      "m-smith-bench", "m-abs", "m-cable-chest-press", "f-hammer", "m-alt-triceps-machine",
     ]);
     expect(wednesday.exercises.filter((item) => item.phase === "main").map((item) => item.id)).toEqual([
-      "w-leg-press", "w-leg-curl", "w-db-reverse-lunge", "w-hip-thrust", "w-abduction",
+      "w-alt-smith-squat", "w-leg-curl", "w-db-reverse-lunge", "w-hip-thrust", "w-abduction",
     ]);
     expect(monday.alternatives.some((item) => item.id === "m-photo-fly")).toBe(true);
     expect(wednesday.alternatives.some((item) => item.id === "w-leg-extension")).toBe(true);
@@ -134,7 +152,7 @@ describe("beginner training plan", () => {
   it("pairs Friday pulldowns with rows without adding training volume", () => {
     const friday = TRAINING_DAYS.find((day) => day.id === "friday")!;
     const main = friday.exercises.filter((item) => item.phase === "main");
-    expect(main.map((item) => item.englishName)).toEqual(["Lat pulldown", "Shoulder press machine", "Dumbbell bent over row", "Dumbbell lateral raise", "Reverse pec deck"]);
+    expect(main.map((item) => item.englishName)).toEqual(["Pull-up", "Shoulder press machine", "Dumbbell bent over row", "Dumbbell lateral raise", "Reverse pec deck"]);
     expect(main.map((item) => item.log?.sets)).toEqual([2, 2, 2, 2, 2]);
     expect(friday.exercises.some((item) => item.phase === "warmup" && item.englishName === "Lat pulldown")).toBe(true);
     expect(friday.alternatives.some((item) => item.englishName === "Lever high row" && item.phase === "main")).toBe(true);

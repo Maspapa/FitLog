@@ -8,6 +8,15 @@ const workout = { id: "old", name: item.name, category: "strength" as const, set
 const record = (date: string, weight = 25) => ({ ...emptyLog(date), workouts: [{ ...workout, weight }] });
 
 describe("exercise history quick add", () => {
+  it("does not copy machine or ambiguous bench loads into new basic lifts", () => {
+    const names = ["胸部推举", "卧推", "大腿推蹬", "高位下拉"];
+    const logs = [{ ...emptyLog("2026-10-14"), workouts: names.map((name) => ({ ...workout, name, weight: 80 })) }];
+    for (const day of TRAINING_DAYS) {
+      const first = day.exercises.find((exercise) => exercise.phase === "main")!;
+      expect(workoutFromPlan(first, logs, "2026-10-15").weight).toBeNull();
+    }
+    expect(logs[0].workouts.every((workout) => workout.weight === 80)).toBe(true);
+  });
   it("adds entered numbers and updates today's existing entry without duplicates", () => {
     const values = { sets: 2, reps: 9, weight: 0, duration: null };
     const added = mergePlanWorkouts([], [item], [], "2026-09-20", { [item.id]: values });
