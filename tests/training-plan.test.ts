@@ -36,8 +36,8 @@ describe("beginner training plan", () => {
     });
   });
   it("keeps agreed working volume and movement-specific warmups", () => {
-    expect(TRAINING_DAYS.map((day) => day.exercises.filter((item) => item.phase === "main").length)).toEqual([5, 4, 4]);
-    expect(TRAINING_DAYS.map((day) => day.exercises.filter((item) => item.phase === "main").reduce((sum, item) => sum + (item.log?.sets ?? 0), 0))).toEqual([15, 12, 12]);
+    expect(TRAINING_DAYS.map((day) => day.exercises.filter((item) => item.phase === "main").length)).toEqual([5, 5, 5]);
+    expect(TRAINING_DAYS.map((day) => day.exercises.filter((item) => item.phase === "main").reduce((sum, item) => sum + (item.log?.sets ?? 0), 0))).toEqual([15, 15, 15]);
     for (const day of TRAINING_DAYS) {
       const first = day.exercises.find((item) => item.phase === "main")!;
       const warmupName = first.englishName === "Pull-up" ? "Lat pulldown" : first.englishName;
@@ -60,7 +60,7 @@ describe("beginner training plan", () => {
       "m-smith-bench", "m-cable-chest-press", "f-hammer", "m-alt-triceps-machine", "m-abs",
     ]);
     expect(wednesday.exercises.filter((item) => item.phase === "main").map((item) => item.id)).toEqual([
-      "w-alt-smith-squat", "w-hip-thrust", "w-leg-curl", "w-abduction",
+      "w-alt-smith-squat", "w-hip-thrust", "w-leg-curl", "w-abduction", "w-alt-adduction",
     ]);
     expect(monday.alternatives.some((item) => item.id === "m-photo-fly")).toBe(true);
     expect(wednesday.alternatives.some((item) => item.id === "w-leg-extension")).toBe(true);
@@ -74,7 +74,7 @@ describe("beginner training plan", () => {
       }
     }
     expect(buildCoachPrompt("fat_loss", [])).toContain("共 15 组");
-    expect(buildCoachPrompt("fat_loss", [])).toContain("各 12 组");
+    expect(buildCoachPrompt("fat_loss", [])).toContain("5 个正式动作");
   });
 
   it("includes warm-up, machine work and stretching every day", () => {
@@ -156,8 +156,8 @@ describe("beginner training plan", () => {
   it("pairs Friday pulldowns with rows without adding training volume", () => {
     const friday = TRAINING_DAYS.find((day) => day.id === "friday")!;
     const main = friday.exercises.filter((item) => item.phase === "main");
-    expect(main.map((item) => item.englishName)).toEqual(["Pull-up", "Dumbbell bent over row", "Dumbbell lateral raise", "Reverse pec deck"]);
-    expect(main.map((item) => item.log?.sets)).toEqual([3, 3, 3, 3]);
+    expect(main.map((item) => item.englishName)).toEqual(["Pull-up", "Dumbbell bent over row", "Dumbbell lateral raise", "Reverse pec deck", "Lever seated crunch"]);
+    expect(main.map((item) => item.log?.sets)).toEqual([3, 3, 3, 3, 3]);
     expect(friday.alternatives.some((item) => item.englishName === "Shoulder press machine")).toBe(true);
     expect(friday.exercises.some((item) => item.phase === "warmup" && item.englishName === "Lat pulldown")).toBe(true);
     expect(friday.alternatives.some((item) => item.englishName === "Lever high row" && item.phase === "main")).toBe(true);
