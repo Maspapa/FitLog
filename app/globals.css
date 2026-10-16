@@ -340,3 +340,19 @@ footer { padding: 38px 5vw; border-top: 1px solid var(--line); background: white
   .inline-fields { gap: 7px; }
   .inline-fields input { width: 52px; }
 }
+
+/* Keep rest controls visible while leaving the last record reachable. */
+body { padding-bottom: calc(145px + env(safe-area-inset-bottom, 0px)); }
+.rest-timer { position: fixed; z-index: 100; right: 18px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); width: 300px; max-width: calc(100vw - 24px); padding: 12px 14px; border: 1px solid var(--line); border-radius: 14px; background: #fff; color: var(--indigo, #24246a); box-shadow: 0 5px 24px #24246a20; }
+.rest-timer-top, .rest-timer-bottom { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.rest-timer-top { margin-bottom: 8px; font-size: 12px; }
+.rest-timer-top > div { display: flex; gap: 4px; }
+.rest-timer button { min-height: 36px; border: 0; border-radius: 8px; padding: 6px 10px; font-size: 12px; background: #f1f3ff; color: inherit; cursor: pointer; }
+.rest-timer button[aria-pressed="true"] { background: var(--ultramarine, #3545bd); color: #fff; }
+.rest-timer button:focus-visible { outline: 2px solid var(--ultramarine, #3545bd); outline-offset: 2px; }
+.rest-timer output { font-size: 30px; line-height: 1; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: 1px; }
+.rest-timer .rest-timer-start { background: var(--yellow, #ffda00); font-weight: 600; min-width: 64px; }
+.rest-timer-status:empty { display: none; }
+.rest-timer-status, .rest-timer small { display: block; margin-top: 8px; font-size: 11px; line-height: 1.4; }
+.rest-timer-done { border-color: var(--ultramarine, #3545bd); background: #f3f5ff; }
+@media (max-width: 640px) { .rest-timer { right: 12px; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); } }
