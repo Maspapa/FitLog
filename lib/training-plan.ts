@@ -213,6 +213,7 @@ export const TRAINING_DAYS: TrainingDay[] = [
     alternatives: [
       {
         id: "m-chest-press",
+        role: "primary",
         phase: "main",
         name: "胸部推举",
         englishName: "Lever chest press",
@@ -235,6 +236,7 @@ export const TRAINING_DAYS: TrainingDay[] = [
         rest: "90 秒",
         log: {"sets":2,"reps":15},
         id: "m-photo-fly",
+        role: "accessory",
         name: "器械夹胸",
         englishName: "Machine fly",
         equipment: "双臂外展训练机",
@@ -299,6 +301,7 @@ export const TRAINING_DAYS: TrainingDay[] = [
       },
       {
         id: "m-triceps",
+        role: "accessory",
         phase: "main",
         name: "绳索下压",
         englishName: "Triceps pushdown",
@@ -317,6 +320,7 @@ export const TRAINING_DAYS: TrainingDay[] = [
       },
       {
         id: "m-alt-independent-press",
+        role: "secondary",
         phase: "main",
         name: "独立肩推",
         englishName: "Shoulder press machine",
@@ -335,6 +339,7 @@ export const TRAINING_DAYS: TrainingDay[] = [
       },
       {
         id: "m-alt-db-lateral",
+        role: "accessory",
         phase: "main",
         name: "哑铃侧平举",
         englishName: "Dumbbell lateral raise",
@@ -417,6 +422,7 @@ export const TRAINING_DAYS: TrainingDay[] = [
       },
       {
         id: "m-smith-push",
+        role: "primary",
         phase: "main",
         name: "史密斯杠上斜俯卧撑",
         englishName: "Smith incline push-up",
@@ -625,6 +631,7 @@ export const TRAINING_DAYS: TrainingDay[] = [
     alternatives: [
       {
         id: "w-db-reverse-lunge",
+        role: "secondary",
         phase: "main",
         name: "哑铃后撤箭步蹲",
         englishName: "Dumbbell rear lunge",
@@ -643,6 +650,7 @@ export const TRAINING_DAYS: TrainingDay[] = [
       },
       {
         id: "w-leg-extension",
+        role: "accessory",
         phase: "main",
         name: "大腿伸展（腿屈伸）",
         englishName: "Leg extension",
@@ -711,6 +719,7 @@ export const TRAINING_DAYS: TrainingDay[] = [
       },
       {
         id: "w-leg-press",
+        role: "primary",
         phase: "main",
         name: "大腿推蹬",
         englishName: "Seated leg press",
@@ -729,6 +738,7 @@ export const TRAINING_DAYS: TrainingDay[] = [
       },
       {
         id: "w-db-rdl",
+        role: "secondary",
         phase: "main",
         name: "哑铃罗马尼亚硬拉",
         englishName: "Dumbbell Romanian deadlift",
@@ -747,6 +757,7 @@ export const TRAINING_DAYS: TrainingDay[] = [
       },
       {
         id: "w-goblet",
+        role: "primary",
         phase: "main",
         name: "哑铃高脚杯深蹲",
         englishName: "Goblet squat",
@@ -1001,6 +1012,7 @@ export const TRAINING_DAYS: TrainingDay[] = [
     alternatives: [
       {
         id: "f-shoulder-press",
+        role: "secondary",
         phase: "main",
         name: "肩部推举",
         englishName: "Shoulder press machine",
@@ -1023,6 +1035,7 @@ export const TRAINING_DAYS: TrainingDay[] = [
         rest: "2–3 分钟",
         log: {"sets":2,"reps":10},
         id: "f-photo-pulldown",
+        role: "primary",
         name: "高位下拉",
         englishName: "Lat pulldown",
         equipment: "高拉/低拉划船机",
@@ -1037,6 +1050,7 @@ export const TRAINING_DAYS: TrainingDay[] = [
       },
       {
         id: "f-supported-row",
+        role: "secondary",
         phase: "main",
         name: "独立划船",
         englishName: "Lever row",
@@ -1055,6 +1069,7 @@ export const TRAINING_DAYS: TrainingDay[] = [
       },
       {
         id: "f-high-row",
+        role: "secondary",
         phase: "main",
         name: "高位划船",
         englishName: "Lever high row",
@@ -1077,6 +1092,7 @@ export const TRAINING_DAYS: TrainingDay[] = [
         rest: "60–90 秒",
         log: {"sets":2,"reps":12},
         id: "f-photo-low-row",
+        role: "secondary",
         name: "坐姿低位绳索划船",
         englishName: "Seated cable row",
         equipment: "高拉/低拉划船机",
@@ -1141,6 +1157,7 @@ export const TRAINING_DAYS: TrainingDay[] = [
       },
       {
         id: "f-dy-row",
+        role: "secondary",
         phase: "main",
         name: "D.Y.划船",
         englishName: "D.Y. row",
@@ -1159,6 +1176,7 @@ export const TRAINING_DAYS: TrainingDay[] = [
       },
       {
         id: "f-alt-independent-press",
+        role: "secondary",
         phase: "main",
         name: "独立肩推",
         englishName: "Shoulder press machine",
@@ -1241,6 +1259,7 @@ export const TRAINING_DAYS: TrainingDay[] = [
       },
       {
         id: "f-alt-face-pull",
+        role: "accessory",
         phase: "main",
         name: "绳索面拉",
         englishName: "Cable face pull",
@@ -1259,6 +1278,7 @@ export const TRAINING_DAYS: TrainingDay[] = [
       },
       {
         id: "f-biceps",
+        role: "accessory",
         phase: "main",
         name: "绳索站二头肌弯举",
         englishName: "Cable curl",

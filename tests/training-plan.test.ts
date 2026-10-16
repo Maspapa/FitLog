@@ -67,7 +67,8 @@ describe("beginner training plan", () => {
     for (const day of TRAINING_DAYS) {
       const main = day.exercises.filter((item) => item.phase === "main");
       expect(main.map((item) => item.role)).toEqual(["primary", "secondary", ...main.slice(2).map(() => "accessory")]);
-      expect(day.alternatives.every((item) => !item.role)).toBe(true);
+      expect(day.alternatives.filter((item) => item.phase === "main").every((item) => ["primary", "secondary", "accessory"].includes(item.role ?? ""))).toBe(true);
+      expect(day.alternatives.filter((item) => item.phase !== "main").every((item) => !item.role)).toBe(true);
       for (const item of day.exercises.filter((item) => item.phase === "main")) {
         expect(item.log?.sets).toBe(3);
         expect(item.rest).toMatch(/2–3 分钟|90–120 秒/);
