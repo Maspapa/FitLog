@@ -41,8 +41,8 @@ export function workoutFromPlan(item: PlanExercise, logs: DailyLog[], today: str
   return {
     id: crypto.randomUUID(), name: item.name,
     category: previous?.category ?? (item.diagram === "cardio" ? "cardio" : item.phase === "stretch" ? "mobility" : "strength"),
-    // 沿用历史时不把旧的高组数重新带进减量后的计划；不改动历史或今日已保存值。
-    sets: previous ? (previous.sets !== null && item.log ? Math.min(previous.sets, item.log.sets) : previous.sets) : item.log?.sets ?? null,
+    // 计划只提供首次记录的建议值；已有历史时原样沿用，不按计划截断实际组数。
+    sets: previous ? previous.sets : item.log?.sets ?? null,
     reps: previous ? previous.reps : item.log?.reps ?? null,
     weight: previous?.weight ?? null, duration: previous?.duration ?? null, intensity: null,
   };

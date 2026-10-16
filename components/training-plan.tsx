@@ -79,7 +79,7 @@ export function TrainingPlan({ selectedDate, logs, saving, onAddExercises }: { s
   return (
     <section className="plan-section" id="training-plan">
       <div className="section-title plan-title"><h2>训练计划</h2></div>
-      <details className="plan-help"><summary>须知与设备</summary><p>先按每项 2 组适应，留 2–3 次余力，不追求力竭。复合动作休 2–3 分钟，其余休 90–120 秒；换动作不能代替组间休息。次数掉到范围下限以下或动作变形，先充分休息，再减重或结束该动作，不补组凑时长。连续两次轻松达到次数上限再小幅加重；关节疼痛立即停止。</p><p>上次数据仅作参考：新记录默认组数不超过当前计划，重量仍可手动调低，历史记录不变。热身与额外动作不要重复加入正式组。</p><div className="gym-equipment">{GYM_EQUIPMENT.join(" · ")}</div></details>
+      <details className="plan-help"><summary>须知与设备</summary><p>按你的习惯建议每项 3 组，留 2–3 次余力，不追求力竭。复合动作休 2–3 分钟，其余休 90–120 秒；换动作不能代替组间休息。次数掉到范围下限以下或动作变形，先充分休息，再减重或结束该动作；辅助动作可做 2 组或省略。连续两次轻松达到次数上限再小幅加重；关节疼痛立即停止。</p><p>输入框原样沿用上次的组数、次数和重量，可按今天情况调整；首次记录才用计划建议。热身从轻重量开始，不计入正式组。</p><div className="gym-equipment">{GYM_EQUIPMENT.join(" · ")}</div></details>
 
       <div className="day-tabs" role="tablist" aria-label="每周训练日">
         {TRAINING_DAYS.map((item) => <button role="tab" aria-selected={item.id === day.id} className={item.id === day.id ? "active" : ""} type="button" key={item.id} onClick={() => { setDayId(item.id); setOpenId(null); setAlternativesOpen(false); }}><span>{item.weekday}</span><strong>{item.title}</strong><small>{item.focus}</small></button>)}

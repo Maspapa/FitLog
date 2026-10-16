@@ -37,7 +37,7 @@ describe("beginner training plan", () => {
   });
   it("keeps agreed working volume and movement-specific warmups", () => {
     expect(TRAINING_DAYS.map((day) => day.exercises.filter((item) => item.phase === "main").length)).toEqual([5, 4, 4]);
-    expect(TRAINING_DAYS.map((day) => day.exercises.filter((item) => item.phase === "main").reduce((sum, item) => sum + (item.log?.sets ?? 0), 0))).toEqual([10, 8, 8]);
+    expect(TRAINING_DAYS.map((day) => day.exercises.filter((item) => item.phase === "main").reduce((sum, item) => sum + (item.log?.sets ?? 0), 0))).toEqual([15, 12, 12]);
     for (const day of TRAINING_DAYS) {
       const first = day.exercises.find((item) => item.phase === "main")!;
       const warmupName = first.englishName === "Pull-up" ? "Lat pulldown" : first.englishName;
@@ -69,12 +69,12 @@ describe("beginner training plan", () => {
       expect(main.map((item) => item.role)).toEqual(["primary", "secondary", ...main.slice(2).map(() => "accessory")]);
       expect(day.alternatives.every((item) => !item.role)).toBe(true);
       for (const item of day.exercises.filter((item) => item.phase === "main")) {
-        expect(item.log?.sets).toBe(2);
+        expect(item.log?.sets).toBe(3);
         expect(item.rest).toMatch(/2–3 分钟|90–120 秒/);
       }
     }
-    expect(buildCoachPrompt("fat_loss", [])).toContain("共 10 组");
-    expect(buildCoachPrompt("fat_loss", [])).toContain("各 8 组");
+    expect(buildCoachPrompt("fat_loss", [])).toContain("共 15 组");
+    expect(buildCoachPrompt("fat_loss", [])).toContain("各 12 组");
   });
 
   it("includes warm-up, machine work and stretching every day", () => {
@@ -157,7 +157,7 @@ describe("beginner training plan", () => {
     const friday = TRAINING_DAYS.find((day) => day.id === "friday")!;
     const main = friday.exercises.filter((item) => item.phase === "main");
     expect(main.map((item) => item.englishName)).toEqual(["Pull-up", "Dumbbell bent over row", "Dumbbell lateral raise", "Reverse pec deck"]);
-    expect(main.map((item) => item.log?.sets)).toEqual([2, 2, 2, 2]);
+    expect(main.map((item) => item.log?.sets)).toEqual([3, 3, 3, 3]);
     expect(friday.alternatives.some((item) => item.englishName === "Shoulder press machine")).toBe(true);
     expect(friday.exercises.some((item) => item.phase === "warmup" && item.englishName === "Lat pulldown")).toBe(true);
     expect(friday.alternatives.some((item) => item.englishName === "Lever high row" && item.phase === "main")).toBe(true);
