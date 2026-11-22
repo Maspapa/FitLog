@@ -7,7 +7,7 @@ import { GYM_EQUIPMENT } from "@/lib/gym-equipment";
 import { PHASE_LABELS, TRAINING_DAYS, type PlanExercise, type TrainingDay, type TrainingPhase } from "@/lib/training-plan";
 
 import type { DailyLog } from "@/lib/schemas";
-import { lastWorkout, workoutSummary, workoutFromPlan, type WorkoutNumbers } from "@/lib/workout-history";
+import { lastWorkout, planFromLastSession, workoutSummary, workoutFromPlan, type WorkoutNumbers } from "@/lib/workout-history";
 import { dateKey } from "@/lib/metrics";
 
 const PHASES: TrainingPhase[] = ["warmup", "main", "stretch"];
@@ -33,7 +33,7 @@ function ExerciseCard({ item, index, open, onToggle, onAdd, previous, added, sav
       {previous && <span className="exercise-history">上次 {previous.date} · {workoutSummary(previous.workout)}</span>}
       <div className="inline-fields"><small>今天</small>{fields.map((field) => <label key={field}><input aria-label={`${item.name}今天${labels[field]}`} type="number" inputMode="decimal" min="0" max={field === "sets" ? 100 : field === "duration" ? 1440 : 1000} step="any" placeholder="—" value={values[field] ?? ""} disabled={saving} onChange={(event) => onChange({ ...values, [field]: event.target.value === "" ? null : Number(event.target.value) })} />{labels[field]}</label>)}{dirty && <small>待保存</small>}</div>
     </form>
-    {open && <div className="exercise-detail">
+    {open && (item.historicalOnly ? <div className="exercise-detail"><p>这是你之前记录的动作，暂无动作指导。</p></div> : <div className="exercise-detail">
       <aside className="lyfta-guide">
         <div className="lyfta-brand"><b>{lyfta.source}</b><span>动作指导</span></div>
         <ExerciseMedia key={item.englishName} media={lyfta} name={item.name} />
@@ -47,7 +47,7 @@ function ExerciseCard({ item, index, open, onToggle, onAdd, previous, added, sav
         <section className="cue-block"><h5>记住这三个词</h5><div>{item.cues.map((cue) => <span key={cue}>{cue}</span>)}</div></section>
         <div className="form-alert"><p><b>常见错误</b>{item.mistake}</p><p><b>安全提示</b>{item.safety}</p></div>
       </div>
-    </div>}
+    </div>)}
   </article>;
 }
 
@@ -74,7 +74,8 @@ export function TrainingPlan({ selectedDate, logs, saving, onAddExercises }: { s
     const defaults: WorkoutNumbers = { sets: base.sets, reps: base.reps, weight: base.weight, duration: base.duration };
     return <ExerciseCard key={item.id} item={item} index={index} open={openId === item.id} onToggle={() => setOpenId(openId === item.id ? null : item.id)} onAdd={() => void saveItems([item])} previous={lastWorkout(logs, item.name, today)} added={todayNames.has(item.name.trim())} saving={saving} values={drafts[item.id] ?? defaults} dirty={Boolean(drafts[item.id])} onChange={(values) => setDrafts((current) => ({ ...current, [item.id]: values }))} />;
   };
-  const mainExercises = day.exercises.filter((item) => item.phase === "main");
+  const personalized = planFromLastSession(day, logs, today);
+  const mainExercises = personalized.main;
 
   return (
     <section className="plan-section" id="training-plan">
@@ -86,20 +87,20 @@ export function TrainingPlan({ selectedDate, logs, saving, onAddExercises }: { s
       </div>
 
       <article className="plan-day">
-        <header><div><span>{day.duration}</span><details className="plan-help"><summary>安排说明</summary><p>{day.summary}</p></details></div><button type="button" disabled={saving} onClick={() => void saveItems(mainExercises)}>＋ 全部加入今天</button></header>
+        <header><div><span>{personalized.date ? `按上次 ${personalized.date} 训练` : day.duration}</span>{!personalized.date && <details className="plan-help"><summary>安排说明</summary><p>{day.summary}</p></details>}</div><button type="button" disabled={saving} onClick={() => void saveItems(mainExercises)}>＋ 全部加入今天</button></header>
         {PHASES.map((phase, phaseIndex) => {
-          const items = day.exercises.filter((item) => item.phase === phase);
+          const items = phase === "main" ? mainExercises : day.exercises.filter((item) => item.phase === phase);
           return <section className={`plan-phase phase-${phase}`} key={phase}>
             <div className="phase-heading"><b>0{phaseIndex + 1}</b><div><h4>{PHASE_LABELS[phase].title}</h4><details className="phase-help"><summary>提示</summary><p>{PHASE_LABELS[phase].subtitle}</p></details></div><span>{items.length} 个动作</span></div>
             <div className="exercise-list">{items.map(card)}</div>
           </section>;
         })}
         <section className="plan-phase alternatives-phase">
-          <button className="phase-heading alternatives-toggle" type="button" aria-expanded={alternativesOpen} aria-controls="alternative-exercises" onClick={() => { setAlternativesOpen(!alternativesOpen); if (alternativesOpen && day.alternatives.some((item) => item.id === openId)) setOpenId(null); }}><b aria-hidden="true">{alternativesOpen ? "−" : "＋"}</b><strong>可替换动作</strong><span>{day.alternatives.length} 个可选 · {alternativesOpen ? "收起" : "展开"}</span></button>
+          <button className="phase-heading alternatives-toggle" type="button" aria-expanded={alternativesOpen} aria-controls="alternative-exercises" onClick={() => { setAlternativesOpen(!alternativesOpen); if (alternativesOpen && personalized.alternatives.some((item) => item.id === openId)) setOpenId(null); }}><b aria-hidden="true">{alternativesOpen ? "−" : "＋"}</b><strong>可替换动作</strong><span>{personalized.alternatives.length} 个可选 · {alternativesOpen ? "收起" : "展开"}</span></button>
           {alternativesOpen && <div id="alternative-exercises">
           <div className="alternative-note"><strong>怎么用：</strong>有氧升温按需选择；备选动作只替换同部位动作，不额外加练。热身用轻重量，不沿用正式负重。</div>
           <div className="alternative-groups">{PHASES.map((phase) => {
-            const items = day.alternatives.filter((item) => item.phase === phase);
+            const items = personalized.alternatives.filter((item) => item.phase === phase);
             return <section className={`alternative-group alt-${phase}`} key={phase}>
               <header><div><span>{phase === "warmup" ? "WARM UP" : phase === "main" ? "EQUIPMENT" : "COOL DOWN"}</span><h5>{PHASE_LABELS[phase].title}备选</h5></div><b>{items.length} 个</b></header>
               <div className="exercise-list">{items.map(card)}</div>

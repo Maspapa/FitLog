@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { emptyLog } from "../lib/metrics";
-import { lastWorkout, workoutFromPlan, workoutSummary, mergePlanWorkouts } from "../lib/workout-history";
+import { lastWorkout, planFromLastSession, workoutFromPlan, workoutSummary, mergePlanWorkouts } from "../lib/workout-history";
 import { TRAINING_DAYS } from "../lib/training-plan";
 
 const item = TRAINING_DAYS[0].exercises.find((item) => item.phase === "main")!;
@@ -60,5 +60,38 @@ describe("exercise history quick add", () => {
     const log = { ...emptyLog("2026-09-16"), workouts: [{ ...workout, name: cardio.name, category: "cardio" as const, sets: null, reps: null, weight: null, duration: 20 }] };
     expect(workoutFromPlan(cardio, [log], "2026-09-18")).toMatchObject({ category: "cardio", duration: 20 });
     expect(workoutSummary(log.workouts[0])).toBe("20 分钟");
+  });
+});
+
+describe("previous-session training plan", () => {
+  const day = TRAINING_DAYS[0];
+  const original = day.exercises.filter((exercise) => exercise.phase === "main");
+  const alternative = day.alternatives.find((exercise) => exercise.phase === "main")!;
+  const withNames = (date: string, names: string[]) => ({ ...emptyLog(date), workouts: names.map((name, index) => ({ ...workout, id: String(index), name })) });
+  it("promotes last Monday's actual alternative and moves unperformed exercises to alternatives", () => {
+    const history = [withNames("2026-10-26", [alternative.name, original[1].name]), withNames("2026-11-04", [original[0].name])];
+    const result = planFromLastSession(day, history, "2026-11-05");
+    expect(result.date).toBe("2026-10-26");
+    expect(result.main.map((exercise) => exercise.name)).toEqual([alternative.name, original[1].name]);
+    expect(result.alternatives.map((exercise) => exercise.id)).toContain(original[0].id);
+    expect(result.alternatives.some((exercise) => exercise.id === alternative.id)).toBe(false);
+    expect(result.alternatives.some((exercise) => exercise.phase === "warmup")).toBe(true);
+  });
+  it("uses the latest previous weekday, excluding today, future dates and empty logs", () => {
+    const history = [withNames("2026-10-19", [original[0].name]), withNames("2026-10-26", []), withNames("2026-11-02", ["其他训练"]), withNames("2026-11-09", [alternative.name])];
+    expect(planFromLastSession(day, history, "2026-11-02").date).toBe("2026-10-19");
+  });
+  it("retains the original plan if no session exists", () => {
+    const result = planFromLastSession(day, [withNames("2026-10-26", [])], "2026-11-02");
+    expect(result.date).toBeNull();
+    expect(result.main).toEqual(original);
+    expect(result.alternatives).toEqual(day.alternatives);
+  });
+  it("keeps custom historical movements without inventing equipment and skips duplicates and known warmups", () => {
+    const warmup = day.exercises.find((exercise) => exercise.phase === "warmup")!;
+    const result = planFromLastSession(day, [withNames("2026-10-26", [warmup.name, "自定义动作", "自定义动作"])], "2026-11-02");
+    expect(result.main).toHaveLength(1);
+    expect(result.main[0]).toMatchObject({ name: "自定义动作", historicalOnly: true, equipment: "未知" });
+    expect(result.alternatives.filter((item) => item.phase === "main")).toHaveLength(original.length + day.alternatives.filter((item) => item.phase === "main").length);
   });
 });

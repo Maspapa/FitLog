@@ -12,12 +12,13 @@ export interface PlanExercise {
   id: string;
   phase: TrainingPhase;
   role?: "primary" | "secondary" | "accessory";
+  historicalOnly?: boolean;
   name: string;
   englishName: string;
   dose: string;
   rest?: string;
   target: string;
-  equipment: GymEquipment | "无需器械";
+  equipment: GymEquipment | "无需器械" | "未知";
   setup: string;
   steps: string[];
   cues: string[];

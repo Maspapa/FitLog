@@ -1,7 +1,37 @@
 import type { DailyLog, Workout } from "./schemas";
-import type { PlanExercise } from "./training-plan";
+import type { PlanExercise, TrainingDay } from "./training-plan";
 
 export type WorkoutNumbers = Pick<Workout, "sets" | "reps" | "weight" | "duration">;
+
+/** Use the previous session on this weekday; retain the default plan without history. */
+export function planFromLastSession(day: TrainingDay, logs: DailyLog[], before: string) {
+  const main = day.exercises.filter((item) => item.phase === "main");
+  const choices = [...main, ...day.alternatives.filter((item) => item.phase === "main")];
+  const names = new Map(choices.map((item) => [item.name.trim(), item]));
+  const nonMainNames = new Set([...day.exercises, ...day.alternatives].filter((item) => item.phase !== "main").map((item) => item.name.trim()));
+  const weekday = { monday: 1, wednesday: 3, friday: 5 }[day.id];
+  const previous = [...logs].filter((log) => log.date < before && new Date(`${log.date}T12:00:00`).getDay() === weekday)
+    .sort((a, b) => b.date.localeCompare(a.date))
+    .find((log) => log.workouts.some((workout) => workout.name.trim() && !nonMainNames.has(workout.name.trim())));
+  if (!previous) return { main, alternatives: day.alternatives, date: null };
+  const seen = new Set<string>();
+  const performed: PlanExercise[] = [];
+  for (const workout of previous.workouts) {
+    const name = workout.name.trim();
+    if (!name || seen.has(name) || nonMainNames.has(name)) continue;
+    seen.add(name);
+    performed.push(names.get(name) ?? {
+      id: `history-${encodeURIComponent(name)}`, name, phase: "main", historicalOnly: true,
+      englishName: "", dose: "", target: "", equipment: "未知", setup: "", steps: [], cues: [], mistake: "", safety: "",
+      diagram: workout.category === "cardio" ? "cardio" : "push",
+    });
+  }
+  return {
+    main: performed,
+    alternatives: [...day.alternatives.filter((item) => item.phase !== "main"), ...choices.filter((item) => !seen.has(item.name.trim()))],
+    date: previous.date,
+  };
+}
 
 export function mergePlanWorkouts(existing: Workout[], items: PlanExercise[], logs: DailyLog[], today: string, values: Record<string, WorkoutNumbers> = {}) {
   const workouts = existing.filter((workout) => workout.name.trim()).map((workout) => ({ ...workout }));
