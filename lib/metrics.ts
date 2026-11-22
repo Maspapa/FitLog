@@ -53,7 +53,7 @@ export function emptyLog(date: string): DailyLog {
     date, weight: null, waist: null, workouts: [],
     meals: { breakfast: "", lunch: "", dinner: "", snacks: "" },
     sleepHours: null, fatigue: null, mood: null, soreness: null,
-    waterGlasses: null, steps: null, alcohol: false, notes: "", updatedAt: new Date().toISOString(),
+    waterGlasses: null, steps: null, alcohol: false, notes: "", startedAt: null, updatedAt: new Date().toISOString(),
   };
 }
 

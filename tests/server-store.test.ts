@@ -15,7 +15,7 @@ function log(date: string, updatedAt: string, notes: string): DailyLog {
     date, weight: null, waist: null, workouts: [],
     meals: { breakfast: "", lunch: "", dinner: "", snacks: "" },
     sleepHours: null, fatigue: null, mood: null, soreness: null,
-    waterGlasses: null, steps: null, alcohol: false, notes, updatedAt,
+    waterGlasses: null, steps: null, alcohol: false, notes, startedAt: null, updatedAt,
   };
 }
 

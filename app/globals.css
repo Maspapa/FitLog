@@ -128,6 +128,10 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
 .plan-day > header p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.6; }
 .plan-day > header button { flex: 0 0 auto; border: 0; border-radius: 12px; background: var(--yellow); color: var(--indigo-deep); padding: 14px 17px; font-size: 12px; font-weight: 900; box-shadow: 0 7px 18px rgba(255,214,10,.22); }
 .plan-day > header button:hover { transform: translateY(-1px); box-shadow: 0 10px 23px rgba(255,214,10,.32); }
+.plan-day > header .plan-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 10px; }
+.plan-day > header .plan-actions .plan-start-time { color: var(--muted); font: 700 11px ui-monospace, monospace; letter-spacing: .04em; white-space: nowrap; }
+.plan-day > header .plan-actions .plan-add-all { border: 1px solid rgba(30,36,86,.16); background: white; color: var(--indigo); box-shadow: none; }
+.plan-day > header .plan-actions .plan-add-all:hover { border-color: var(--ultramarine); box-shadow: none; }
 
 .plan-phase { padding: 32px 34px 38px; border-bottom: 1px solid var(--line); }
 .phase-heading { display: grid; grid-template-columns: 45px 1fr auto; gap: 14px; align-items: center; margin-bottom: 18px; }
@@ -229,7 +233,7 @@ footer { padding: 38px 5vw; border-top: 1px solid var(--line); background: white
   .editor-section, .insights-section, .logbook { padding: 44px 15px; }.section-title { margin-bottom: 20px; }.section-title h2 { font-size: 27px; }.entry-card { padding: 24px 18px; border-radius: 15px; }.measure-grid { gap: 10px; }.workout-row { grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--line); padding-top: 10px; }.workout-name { grid-column: 1 / 3; }.workout-row label { grid-row: 2; }.workout-row select { grid-column: 1 / -1; grid-row: 3; }.remove-button { grid-column: 3; grid-row: 1; justify-self: end; }.duration-field { grid-column: 1 / -1; }.card-heading button { margin-right: 38px; padding: 10px; }
   .chart-card, .coach-card { padding: 22px; min-height: 380px; border-radius: 20px; }.report-lead, .report-columns { grid-template-columns: 1fr; }.report-lead p { margin-top: 20px; }.report-columns article { grid-template-columns: 1fr; }.report-columns article p { grid-column: 1; }.next-focus { grid-template-columns: 1fr; }.coach-report { padding: 25px 18px; border-radius: 20px; }.log-list button { grid-template-columns: 65px 1fr 65px; gap: 10px; padding: 17px 4px; font-size: 12px; } footer { gap: 20px; align-items: flex-start; } footer span { text-align: right; }
   .plan-section { padding: 60px 15px 72px; }.plan-principles { grid-template-columns: 1fr; }.plan-principles > div { min-height: 0; border-right: 0; border-bottom: 1px solid var(--line); }.plan-principles > div:nth-child(2) { border-bottom: 1px solid var(--line); }
-  .day-tabs { grid-template-columns: 1fr; }.day-tabs button { min-height: 82px; }.plan-day > header { padding: 24px 19px; align-items: stretch; flex-direction: column; }.plan-day > header button { width: 100%; }
+  .day-tabs { grid-template-columns: 1fr; }.day-tabs button { min-height: 82px; }.plan-day > header { padding: 24px 19px; align-items: stretch; flex-direction: column; }.plan-day > header button { width: 100%; }.plan-day > header .plan-actions { width: 100%; justify-content: flex-start; }
   .plan-phase { padding: 25px 17px 29px; }.phase-heading { grid-template-columns: 42px 1fr; }.phase-heading > span { display: none; }
   .exercise-summary { min-height: 84px; padding: 11px 3px; grid-template-columns: 30px minmax(0,1fr) 25px; gap: 8px; }.exercise-summary > b { grid-column: 2; }.exercise-summary > em { display: none; }.exercise-summary > i { grid-column: 3; grid-row: 1 / 3; }.exercise-name small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .exercise-card.open .exercise-summary { padding-left: 10px; padding-right: 10px; }.exercise-detail { padding: 17px 12px 22px; gap: 18px; }.detail-actions { grid-template-columns: 1fr; }.detail-actions > button { min-height: 42px; }.plan-footer { padding: 23px 19px; }
@@ -289,6 +293,7 @@ footer { padding: 38px 5vw; border-top: 1px solid var(--line); background: white
 .plan-day > header { padding: 12px 16px; gap: 12px; flex-direction: row; align-items: center; }
 .plan-day > header .plan-help { margin: 4px 0 0; }
 .plan-day > header button { width: auto; padding: 10px 12px; min-height: 40px; box-shadow: none; }
+.plan-day > header .plan-actions { gap: 8px; }
 .plan-phase { padding: 16px; }
 .phase-heading { grid-template-columns: 1fr auto; gap: 8px; margin-bottom: 8px; }
 .phase-heading > b { display: none; }

@@ -9,6 +9,7 @@ import { PHASE_LABELS, TRAINING_DAYS, type PlanExercise, type TrainingDay, type 
 import type { DailyLog } from "@/lib/schemas";
 import { lastWorkout, planFromLastSession, workoutSummary, workoutFromPlan, type WorkoutNumbers } from "@/lib/workout-history";
 import { dateKey } from "@/lib/metrics";
+import { formatStartTime } from "@/lib/training-session";
 
 const PHASES: TrainingPhase[] = ["warmup", "main", "stretch"];
 const ROLE_LABELS = { primary: "主练", secondary: "副练", accessory: "辅助" };
@@ -51,13 +52,14 @@ function ExerciseCard({ item, index, open, onToggle, onAdd, previous, added, sav
   </article>;
 }
 
-export function TrainingPlan({ selectedDate, logs, saving, onAddExercises }: { selectedDate: string; logs: DailyLog[]; saving: boolean; onAddExercises: (items: PlanExercise[], day: TrainingDay, values?: Record<string, WorkoutNumbers>) => Promise<boolean> }) {
+export function TrainingPlan({ selectedDate, logs, saving, startedAt, onStartTraining, onAddExercises }: { selectedDate: string; logs: DailyLog[]; saving: boolean; startedAt: string | null; onStartTraining: () => void | Promise<void>; onAddExercises: (items: PlanExercise[], day: TrainingDay, values?: Record<string, WorkoutNumbers>) => Promise<boolean> }) {
   const [dayId, setDayId] = useState<TrainingDay["id"]>(() => suggestedDay(selectedDate));
   const [openId, setOpenId] = useState<string | null>(null);
   const [alternativesOpen, setAlternativesOpen] = useState(false);
   const [drafts, setDrafts] = useState<Record<string, WorkoutNumbers>>({});
   const day = useMemo(() => TRAINING_DAYS.find((item) => item.id === dayId) || TRAINING_DAYS[0], [dayId]);
   const today = dateKey();
+  const isToday = selectedDate === today;
   const todayNames = new Set(logs.find((log) => log.date === today)?.workouts.map((item) => item.name.trim()) ?? []);
   async function saveItems(items: PlanExercise[]) {
     for (const item of items) {
@@ -87,7 +89,13 @@ export function TrainingPlan({ selectedDate, logs, saving, onAddExercises }: { s
       </div>
 
       <article className="plan-day">
-        <header><div><span>{personalized.date ? `按上次 ${personalized.date} 训练` : day.duration}</span>{!personalized.date && <details className="plan-help"><summary>安排说明</summary><p>{day.summary}</p></details>}</div><button type="button" disabled={saving} onClick={() => void saveItems(mainExercises)}>＋ 全部加入今天</button></header>
+        <header><div><span>{personalized.date ? `按上次 ${personalized.date} 训练` : day.duration}</span>{!personalized.date && <details className="plan-help"><summary>安排说明</summary><p>{day.summary}</p></details>}</div>
+          <div className="plan-actions">
+            {isToday && <span className="plan-start-time" role="status">{startedAt ? `${formatStartTime(startedAt)} 开始训练` : "还没记录开始时间"}</span>}
+            {isToday && <button className="plan-start" type="button" disabled={saving} onClick={() => void onStartTraining()}>{startedAt ? "更新开始时间" : "开始训练"}</button>}
+            <button className="plan-add-all" type="button" disabled={saving} onClick={() => void saveItems(mainExercises)}>＋ 全部加入今天</button>
+          </div>
+        </header>
         {PHASES.map((phase, phaseIndex) => {
           const items = phase === "main" ? mainExercises : day.exercises.filter((item) => item.phase === phase);
           return <section className={`plan-phase phase-${phase}`} key={phase}>

@@ -33,6 +33,8 @@ export const DailyLogSchema = z.object({
   steps: z.number().int().min(0).max(200000).nullable(),
   alcohol: z.boolean(),
   notes: z.string().max(800),
+  // 训练开始时刻，只记录时间点，不记录结束时间；旧记录没有该字段时按未记录处理。
+  startedAt: z.string().max(40).nullable().default(null),
   updatedAt: z.string(),
 });
 

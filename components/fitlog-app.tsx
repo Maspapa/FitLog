@@ -8,6 +8,7 @@ import { TrendChart } from "./trend-chart";
 import { calculateStreak, dateKey, latestMeasurement, recentLogs, weightAverage, workoutsThisWeek } from "@/lib/metrics";
 import { createData, exportData, getOrCreateDeviceToken, importData, loadData, saveData, upsertLog } from "@/lib/storage";
 import { mergePlanWorkouts, type WorkoutNumbers } from "@/lib/workout-history";
+import { formatStartTime, recordTrainingStart } from "@/lib/training-session";
 import type { AiReport, DailyLog, FitData, Goal } from "@/lib/schemas";
 import type { PlanExercise, TrainingDay } from "@/lib/training-plan";
 
@@ -38,6 +39,7 @@ export function FitLogApp() {
   const selectedLog = useMemo(() => data.logs.find((log) => log.date === selectedDate) || freshLog(selectedDate), [data.logs, selectedDate]);
   const last14 = useMemo(() => recentLogs(data.logs, 14), [data.logs]);
   const stats = useMemo(() => ({ average: weightAverage(data.logs), waist: latestMeasurement(data.logs, "waist"), workouts: workoutsThisWeek(data.logs), streak: calculateStreak(data.logs) }), [data.logs]);
+  const startedAt = useMemo(() => data.logs.find((log) => log.date === dateKey())?.startedAt ?? null, [data.logs]);
 
   async function persist(next: FitData, successMessage = "记录已保存到服务器") {
     setData(next);
@@ -63,6 +65,20 @@ export function FitLogApp() {
       setMessage(`已保存今天的${items.length === 1 ? items[0].name : day.title}记录`);
       return true;
     } catch (error) { setMessage(error instanceof Error ? error.message : "保存失败，请重试"); return false; }
+    finally { addingRef.current = false; setAdding(false); }
+  }
+  async function startTraining() {
+    if (addingRef.current) return;
+    const today = dateKey();
+    const todayLog = (draftRef.current?.date === today ? draftRef.current : data.logs.find((log) => log.date === today)) || freshLog(today);
+    const nextLog = recordTrainingStart(todayLog);
+    addingRef.current = true; setAdding(true);
+    try {
+      const saved = await saveData(tokenRef.current, upsertLog(data, nextLog));
+      setData(saved);
+      if (selectedDate === today) { draftRef.current = saved.logs.find((log) => log.date === today) ?? nextLog; setEditorKey((key) => key + 1); }
+      setMessage(`${formatStartTime(nextLog.startedAt)} 已记录开始训练`);
+    } catch (error) { setMessage(error instanceof Error ? error.message : "记录开始训练时间失败，请重试"); }
     finally { addingRef.current = false; setAdding(false); }
   }
   function changeDate(value: string) { draftRef.current = null; setSelectedDate(value); setEditorKey((key) => key + 1); }
@@ -102,7 +118,7 @@ export function FitLogApp() {
 
     <DailyEditor key={`${selectedDate}-${editorKey}`} initial={selectedLog} onDraftChange={(log) => { draftRef.current = log; }} onSave={saveLog} />
 
-    <TrainingPlan selectedDate={selectedDate} logs={data.logs} saving={adding} onAddExercises={addPlanExercises} />
+    <TrainingPlan selectedDate={selectedDate} logs={data.logs} saving={adding} startedAt={startedAt} onStartTraining={startTraining} onAddExercises={addPlanExercises} />
 
     <details className="compact-disclosure"><summary>趋势与 AI 复盘</summary><section className="insights-section">
       <div className="insight-grid"><article className="chart-card"><div><span>最近30次记录</span><h3>体重趋势</h3></div><TrendChart logs={data.logs} /></article>
