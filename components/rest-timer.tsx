@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useId, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
-import { adjustRestTime, clampTimerPosition, parseTimerPosition, remainingSeconds, clampTimerForActions, satellitePositions, type TimerPoint, type TimerViewport } from "@/lib/rest-timer";
+import { adjustRestTime, clampTimerForActions, clampTimerPosition, parseTimerPosition, remainingSeconds, satellitePositions, shouldAutoStart, type TimerPoint, type TimerViewport } from "@/lib/rest-timer";
 
 const POSITION_KEY = "fitlog.rest-timer.position";
 
@@ -31,6 +31,9 @@ export function RestTimer() {
   const container = useRef<HTMLElement>(null);
   const bubble = useRef<HTMLButtonElement>(null);
   const actionsId = useId();
+  const collapseRef = useRef<() => void>(() => {});
+  const startRef = useRef<() => void>(() => {});
+  const freshRef = useRef(false);
 
   useEffect(() => {
     let stored: TimerPoint | null = null;
@@ -55,12 +58,24 @@ export function RestTimer() {
   }, []);
 
   useEffect(() => {
+    freshRef.current = shouldAutoStart({ done, running, remaining, duration });
+    startRef.current = startTimer;
+    collapseRef.current = collapse;
+  });
+
+  useEffect(() => {
     if (!expanded) return;
     function dismiss(event: PointerEvent) {
-      if (event.target instanceof Node && !container.current?.contains(event.target)) setExpanded(false);
+      if (event.target instanceof Node && !container.current?.contains(event.target)) collapseRef.current();
     }
     function escape(event: KeyboardEvent) {
-      if (event.key === "Escape") { setExpanded(false); bubble.current?.focus(); }
+      if (event.key === "Escape") { collapseRef.current(); bubble.current?.focus(); }
+    }
+    function autoStartOnBlur() {
+      if (freshRef.current) startRef.current();
+    }
+    function onVisibilityChange() {
+      if (document.hidden) autoStartOnBlur();
     }
     function keepRingVisible() {
       const bounds = currentViewport();
@@ -71,11 +86,15 @@ export function RestTimer() {
     }
     document.addEventListener("pointerdown", dismiss);
     document.addEventListener("keydown", escape);
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    window.addEventListener("blur", autoStartOnBlur);
     window.addEventListener("resize", keepRingVisible);
     window.visualViewport?.addEventListener("resize", keepRingVisible);
     return () => {
       document.removeEventListener("pointerdown", dismiss);
       document.removeEventListener("keydown", escape);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      window.removeEventListener("blur", autoStartOnBlur);
       window.removeEventListener("resize", keepRingVisible);
       window.visualViewport?.removeEventListener("resize", keepRingVisible);
     };
@@ -159,6 +178,16 @@ export function RestTimer() {
     if (next.done) finish();
   }
 
+  function startTimer() {
+    const seconds = done ? duration : remaining;
+    if (seconds <= 0) return;
+    setRemaining(seconds);
+    setDone(false);
+    setVibrationUnavailable(typeof navigator.vibrate !== "function");
+    deadline.current = Date.now() + seconds * 1000;
+    setRunning(true);
+  }
+
   function toggle() {
     if (running && deadline.current !== null) {
       const seconds = remainingSeconds(deadline.current);
@@ -166,14 +195,15 @@ export function RestTimer() {
       deadline.current = null;
       setRemaining(seconds);
       setRunning(false);
-    } else {
-      const seconds = done ? duration : remaining;
-      setRemaining(seconds);
-      setDone(false);
-      setVibrationUnavailable(typeof navigator.vibrate !== "function");
-      deadline.current = Date.now() + seconds * 1000;
-      setRunning(true);
+      return;
     }
+    startTimer();
+  }
+
+  /** 一次都没开始过时收起面板，视为“开始练了”，直接开表。 */
+  function collapse() {
+    setExpanded(false);
+    if (shouldAutoStart({ done, running, remaining, duration })) startTimer();
   }
 
   const time = `${String(Math.floor(remaining / 60)).padStart(2, "0")}:${String(remaining % 60).padStart(2, "0")}`;
@@ -185,7 +215,7 @@ export function RestTimer() {
       onPointerDown={startDrag} onPointerMove={moveDrag} onPointerUp={endDrag} onPointerCancel={endDrag} onLostPointerCapture={endDrag}
       onClick={(event) => {
         if (suppressClick.current && event.detail !== 0) { suppressClick.current = false; return; }
-        if (expanded) { setExpanded(false); return; }
+        if (expanded) { collapse(); return; }
         const point = clampTimerForActions(positionRef.current ?? { x: 0, y: 0 }, currentViewport());
         positionRef.current = point; setPosition(point); rememberPosition(point);
         setExpanded(true);

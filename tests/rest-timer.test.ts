@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { RestTimer } from "../components/rest-timer";
-import { adjustRestTime, clampTimerForActions, clampTimerPosition, parseTimerPosition, remainingSeconds, satellitePositions, TIMER_ACTION_SIZE, TIMER_BUBBLE_SIZE, TIMER_RING_INSET } from "../lib/rest-timer";
+import { adjustRestTime, clampTimerForActions, clampTimerPosition, parseTimerPosition, remainingSeconds, satellitePositions, shouldAutoStart, TIMER_ACTION_SIZE, TIMER_BUBBLE_SIZE, TIMER_RING_INSET } from "../lib/rest-timer";
 
 describe("rest timer deadline", () => {
   it("counts full and partial seconds without ending early", () => {
@@ -48,6 +48,20 @@ describe("adjustable rest duration", () => {
   it("prepares a new duration after completion without automatically starting", () => {
     expect(adjustRestTime({ ...idle, remaining: 0, done: true }, 30, 0))
       .toEqual({ duration: 90, remaining: 90, deadline: null, done: false });
+  });
+});
+
+describe("auto start on collapse", () => {
+  const fresh = { done: false, running: false, remaining: 60, duration: 60 };
+  it("starts only a timer that was never started", () => {
+    expect(shouldAutoStart(fresh)).toBe(true);
+    expect(shouldAutoStart({ ...fresh, remaining: 90, duration: 90 })).toBe(true);
+  });
+  it("leaves a running, paused or finished timer alone", () => {
+    expect(shouldAutoStart({ ...fresh, running: true })).toBe(false);
+    expect(shouldAutoStart({ ...fresh, remaining: 30 })).toBe(false);
+    expect(shouldAutoStart({ ...fresh, done: true, remaining: 0 })).toBe(false);
+    expect(shouldAutoStart({ ...fresh, remaining: 0, duration: 0 })).toBe(false);
   });
 });
 

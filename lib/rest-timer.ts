@@ -82,3 +82,8 @@ export function satellitePositions(center: TimerPoint, viewport: TimerViewport):
     start: place(offset, offset),
   };
 }
+
+/** 展开操作面板后如果一次都没开始过，收起或失焦时自动开始，省掉再点一次。 */
+export function shouldAutoStart(state: { done: boolean; running: boolean; remaining: number; duration: number }): boolean {
+  return !state.done && !state.running && state.remaining > 0 && state.remaining === state.duration;
+}
