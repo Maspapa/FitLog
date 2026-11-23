@@ -9,10 +9,9 @@ function shortDate(date: string) { return date.slice(5).replace("-", "/"); }
 
 export type CarriedMeasurement = { value: number; date: string } | null;
 
-export function DailyEditor({ initial, carried, focusId, onDraftChange, onSave }: {
+export function DailyEditor({ initial, carried, onDraftChange, onSave }: {
   initial: DailyLog;
   carried?: { weight: CarriedMeasurement; waist: CarriedMeasurement };
-  focusId?: string | null;
   onDraftChange: (log: DailyLog) => void;
   onSave: (log: DailyLog) => void;
 }) {
@@ -25,22 +24,16 @@ export function DailyEditor({ initial, carried, focusId, onDraftChange, onSave }
   const [pendingFocus, setPendingFocus] = useState<string | null>(null);
   const rows = useRef(new Map<string, HTMLDivElement>());
   const lastFocused = useRef<string | null>(null);
-  const focusTarget = pendingFocus ?? focusId ?? null;
 
   useEffect(() => {
-    if (!focusTarget || lastFocused.current === focusTarget) return;
-    const row = rows.current.get(focusTarget);
+    if (!pendingFocus || lastFocused.current === pendingFocus) return;
+    const row = rows.current.get(pendingFocus);
     if (!row) return;
-    lastFocused.current = focusTarget;
-    // 只有手动新增的空行才聚焦；从计划加入的动作只滚到可见位置，
-    // 避免程序化聚焦让移动端输入法“锁”在输入框上关不掉。
+    lastFocused.current = pendingFocus;
+    // 只有手动「＋ 添加」的空行才聚焦名称框；从计划加入既有动作时页面完全不动。
     const nameInput = row.querySelector<HTMLInputElement>("input.workout-name");
-    if (!nameInput || nameInput.value.trim()) {
-      row.scrollIntoView({ block: "center", behavior: "smooth" });
-      return;
-    }
-    if (document.activeElement !== nameInput) nameInput.focus();
-  }, [focusTarget, log.workouts.length]);
+    if (nameInput && document.activeElement !== nameInput) nameInput.focus();
+  }, [pendingFocus, log.workouts.length]);
 
   function field<K extends keyof DailyLog>(key: K, value: DailyLog[K]) {
     if (key === "weight" || key === "waist") setTouched((current) => ({ ...current, [key]: true }));

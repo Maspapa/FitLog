@@ -41,7 +41,6 @@ export function FitLogApp() {
   const last14 = useMemo(() => recentLogs(data.logs, 14), [data.logs]);
   const latestWeight = useMemo(() => latestMeasurementEntry(data.logs, "weight"), [data.logs]);
   const latestWaist = useMemo(() => latestMeasurementEntry(data.logs, "waist"), [data.logs]);
-  const [focusWorkout, setFocusWorkout] = useState<string | null>(null);
   useEffect(() => {
     function dismissKeyboard(event: PointerEvent) {
       const active = document.activeElement;
@@ -55,11 +54,6 @@ export function FitLogApp() {
       document.removeEventListener("touchstart", dismissKeyboard as unknown as EventListener);
     };
   }, []);
-  useEffect(() => {
-    if (!focusWorkout) return;
-    const timer = window.setTimeout(() => setFocusWorkout(null), 600);
-    return () => window.clearTimeout(timer);
-  }, [focusWorkout]);
   const startedAt = useMemo(() => data.logs.find((log) => log.date === dateKey())?.startedAt ?? null, [data.logs]);
 
   async function persist(next: FitData, successMessage = "记录已保存到服务器") {
@@ -80,7 +74,6 @@ export function FitLogApp() {
     const nextLog = { ...todayLog, workouts, updatedAt: new Date().toISOString() };
     const next = upsertLog(data, nextLog);
     try {
-      const before = new Set((data.logs.find((log) => log.date === today)?.workouts ?? []).map((item) => item.id));
       const saved = await saveData(tokenRef.current, next);
       setData(saved);
       if (selectedDate === today) {
@@ -89,7 +82,6 @@ export function FitLogApp() {
         // 重挂载编辑器前先收起键盘，避免输入法还挂在被替换掉的输入框上。
         (document.activeElement as HTMLElement | null)?.blur?.();
         setEditorKey((key) => key + 1);
-        setFocusWorkout(savedToday.workouts.find((item) => !before.has(item.id))?.id ?? null);
       }
       setMessage(`已保存今天的${items.length === 1 ? items[0].name : day.title}记录`);
       return true;
@@ -138,7 +130,7 @@ export function FitLogApp() {
       <div className="date-control"><button type="button" onClick={() => { const date = new Date(`${selectedDate}T12:00:00`); date.setDate(date.getDate()-1); changeDate(dateKey(date)); }}>←</button><input aria-label="打卡日期" type="date" max={dateKey()} value={selectedDate} onChange={(e) => changeDate(e.target.value)} /><button type="button" disabled={selectedDate === dateKey()} onClick={() => { const date = new Date(`${selectedDate}T12:00:00`); date.setDate(date.getDate()+1); changeDate(dateKey(date)); }}>→</button></div>
     </header>
 
-    <DailyEditor key={`${selectedDate}-${editorKey}`} initial={selectedLog} carried={{ weight: latestWeight, waist: latestWaist }} focusId={focusWorkout} onDraftChange={(log) => { draftRef.current = log; }} onSave={saveLog} />
+    <DailyEditor key={`${selectedDate}-${editorKey}`} initial={selectedLog} carried={{ weight: latestWeight, waist: latestWaist }} onDraftChange={(log) => { draftRef.current = log; }} onSave={saveLog} />
 
     <TrainingPlan selectedDate={selectedDate} logs={data.logs} saving={adding} startedAt={startedAt} onStartTraining={startTraining} onAddExercises={addPlanExercises} />
 
