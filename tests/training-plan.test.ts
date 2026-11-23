@@ -41,7 +41,7 @@ describe("beginner training plan", () => {
   });
   it("keeps agreed working volume and movement-specific warmups", () => {
     expect(TRAINING_DAYS.map((day) => day.exercises.filter((item) => item.phase === "main").length)).toEqual([5, 5, 5]);
-    expect(TRAINING_DAYS.map((day) => day.exercises.filter((item) => item.phase === "main").reduce((sum, item) => sum + (item.log?.sets ?? 0), 0))).toEqual([13, 15, 15]);
+    expect(TRAINING_DAYS.map((day) => day.exercises.filter((item) => item.phase === "main").reduce((sum, item) => sum + (item.log?.sets ?? 0), 0))).toEqual([13, 14, 15]);
     for (const day of TRAINING_DAYS) {
       const first = day.exercises.find((item) => item.phase === "main")!;
       const warmupName = first.englishName === "Pull-up" ? "Lat pulldown" : first.englishName;
@@ -64,7 +64,7 @@ describe("beginner training plan", () => {
       "m-smith-bench", "m-incline-push", "m-db-lateral", "m-alt-triceps-machine", "m-reverse-crunch",
     ]);
     expect(wednesday.exercises.filter((item) => item.phase === "main").map((item) => item.id)).toEqual([
-      "w-alt-smith-squat", "w-hip-thrust", "w-leg-curl", "w-abduction", "w-alt-adduction",
+      "w-alt-smith-squat", "w-db-rdl", "w-hip-thrust", "w-leg-curl", "w-calf-raise",
     ]);
     expect(monday.alternatives.some((item) => item.id === "m-photo-fly")).toBe(true);
     expect(monday.alternatives.some((item) => item.id === "m-cable-chest-press")).toBe(true);
@@ -75,8 +75,8 @@ describe("beginner training plan", () => {
       expect(day.alternatives.filter((item) => item.phase === "main").every((item) => ["primary", "secondary", "accessory"].includes(item.role ?? ""))).toBe(true);
       expect(day.alternatives.filter((item) => item.phase !== "main").every((item) => !item.role)).toBe(true);
       for (const item of day.exercises.filter((item) => item.phase === "main")) {
-        expect([2, 3]).toContain(item.log?.sets);
-        expect(item.rest).toMatch(/2–3 分钟|90–120 秒/);
+        expect([2, 3, 4]).toContain(item.log?.sets);
+        expect(item.rest).toMatch(/2–3 分钟|90–120 秒|60–90 秒/);
       }
     }
     expect(buildCoachPrompt("fat_loss", [])).toContain("周一 13 组");
@@ -177,7 +177,7 @@ describe("beginner training plan", () => {
       expect(["https://www.lyfta.app", "https://shop.lifefitness.com"]).toContain(url.origin);
       expect(url.pathname).toMatch(/^\/(exercise|products)\/[a-z0-9-]+$/);
       const media = lyftaExerciseMedia(item.englishName);
-      if (!["Smith incline push-up", "Reverse crunch", "D.Y. row"].includes(item.englishName)) {
+      if (!["Smith incline push-up", "Reverse crunch", "Smith standing leg calf raise", "D.Y. row"].includes(item.englishName)) {
         expect(media.video || media.poster, item.englishName).toBeTruthy();
       }
       if (media.video) {

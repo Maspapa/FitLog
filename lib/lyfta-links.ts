@@ -76,6 +76,10 @@ const EXERCISE_MEDIA: Record<string, LyftaExerciseMedia> = {
     "page": "https://www.lyfta.app/exercise/reverse-crunch-6rd",
     "source": "Lyfta"
   },
+  "Smith standing leg calf raise": {
+    "page": "https://www.lyfta.app/exercise/smith-standing-leg-calf-raise-6ux",
+    "source": "Lyfta"
+  },
   "Doorway chest stretch": {
     "page": "https://www.lyfta.app/exercise/doorway-chest-stretch-male-qxq",
     "source": "Lyfta",
