@@ -353,8 +353,6 @@ body { padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
 .rest-timer .rest-timer-actions button { position: fixed; z-index: 101; display: grid; place-items: center; width: 44px; height: 44px; min-height: 44px; padding: 0; border: 1px solid var(--line); border-radius: 50%; background: #fff; color: var(--indigo-deep, #24246a); font-size: 12px; font-weight: 800; letter-spacing: -.02em; box-shadow: 0 6px 18px #24246a26; }
 .rest-timer .rest-timer-actions button:disabled { opacity: .35; cursor: default; }
 .rest-timer .rest-timer-actions .rest-timer-action-reset { background: #eef1ff; font-size: 11px; }
-.rest-timer .rest-timer-actions .rest-timer-action-start { border-color: transparent; background: var(--ultramarine, #3545bd); color: #fff; }
-.rest-timer-done .rest-timer-actions .rest-timer-action-start { background: var(--indigo, #24246a); }
 .rest-timer button:focus-visible { outline: 2px solid var(--ultramarine, #3545bd); outline-offset: 2px; }
 .rest-timer .rest-timer-bubble { position: relative; display: grid; place-items: center; width: 56px; height: 56px; min-height: 56px; padding: 0; border: 0; border-radius: 50%; background: var(--ultramarine, #3545bd); color: #fff; box-shadow: 0 4px 18px #24246a30; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; }
 .rest-timer-dragging .rest-timer-bubble { cursor: grabbing; box-shadow: 0 6px 24px #24246a50; }

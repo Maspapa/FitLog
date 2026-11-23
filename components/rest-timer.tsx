@@ -188,17 +188,6 @@ export function RestTimer() {
     setRunning(true);
   }
 
-  function toggle() {
-    if (running && deadline.current !== null) {
-      const seconds = remainingSeconds(deadline.current);
-      if (seconds === 0) { finish(); return; }
-      deadline.current = null;
-      setRemaining(seconds);
-      setRunning(false);
-      return;
-    }
-    startTimer();
-  }
 
   /** 一次都没开始过时收起面板，视为“开始练了”，直接开表。 */
   function collapse() {
@@ -208,8 +197,7 @@ export function RestTimer() {
 
   const time = `${String(Math.floor(remaining / 60)).padStart(2, "0")}:${String(remaining % 60).padStart(2, "0")}`;
   const actions = position && viewport ? satellitePositions(position, viewport) : null;
-  const actionStyle = (key: "minus" | "plus" | "reset" | "start") => actions ? { left: actions[key].x, top: actions[key].y } : undefined;
-  const startLabel = running ? "暂停" : done ? "再来" : remaining < duration ? "继续" : "开始";
+  const actionStyle = (key: "minus" | "plus" | "reset") => actions ? { left: actions[key].x, top: actions[key].y } : undefined;
   return <aside ref={container} className={`rest-timer${done ? " rest-timer-done" : ""}${running ? " rest-timer-running" : ""}${dragging ? " rest-timer-dragging" : ""}`} aria-label="组间休息计时器" style={position ? { left: position.x, top: position.y, right: "auto", bottom: "auto" } : undefined}>
     <button ref={bubble} type="button" className="rest-timer-bubble" aria-label={`${expanded ? "收起" : "展开"}休息计时器，${done ? "休息结束" : `剩余 ${time}`}`} aria-expanded={expanded} aria-controls={actionsId} title="点击展开，拖动移动位置；方向键也可移动"
       onPointerDown={startDrag} onPointerMove={moveDrag} onPointerUp={endDrag} onPointerCancel={endDrag} onLostPointerCapture={endDrag}
@@ -237,7 +225,6 @@ export function RestTimer() {
       <button type="button" className="rest-timer-action rest-timer-action-minus" style={actionStyle("minus")} aria-label="减少30秒" disabled={duration <= 30} onClick={() => adjustTime(-30)}>−30s</button>
       <button type="button" className="rest-timer-action rest-timer-action-plus" style={actionStyle("plus")} aria-label="增加30秒" onClick={() => adjustTime(30)}>+30s</button>
       <button type="button" className="rest-timer-action rest-timer-action-reset" style={actionStyle("reset")} aria-label="重置休息计时器" onClick={() => reset()}>重置</button>
-      <button type="button" className="rest-timer-action rest-timer-action-start" style={actionStyle("start")} aria-label={running ? "暂停计时" : "开始计时"} onClick={toggle}>{startLabel}</button>
     </div>}
   </aside>;
 }
