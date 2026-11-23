@@ -50,12 +50,12 @@ main { min-height: 100vh; overflow: hidden; background: var(--paper); }
 .date-control button:disabled { color: #bdc6dc; cursor: default; }
 .date-control input { height: 47px; border: 0; border-left: 1px solid var(--line); border-right: 1px solid var(--line); background: transparent; color: var(--ink); padding: 0 15px; font: 750 13px ui-monospace, monospace; outline: 0; }
 
-.latest-metrics { display: flex; align-items: center; gap: 22px; margin: 0 20px 12px; padding: 12px 16px; border: 1px solid var(--line); border-radius: 10px; background: white; }
-.latest-metrics > span { display: inline-flex; align-items: baseline; gap: 5px; }
-.latest-metrics i { font-style: normal; color: var(--muted); font-size: 12px; }
-.latest-metrics b { color: var(--indigo-deep); font-size: 21px; font-weight: 650; font-variant-numeric: tabular-nums; }
-.latest-metrics em { font-style: normal; color: var(--indigo); font-size: 11px; font-weight: 800; }
-.latest-metrics small { color: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+
+
+
+
+
+
 
 .quick-nav { margin: 28px 5vw 0; padding: 10px; display: flex; align-items: center; gap: 8px; border: 1px solid var(--line); border-radius: 14px; background: white; }
 .quick-nav > span { padding: 0 12px; color: var(--muted); font-size: 12px; font-weight: 750; }
@@ -80,7 +80,7 @@ main { min-height: 100vh; overflow: hidden; background: var(--paper); }
 .hint { color: var(--muted); font-size: 11px; line-height: 1.5; }
 
 .measure-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.measure-grid label > span, .meal-grid label > span { display: block; color: var(--muted); font-size: 11px; font-weight: 800; margin-bottom: 7px; }
+.measure-grid label > span, .meal-grid label > span { display: block; color: var(--muted); font-size: 11px; font-weight: 800; margin-bottom: 7px; }.measure-grid label > span small { margin-left: 6px; color: var(--muted); font-weight: 600; letter-spacing: 0; }
 .measure-grid label > div { height: 85px; border-bottom: 2px solid rgba(79,70,229,.25); display: flex; align-items: baseline; }
 .measure-grid label > div:focus-within { border-color: var(--indigo); }
 .measure-grid input { width: 100%; border: 0; background: transparent; outline: 0; color: var(--indigo-deep); font: 400 43px Georgia, serif; min-width: 0; }
@@ -129,8 +129,8 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
 .plan-day > header button:hover { transform: translateY(-1px); box-shadow: 0 10px 23px rgba(255,214,10,.32); }
 .plan-day > header .plan-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 10px; }
 .plan-day > header .plan-actions .plan-start-time { color: var(--muted); font: 700 11px ui-monospace, monospace; letter-spacing: .04em; white-space: nowrap; }
-.plan-day > header .plan-actions .plan-add-all { border: 1px solid rgba(30,36,86,.16); background: white; color: var(--indigo); box-shadow: none; }
-.plan-day > header .plan-actions .plan-add-all:hover { border-color: var(--ultramarine); box-shadow: none; }
+
+
 
 .plan-phase { padding: 32px 34px 38px; border-bottom: 1px solid var(--line); }
 .phase-heading { display: grid; grid-template-columns: 45px 1fr auto; gap: 14px; align-items: center; margin-bottom: 18px; }

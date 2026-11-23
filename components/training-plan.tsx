@@ -93,7 +93,6 @@ export function TrainingPlan({ selectedDate, logs, saving, startedAt, onStartTra
           <div className="plan-actions">
             {isToday && <span className="plan-start-time" role="status">{startedAt ? `${formatStartTime(startedAt)} 开始训练` : "还没记录开始时间"}</span>}
             {isToday && <button className="plan-start" type="button" disabled={saving} onClick={() => void onStartTraining()}>{startedAt ? "更新开始时间" : "开始训练"}</button>}
-            <button className="plan-add-all" type="button" disabled={saving} onClick={() => void saveItems(mainExercises)}>＋ 全部加入今天</button>
           </div>
         </header>
         {PHASES.map((phase, phaseIndex) => {

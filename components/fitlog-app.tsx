@@ -5,7 +5,7 @@ import { DailyEditor, freshLog } from "./daily-editor";
 import { CoachReport } from "./coach-report";
 import { TrainingPlan } from "./training-plan";
 import { TrendChart } from "./trend-chart";
-import { dateKey, formatMeasurement, latestMeasurementEntry, recentLogs } from "@/lib/metrics";
+import { dateKey, latestMeasurementEntry, recentLogs } from "@/lib/metrics";
 import { createData, exportData, getOrCreateDeviceToken, importData, loadData, saveData, upsertLog } from "@/lib/storage";
 import { mergePlanWorkouts, type WorkoutNumbers } from "@/lib/workout-history";
 import { formatStartTime, recordTrainingStart } from "@/lib/training-session";
@@ -40,6 +40,12 @@ export function FitLogApp() {
   const last14 = useMemo(() => recentLogs(data.logs, 14), [data.logs]);
   const latestWeight = useMemo(() => latestMeasurementEntry(data.logs, "weight"), [data.logs]);
   const latestWaist = useMemo(() => latestMeasurementEntry(data.logs, "waist"), [data.logs]);
+  const [focusWorkout, setFocusWorkout] = useState<string | null>(null);
+  useEffect(() => {
+    if (!focusWorkout) return;
+    const timer = window.setTimeout(() => setFocusWorkout(null), 600);
+    return () => window.clearTimeout(timer);
+  }, [focusWorkout]);
   const startedAt = useMemo(() => data.logs.find((log) => log.date === dateKey())?.startedAt ?? null, [data.logs]);
 
   async function persist(next: FitData, successMessage = "记录已保存到服务器") {
@@ -60,9 +66,15 @@ export function FitLogApp() {
     const nextLog = { ...todayLog, workouts, updatedAt: new Date().toISOString() };
     const next = upsertLog(data, nextLog);
     try {
+      const before = new Set((data.logs.find((log) => log.date === today)?.workouts ?? []).map((item) => item.id));
       const saved = await saveData(tokenRef.current, next);
       setData(saved);
-      if (selectedDate === today) { draftRef.current = saved.logs.find((log) => log.date === today) ?? nextLog; setEditorKey((key) => key + 1); }
+      if (selectedDate === today) {
+        const savedToday = saved.logs.find((log) => log.date === today) ?? nextLog;
+        draftRef.current = savedToday;
+        setEditorKey((key) => key + 1);
+        setFocusWorkout(savedToday.workouts.find((item) => !before.has(item.id))?.id ?? null);
+      }
       setMessage(`已保存今天的${items.length === 1 ? items[0].name : day.title}记录`);
       return true;
     } catch (error) { setMessage(error instanceof Error ? error.message : "保存失败，请重试"); return false; }
@@ -110,12 +122,7 @@ export function FitLogApp() {
       <div className="date-control"><button type="button" onClick={() => { const date = new Date(`${selectedDate}T12:00:00`); date.setDate(date.getDate()-1); changeDate(dateKey(date)); }}>←</button><input aria-label="打卡日期" type="date" max={dateKey()} value={selectedDate} onChange={(e) => changeDate(e.target.value)} /><button type="button" disabled={selectedDate === dateKey()} onClick={() => { const date = new Date(`${selectedDate}T12:00:00`); date.setDate(date.getDate()+1); changeDate(dateKey(date)); }}>→</button></div>
     </header>
 
-    <section className="latest-metrics" aria-label="最近一次身体数据">
-      <span><i>体重</i><b>{latestWeight ? formatMeasurement(latestWeight.value) : "--"}</b><em>kg</em>{latestWeight && <small>{latestWeight.date.slice(5).replace("-", "/")}</small>}</span>
-      <span><i>腰围</i><b>{latestWaist ? formatMeasurement(latestWaist.value) : "--"}</b><em>cm</em>{latestWaist && <small>{latestWaist.date.slice(5).replace("-", "/")}</small>}</span>
-    </section>
-
-    <DailyEditor key={`${selectedDate}-${editorKey}`} initial={selectedLog} onDraftChange={(log) => { draftRef.current = log; }} onSave={saveLog} />
+    <DailyEditor key={`${selectedDate}-${editorKey}`} initial={selectedLog} carried={{ weight: latestWeight, waist: latestWaist }} focusId={focusWorkout} onDraftChange={(log) => { draftRef.current = log; }} onSave={saveLog} />
 
     <TrainingPlan selectedDate={selectedDate} logs={data.logs} saving={adding} startedAt={startedAt} onStartTraining={startTraining} onAddExercises={addPlanExercises} />
 
