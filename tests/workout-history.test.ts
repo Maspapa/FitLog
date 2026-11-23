@@ -69,27 +69,32 @@ describe("previous-session training plan", () => {
   const alternative = day.alternatives.find((exercise) => exercise.phase === "main")!;
   const withNames = (date: string, names: string[]) => ({ ...emptyLog(date), workouts: names.map((name, index) => ({ ...workout, id: String(index), name })) });
   it("promotes last Monday's actual alternative and moves unperformed exercises to alternatives", () => {
-    const history = [withNames("2026-10-26", [alternative.name, original[1].name]), withNames("2026-11-04", [original[0].name])];
-    const result = planFromLastSession(day, history, "2026-11-05");
-    expect(result.date).toBe("2026-10-26");
+    const history = [withNames("2026-11-30", [alternative.name, original[1].name]), withNames("2026-12-02", [original[0].name])];
+    const result = planFromLastSession(day, history, "2026-12-03");
+    expect(result.date).toBe("2026-11-30");
     expect(result.main.map((exercise) => exercise.name)).toEqual([alternative.name, original[1].name]);
     expect(result.alternatives.map((exercise) => exercise.id)).toContain(original[0].id);
     expect(result.alternatives.some((exercise) => exercise.id === alternative.id)).toBe(false);
     expect(result.alternatives.some((exercise) => exercise.phase === "warmup")).toBe(true);
   });
   it("uses the latest previous weekday, excluding today, future dates and empty logs", () => {
-    const history = [withNames("2026-10-19", [original[0].name]), withNames("2026-10-26", []), withNames("2026-11-02", ["其他训练"]), withNames("2026-11-09", [alternative.name])];
-    expect(planFromLastSession(day, history, "2026-11-02").date).toBe("2026-10-19");
+    const history = [withNames("2026-11-30", [original[0].name]), withNames("2026-12-07", []), withNames("2026-12-14", ["其他训练"]), withNames("2026-12-21", [alternative.name])];
+    expect(planFromLastSession(day, history, "2026-12-14").date).toBe("2026-11-30");
+  });
+  it("ignores sessions from before the plan was revised", () => {
+    const result = planFromLastSession(day, [withNames("2026-11-09", [alternative.name])], "2026-11-23");
+    expect(result.date).toBeNull();
+    expect(result.main).toEqual(original);
   });
   it("retains the original plan if no session exists", () => {
-    const result = planFromLastSession(day, [withNames("2026-10-26", [])], "2026-11-02");
+    const result = planFromLastSession(day, [withNames("2026-11-30", [])], "2026-12-03");
     expect(result.date).toBeNull();
     expect(result.main).toEqual(original);
     expect(result.alternatives).toEqual(day.alternatives);
   });
   it("keeps custom historical movements without inventing equipment and skips duplicates and known warmups", () => {
     const warmup = day.exercises.find((exercise) => exercise.phase === "warmup")!;
-    const result = planFromLastSession(day, [withNames("2026-10-26", [warmup.name, "自定义动作", "自定义动作"])], "2026-11-02");
+    const result = planFromLastSession(day, [withNames("2026-11-30", [warmup.name, "自定义动作", "自定义动作"])], "2026-12-03");
     expect(result.main).toHaveLength(1);
     expect(result.main[0]).toMatchObject({ name: "自定义动作", historicalOnly: true, equipment: "未知" });
     expect(result.alternatives.filter((item) => item.phase === "main")).toHaveLength(original.length + day.alternatives.filter((item) => item.phase === "main").length);

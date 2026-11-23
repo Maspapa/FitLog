@@ -23,21 +23,25 @@ describe("beginner training plan", () => {
     });
   });
   it("retains compound demonstrations while moving lunges to alternatives", () => {
-    const ids = ["m-cable-chest-press", "w-db-reverse-lunge", "f-db-bent-over-row"];
+    const ids = ["m-incline-push", "w-db-reverse-lunge", "f-db-bent-over-row"];
     TRAINING_DAYS.forEach((day, index) => {
       const exercise = [...day.exercises, ...day.alternatives].find((item) => item.id === ids[index])!;
       expect(exercise.phase).toBe("main");
       expect(exercise.target).toContain("复合动作");
       expect(day.alternatives.some((item) => item.id === exercise.id)).toBe(index === 1);
       const media = lyftaExerciseMedia(exercise.englishName);
-      expect(media.page).toBe(exercise.guideUrl);
-      expect(media.video).toMatch(/\.mp4$/);
-      expect(media.poster).toMatch(/\.png$/);
+      if (media.video) {
+        expect(media.page).toBe(exercise.guideUrl);
+        expect(media.video).toMatch(/\.mp4$/);
+        expect(media.poster).toMatch(/\.png$/);
+      } else {
+        expect(exercise.guideUrl).toMatch(/^https:\/\//);
+      }
     });
   });
   it("keeps agreed working volume and movement-specific warmups", () => {
     expect(TRAINING_DAYS.map((day) => day.exercises.filter((item) => item.phase === "main").length)).toEqual([5, 5, 5]);
-    expect(TRAINING_DAYS.map((day) => day.exercises.filter((item) => item.phase === "main").reduce((sum, item) => sum + (item.log?.sets ?? 0), 0))).toEqual([15, 15, 15]);
+    expect(TRAINING_DAYS.map((day) => day.exercises.filter((item) => item.phase === "main").reduce((sum, item) => sum + (item.log?.sets ?? 0), 0))).toEqual([13, 15, 15]);
     for (const day of TRAINING_DAYS) {
       const first = day.exercises.find((item) => item.phase === "main")!;
       const warmupName = first.englishName === "Pull-up" ? "Lat pulldown" : first.englishName;
@@ -57,12 +61,13 @@ describe("beginner training plan", () => {
   it("spaces the pressing work and removes duplicate main exercises", () => {
     const [monday, wednesday] = TRAINING_DAYS;
     expect(monday.exercises.filter((item) => item.phase === "main").map((item) => item.id)).toEqual([
-      "m-smith-bench", "m-cable-chest-press", "f-hammer", "m-alt-triceps-machine", "m-abs",
+      "m-smith-bench", "m-incline-push", "m-db-lateral", "m-alt-triceps-machine", "m-reverse-crunch",
     ]);
     expect(wednesday.exercises.filter((item) => item.phase === "main").map((item) => item.id)).toEqual([
       "w-alt-smith-squat", "w-hip-thrust", "w-leg-curl", "w-abduction", "w-alt-adduction",
     ]);
     expect(monday.alternatives.some((item) => item.id === "m-photo-fly")).toBe(true);
+    expect(monday.alternatives.some((item) => item.id === "m-cable-chest-press")).toBe(true);
     expect(wednesday.alternatives.some((item) => item.id === "w-leg-extension")).toBe(true);
     for (const day of TRAINING_DAYS) {
       const main = day.exercises.filter((item) => item.phase === "main");
@@ -70,11 +75,11 @@ describe("beginner training plan", () => {
       expect(day.alternatives.filter((item) => item.phase === "main").every((item) => ["primary", "secondary", "accessory"].includes(item.role ?? ""))).toBe(true);
       expect(day.alternatives.filter((item) => item.phase !== "main").every((item) => !item.role)).toBe(true);
       for (const item of day.exercises.filter((item) => item.phase === "main")) {
-        expect(item.log?.sets).toBe(3);
+        expect([2, 3]).toContain(item.log?.sets);
         expect(item.rest).toMatch(/2–3 分钟|90–120 秒/);
       }
     }
-    expect(buildCoachPrompt("fat_loss", [])).toContain("共 15 组");
+    expect(buildCoachPrompt("fat_loss", [])).toContain("周一 13 组");
     expect(buildCoachPrompt("fat_loss", [])).toContain("5 个正式动作");
   });
 
@@ -172,7 +177,7 @@ describe("beginner training plan", () => {
       expect(["https://www.lyfta.app", "https://shop.lifefitness.com"]).toContain(url.origin);
       expect(url.pathname).toMatch(/^\/(exercise|products)\/[a-z0-9-]+$/);
       const media = lyftaExerciseMedia(item.englishName);
-      if (!["Smith incline push-up", "D.Y. row"].includes(item.englishName)) {
+      if (!["Smith incline push-up", "Reverse crunch", "D.Y. row"].includes(item.englishName)) {
         expect(media.video || media.poster, item.englishName).toBeTruthy();
       }
       if (media.video) {

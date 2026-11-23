@@ -10,7 +10,8 @@ export function planFromLastSession(day: TrainingDay, logs: DailyLog[], before: 
   const names = new Map(choices.map((item) => [item.name.trim(), item]));
   const nonMainNames = new Set([...day.exercises, ...day.alternatives].filter((item) => item.phase !== "main").map((item) => item.name.trim()));
   const weekday = { monday: 1, wednesday: 3, friday: 5 }[day.id];
-  const previous = [...logs].filter((log) => log.date < before && new Date(`${log.date}T12:00:00`).getDay() === weekday)
+  const since = day.revisedOn ?? "";
+  const previous = [...logs].filter((log) => log.date < before && log.date >= since && new Date(`${log.date}T12:00:00`).getDay() === weekday)
     .sort((a, b) => b.date.localeCompare(a.date))
     .find((log) => log.workouts.some((workout) => workout.name.trim() && !nonMainNames.has(workout.name.trim())));
   if (!previous) return { main, alternatives: day.alternatives, date: null };

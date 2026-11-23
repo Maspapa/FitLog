@@ -72,6 +72,10 @@ const EXERCISE_MEDIA: Record<string, LyftaExerciseMedia> = {
     "video": "https://apilyfta.com/static/GymvisualMP4/14521201-Lever-Seated-Crunch_Waist.mp4",
     "poster": "https://apilyfta.com/static/GymvisualPNG/14521101-Lever-Seated-Crunch_Waist_small.png"
   },
+  "Reverse crunch": {
+    "page": "https://www.lyfta.app/exercise/reverse-crunch-6rd",
+    "source": "Lyfta"
+  },
   "Doorway chest stretch": {
     "page": "https://www.lyfta.app/exercise/doorway-chest-stretch-male-qxq",
     "source": "Lyfta",
