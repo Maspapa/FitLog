@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { RestTimer } from "../components/rest-timer";
-import { adjustRestTime, clampTimerForActions, clampTimerPosition, parseTimerPosition, remainingSeconds, satellitePositions, shouldAutoStart, TIMER_ACTION_SIZE, TIMER_BUBBLE_SIZE, TIMER_RING_INSET } from "../lib/rest-timer";
+import { adjustRestTime, clampTimerForActions, clampTimerPosition, parseTimerPosition, remainingSeconds, satellitePositions, shouldAutoStart, TIMER_ACTION_SIZE, TIMER_BUBBLE_SIZE, TIMER_RING_BOTTOM_INSET, TIMER_RING_SIDE_INSET } from "../lib/rest-timer";
 
 describe("rest timer deadline", () => {
   it("counts full and partial seconds without ending early", () => {
@@ -90,18 +90,20 @@ describe("floating rest timer", () => {
     expect(clampTimerPosition({ x: 900, y: 700 }, { x: 0, y: 0, width: 320, height: 300 })).toEqual({ x: 252, y: 232 });
     expect(clampTimerPosition({ x: 0, y: 0 }, { x: 100, y: 200, width: 320, height: 300 })).toEqual({ x: 112, y: 212 });
   });
-  it("puts minus, plus, reset and start in the four corners around the bubble", () => {
+  it("puts minus and plus above the bubble and reset straight below it", () => {
     const center = { x: 160, y: 400 };
     const actions = satellitePositions(center, viewport);
     const cx = center.x + TIMER_BUBBLE_SIZE / 2, cy = center.y + TIMER_BUBBLE_SIZE / 2;
     expect(actions.minus.x).toBeLessThan(cx); expect(actions.minus.y).toBeLessThan(cy);
     expect(actions.plus.x).toBeGreaterThan(cx); expect(actions.plus.y).toBeLessThan(cy);
-    expect(actions.reset.x).toBeLessThan(cx); expect(actions.reset.y).toBeGreaterThan(cy);
-    expect(actions.start.x).toBeGreaterThan(cx); expect(actions.start.y).toBeGreaterThan(cy);
+    expect(actions.reset.x).toBeCloseTo(cx - TIMER_ACTION_SIZE / 2, 5);
+    expect(actions.reset.y).toBeGreaterThan(cy);
+    expect(Object.keys(actions)).toHaveLength(3);
   });
   it("moves the bubble inward so the whole ring stays visible", () => {
-    expect(TIMER_RING_INSET).toBe(45);
-    expect(clampTimerForActions({ x: 12, y: 12 }, viewport)).toEqual({ x: 45, y: 45 });
+    expect(TIMER_RING_SIDE_INSET).toBe(53);
+    expect(TIMER_RING_BOTTOM_INSET).toBe(130);
+    expect(clampTimerForActions({ x: 12, y: 12 }, viewport)).toEqual({ x: 53, y: 53 });
     const roomy = clampTimerForActions({ x: 200, y: 400 }, viewport);
     expect(roomy).toEqual({ x: 200, y: 400 });
     const corner = clampTimerForActions({ x: 12, y: 12 }, viewport);

@@ -45,24 +45,25 @@ export function timerPanelPosition(point: TimerPoint, viewport: TimerViewport, s
 export const TIMER_ACTION_SIZE = 44;
 const ACTION_RADIUS = 72;
 const ACTION_EDGE = 8;
-/** 展开环形按钮时小球需要离边缘的最小距离，保证四个按钮都完整可见。 */
-export const TIMER_RING_INSET = Math.ceil(ACTION_RADIUS / Math.SQRT2 + TIMER_ACTION_SIZE / 2 - TIMER_BUBBLE_SIZE / 2);
+/** 三个按钮按三角形排：上面两个（−30s／+30s）、下面正中一个（重置）。 */
+export const TIMER_RING_SIDE_INSET = Math.ceil(ACTION_EDGE + ACTION_RADIUS / Math.SQRT2 + TIMER_ACTION_SIZE / 2 - TIMER_BUBBLE_SIZE / 2);
+export const TIMER_RING_BOTTOM_INSET = Math.ceil(ACTION_EDGE + TIMER_BUBBLE_SIZE / 2 + ACTION_RADIUS + TIMER_ACTION_SIZE / 2);
 
-/** 展开操作时把小球挪进安全区，让环形按钮完整落在屏幕内。 */
+/** 展开操作时把小球挪进安全区，让三个按钮完整落在屏幕内。 */
 export function clampTimerForActions(point: TimerPoint, viewport: TimerViewport): TimerPoint {
-  const minX = viewport.x + TIMER_RING_INSET;
-  const maxX = viewport.x + viewport.width - TIMER_BUBBLE_SIZE - TIMER_RING_INSET;
-  const minY = viewport.y + TIMER_RING_INSET;
-  const maxY = viewport.y + viewport.height - TIMER_BUBBLE_SIZE - TIMER_RING_INSET;
+  const minX = viewport.x + TIMER_RING_SIDE_INSET;
+  const maxX = viewport.x + viewport.width - TIMER_BUBBLE_SIZE - TIMER_RING_SIDE_INSET;
+  const minY = viewport.y + TIMER_RING_SIDE_INSET;
+  const maxY = viewport.y + viewport.height - TIMER_BUBBLE_SIZE - TIMER_RING_BOTTOM_INSET;
   return {
     x: Math.max(minX, Math.min(point.x, maxX)),
     y: Math.max(minY, Math.min(point.y, maxY)),
   };
 }
 
-export type TimerActionKey = "minus" | "plus" | "reset" | "start";
+export type TimerActionKey = "minus" | "plus" | "reset";
 
-/** 四个操作按钮围着小球的四个角排成环，并夹在可视区域内。 */
+/** 三个操作按钮围着小球排成三角形，并夹在可视区域内。 */
 export function satellitePositions(center: TimerPoint, viewport: TimerViewport): Record<TimerActionKey, TimerPoint> {
   const offset = ACTION_RADIUS / Math.SQRT2;
   const centerX = center.x + TIMER_BUBBLE_SIZE / 2;
@@ -78,8 +79,7 @@ export function satellitePositions(center: TimerPoint, viewport: TimerViewport):
   return {
     minus: place(-offset, -offset),
     plus: place(offset, -offset),
-    reset: place(-offset, offset),
-    start: place(offset, offset),
+    reset: place(0, ACTION_RADIUS),
   };
 }
 
