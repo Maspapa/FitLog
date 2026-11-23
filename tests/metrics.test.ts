@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { calculateStreak, dateKey, emptyLog, latestMeasurement, weightAverage, workoutsThisWeek } from "@/lib/metrics";
+import { calculateStreak, dateKey, emptyLog, formatMeasurement, latestMeasurement, latestMeasurementEntry, weightAverage, workoutsThisWeek } from "@/lib/metrics";
 import { buildCoachPrompt } from "@/lib/ai";
 
 function log(date: string, weight: number | null = null) { return { ...emptyLog(date), weight }; }
@@ -8,6 +8,15 @@ describe("fitness metrics", () => {
   it("uses local calendar dates", () => { expect(dateKey(new Date(2026, 7, 4, 23, 59))).toBe("2026-08-04"); });
   it("calculates a seven-day weight average without missing values", () => {
     expect(weightAverage([log("2026-08-22", 80), log("2026-08-23"), log("2026-08-24", 79)], 7, new Date(2026, 7, 24))).toBe(79.5);
+  });
+  it("returns the last filled measurement with its date", () => {
+    const logs = [emptyLog("2026-11-08"), { ...emptyLog("2026-11-12"), weight: 75.35 }, emptyLog("2026-11-20"), { ...emptyLog("2026-11-18"), waist: 88 }];
+    expect(latestMeasurementEntry(logs, "weight")).toEqual({ value: 75.35, date: "2026-11-12" });
+    expect(latestMeasurementEntry(logs, "waist")).toEqual({ value: 88, date: "2026-11-18" });
+    expect(latestMeasurementEntry([emptyLog("2026-11-20")], "weight")).toBeNull();
+    expect(formatMeasurement(75.35)).toBe("75.35");
+    expect(formatMeasurement(88)).toBe("88");
+    expect(formatMeasurement(70.5)).toBe("70.5");
   });
   it("finds the latest waist measurement", () => {
     const first = { ...log("2026-08-20"), waist: 88 }; const second = { ...log("2026-08-23"), waist: 87.5 };

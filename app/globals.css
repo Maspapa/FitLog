@@ -50,13 +50,12 @@ main { min-height: 100vh; overflow: hidden; background: var(--paper); }
 .date-control button:disabled { color: #bdc6dc; cursor: default; }
 .date-control input { height: 47px; border: 0; border-left: 1px solid var(--line); border-right: 1px solid var(--line); background: transparent; color: var(--ink); padding: 0 15px; font: 750 13px ui-monospace, monospace; outline: 0; }
 
-.stats-strip { display: grid; grid-template-columns: repeat(4, 1fr); margin: 22px 5vw 0; background: white; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
-.stat { min-height: 105px; padding: 20px 24px; border-right: 1px solid var(--line); position: relative; }
-.stat::after { content: ""; position: absolute; width: 18px; height: 4px; border-radius: 4px; right: 18px; top: 18px; background: var(--yellow); }
-.stat:last-child { border: 0; }
-.stat strong { color: var(--ultramarine); font: 500 clamp(30px, 3.5vw, 44px) Georgia, serif; letter-spacing: -.04em; }
-.stat > span { margin-left: 6px; color: var(--indigo-deep); font-size: 12px; font-weight: 800; }
-.stat p { margin: 11px 0 0; color: var(--muted); font: 700 11px ui-monospace, monospace; letter-spacing: .06em; }
+.latest-metrics { display: flex; align-items: center; gap: 22px; margin: 0 20px 12px; padding: 12px 16px; border: 1px solid var(--line); border-radius: 10px; background: white; }
+.latest-metrics > span { display: inline-flex; align-items: baseline; gap: 5px; }
+.latest-metrics i { font-style: normal; color: var(--muted); font-size: 12px; }
+.latest-metrics b { color: var(--indigo-deep); font-size: 21px; font-weight: 650; font-variant-numeric: tabular-nums; }
+.latest-metrics em { font-style: normal; color: var(--indigo); font-size: 11px; font-weight: 800; }
+.latest-metrics small { color: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
 
 .quick-nav { margin: 28px 5vw 0; padding: 10px; display: flex; align-items: center; gap: 8px; border: 1px solid var(--line); border-radius: 14px; background: white; }
 .quick-nav > span { padding: 0 12px; color: var(--muted); font-size: 12px; font-weight: 750; }
@@ -228,7 +227,7 @@ footer { padding: 38px 5vw; border-top: 1px solid var(--line); background: white
 @media (max-width: 680px) {
   .topbar { height: 66px; padding: 0 15px; }.topbar button { padding: 7px 9px; }.topbar-primary { display: none; }.topbar-plan { padding: 7px 4px; }.brand { font-size: 18px; }.brand i { width: 35px; height: 35px; border-radius: 11px; }
   .dashboard-bar { min-height: 118px; padding: 14px 15px; flex-direction: column; align-items: stretch; gap: 10px; }.hero-meta { justify-content: space-between; }.date-control { align-self: stretch; justify-content: center; }.date-control input { flex: 1; text-align: center; min-width: 0; }
-  .stats-strip { margin: 15px 15px 0; border-radius: 13px; grid-template-columns: 1fr 1fr; }.stat { min-height: 92px; padding: 15px; border-bottom: 1px solid var(--line); }.stat:nth-child(2) { border-right: 0; }.stat strong { font-size: 34px; }
+  
   .quick-nav { margin: 18px 15px 0; padding: 8px; display: grid; grid-template-columns: 1fr 1fr; }.quick-nav > span { grid-column: 1 / -1; padding: 5px 8px; }.quick-nav a { padding: 12px; }
   .editor-section, .insights-section, .logbook { padding: 44px 15px; }.section-title { margin-bottom: 20px; }.section-title h2 { font-size: 27px; }.entry-card { padding: 24px 18px; border-radius: 15px; }.measure-grid { gap: 10px; }.workout-row { grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--line); padding-top: 10px; }.workout-name { grid-column: 1 / 3; }.workout-row label { grid-row: 2; }.workout-row select { grid-column: 1 / -1; grid-row: 3; }.remove-button { grid-column: 3; grid-row: 1; justify-self: end; }.duration-field { grid-column: 1 / -1; }.card-heading button { margin-right: 38px; padding: 10px; }
   .chart-card, .coach-card { padding: 22px; min-height: 380px; border-radius: 20px; }.report-lead, .report-columns { grid-template-columns: 1fr; }.report-lead p { margin-top: 20px; }.report-columns article { grid-template-columns: 1fr; }.report-columns article p { grid-column: 1; }.next-focus { grid-template-columns: 1fr; }.coach-report { padding: 25px 18px; border-radius: 20px; }.log-list button { grid-template-columns: 65px 1fr 65px; gap: 10px; padding: 17px 4px; font-size: 12px; } footer { gap: 20px; align-items: flex-start; } footer span { text-align: right; }
@@ -263,10 +262,10 @@ footer { padding: 38px 5vw; border-top: 1px solid var(--line); background: white
 .date-control input { height: 40px; padding: 0 8px; }
 .compact-disclosure { margin: 0 20px 12px; border: 1px solid var(--line); border-radius: 10px; background: white; }
 .compact-disclosure > summary { cursor: pointer; padding: 14px 16px; font-size: 13px; color: var(--indigo); }
-.stats-strip { margin: 0; border: 0; }
-.stat { min-height: 75px; padding: 12px; }
-.stat strong { font-family: inherit; font-size: 25px; font-weight: 650; }
-.stat::after { display: none; }
+
+
+
+
 .editor-section, .plan-section { padding: 12px 20px 24px; background: transparent; }
 .section-title { margin-bottom: 12px; }
 .section-title h2 { font-size: 18px; letter-spacing: 0; }

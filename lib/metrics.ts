@@ -32,6 +32,18 @@ export function latestMeasurement(logs: DailyLog[], field: "weight" | "waist"): 
   return matched?.[field] ?? null;
 }
 
+/** 按记录的精度显示体重或腰围，75.35 不会被四舍五入成一位小数。 */
+export function formatMeasurement(value: number): string {
+  return Number.isInteger(value) ? String(value) : String(Number(value.toFixed(2)));
+}
+
+/** 最近一次填过的体重或腰围，连同那天的日期；没填过时返回 null。 */
+export function latestMeasurementEntry(logs: DailyLog[], field: "weight" | "waist"): { value: number; date: string } | null {
+  const matched = [...logs].sort((a, b) => b.date.localeCompare(a.date)).find((log) => log[field] !== null);
+  const value = matched?.[field];
+  return matched && value !== null && value !== undefined ? { value, date: matched.date } : null;
+}
+
 export function workoutsThisWeek(logs: DailyLog[], today = new Date()): number {
   const current = new Date(today.getFullYear(), today.getMonth(), today.getDate());
   const day = current.getDay() || 7;

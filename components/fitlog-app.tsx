@@ -5,7 +5,7 @@ import { DailyEditor, freshLog } from "./daily-editor";
 import { CoachReport } from "./coach-report";
 import { TrainingPlan } from "./training-plan";
 import { TrendChart } from "./trend-chart";
-import { calculateStreak, dateKey, latestMeasurement, recentLogs, weightAverage, workoutsThisWeek } from "@/lib/metrics";
+import { dateKey, formatMeasurement, latestMeasurementEntry, recentLogs } from "@/lib/metrics";
 import { createData, exportData, getOrCreateDeviceToken, importData, loadData, saveData, upsertLog } from "@/lib/storage";
 import { mergePlanWorkouts, type WorkoutNumbers } from "@/lib/workout-history";
 import { formatStartTime, recordTrainingStart } from "@/lib/training-session";
@@ -38,7 +38,8 @@ export function FitLogApp() {
   }, []);
   const selectedLog = useMemo(() => data.logs.find((log) => log.date === selectedDate) || freshLog(selectedDate), [data.logs, selectedDate]);
   const last14 = useMemo(() => recentLogs(data.logs, 14), [data.logs]);
-  const stats = useMemo(() => ({ average: weightAverage(data.logs), waist: latestMeasurement(data.logs, "waist"), workouts: workoutsThisWeek(data.logs), streak: calculateStreak(data.logs) }), [data.logs]);
+  const latestWeight = useMemo(() => latestMeasurementEntry(data.logs, "weight"), [data.logs]);
+  const latestWaist = useMemo(() => latestMeasurementEntry(data.logs, "waist"), [data.logs]);
   const startedAt = useMemo(() => data.logs.find((log) => log.date === dateKey())?.startedAt ?? null, [data.logs]);
 
   async function persist(next: FitData, successMessage = "记录已保存到服务器") {
@@ -109,12 +110,10 @@ export function FitLogApp() {
       <div className="date-control"><button type="button" onClick={() => { const date = new Date(`${selectedDate}T12:00:00`); date.setDate(date.getDate()-1); changeDate(dateKey(date)); }}>←</button><input aria-label="打卡日期" type="date" max={dateKey()} value={selectedDate} onChange={(e) => changeDate(e.target.value)} /><button type="button" disabled={selectedDate === dateKey()} onClick={() => { const date = new Date(`${selectedDate}T12:00:00`); date.setDate(date.getDate()+1); changeDate(dateKey(date)); }}>→</button></div>
     </header>
 
-    <details className="compact-disclosure stats-disclosure"><summary>数据概览</summary><section className="stats-strip">
-      <Stat value={stats.average === null ? "--" : stats.average.toFixed(1)} unit="kg" label="近7日平均体重" />
-      <Stat value={stats.waist === null ? "--" : stats.waist.toFixed(1)} unit="cm" label="最近腰围" />
-      <Stat value={String(stats.workouts)} unit="项" label="本周训练" />
-      <Stat value={String(stats.streak)} unit="天" label="连续记录" />
-    </section></details>
+    <section className="latest-metrics" aria-label="最近一次身体数据">
+      <span><i>体重</i><b>{latestWeight ? formatMeasurement(latestWeight.value) : "--"}</b><em>kg</em>{latestWeight && <small>{latestWeight.date.slice(5).replace("-", "/")}</small>}</span>
+      <span><i>腰围</i><b>{latestWaist ? formatMeasurement(latestWaist.value) : "--"}</b><em>cm</em>{latestWaist && <small>{latestWaist.date.slice(5).replace("-", "/")}</small>}</span>
+    </section>
 
     <DailyEditor key={`${selectedDate}-${editorKey}`} initial={selectedLog} onDraftChange={(log) => { draftRef.current = log; }} onSave={saveLog} />
 
@@ -134,4 +133,4 @@ export function FitLogApp() {
   </fieldset></main>;
 }
 
-function Stat({ value, unit, label }: { value: string; unit: string; label: string }) { return <div className="stat"><strong>{value}</strong><span>{unit}</span><p>{label}</p></div>; }
+
