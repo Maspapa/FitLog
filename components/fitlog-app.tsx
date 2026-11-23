@@ -49,7 +49,11 @@ export function FitLogApp() {
       (active as HTMLElement | null)?.blur();
     }
     document.addEventListener("pointerdown", dismissKeyboard);
-    return () => document.removeEventListener("pointerdown", dismissKeyboard);
+    document.addEventListener("touchstart", dismissKeyboard as unknown as EventListener, { passive: true });
+    return () => {
+      document.removeEventListener("pointerdown", dismissKeyboard);
+      document.removeEventListener("touchstart", dismissKeyboard as unknown as EventListener);
+    };
   }, []);
   useEffect(() => {
     if (!focusWorkout) return;
@@ -82,6 +86,8 @@ export function FitLogApp() {
       if (selectedDate === today) {
         const savedToday = saved.logs.find((log) => log.date === today) ?? nextLog;
         draftRef.current = savedToday;
+        // 重挂载编辑器前先收起键盘，避免输入法还挂在被替换掉的输入框上。
+        (document.activeElement as HTMLElement | null)?.blur?.();
         setEditorKey((key) => key + 1);
         setFocusWorkout(savedToday.workouts.find((item) => !before.has(item.id))?.id ?? null);
       }

@@ -31,12 +31,15 @@ export function DailyEditor({ initial, carried, focusId, onDraftChange, onSave }
     if (!focusTarget || lastFocused.current === focusTarget) return;
     const row = rows.current.get(focusTarget);
     if (!row) return;
-    const nameInput = row.querySelector<HTMLInputElement>("input.workout-name");
-    const firstNumber = row.querySelector<HTMLInputElement>("input[type=number]");
-    const input = nameInput && !nameInput.value.trim() ? nameInput : firstNumber ?? nameInput;
     lastFocused.current = focusTarget;
-    if (!input || document.activeElement === input) return;
-    input.focus();
+    // 只有手动新增的空行才聚焦；从计划加入的动作只滚到可见位置，
+    // 避免程序化聚焦让移动端输入法“锁”在输入框上关不掉。
+    const nameInput = row.querySelector<HTMLInputElement>("input.workout-name");
+    if (!nameInput || nameInput.value.trim()) {
+      row.scrollIntoView({ block: "center", behavior: "smooth" });
+      return;
+    }
+    if (document.activeElement !== nameInput) nameInput.focus();
   }, [focusTarget, log.workouts.length]);
 
   function field<K extends keyof DailyLog>(key: K, value: DailyLog[K]) {
