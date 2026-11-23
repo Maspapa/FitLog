@@ -5,6 +5,7 @@ import { DailyEditor, freshLog } from "./daily-editor";
 import { CoachReport } from "./coach-report";
 import { TrainingPlan } from "./training-plan";
 import { TrendChart } from "./trend-chart";
+import { shouldDismissKeyboard } from "@/lib/keyboard";
 import { dateKey, latestMeasurementEntry, recentLogs } from "@/lib/metrics";
 import { createData, exportData, getOrCreateDeviceToken, importData, loadData, saveData, upsertLog } from "@/lib/storage";
 import { mergePlanWorkouts, type WorkoutNumbers } from "@/lib/workout-history";
@@ -41,6 +42,15 @@ export function FitLogApp() {
   const latestWeight = useMemo(() => latestMeasurementEntry(data.logs, "weight"), [data.logs]);
   const latestWaist = useMemo(() => latestMeasurementEntry(data.logs, "waist"), [data.logs]);
   const [focusWorkout, setFocusWorkout] = useState<string | null>(null);
+  useEffect(() => {
+    function dismissKeyboard(event: PointerEvent) {
+      const active = document.activeElement;
+      if (!shouldDismissKeyboard(active, event.target as unknown as { tagName?: string; closest?: (selector: string) => unknown })) return;
+      (active as HTMLElement | null)?.blur();
+    }
+    document.addEventListener("pointerdown", dismissKeyboard);
+    return () => document.removeEventListener("pointerdown", dismissKeyboard);
+  }, []);
   useEffect(() => {
     if (!focusWorkout) return;
     const timer = window.setTimeout(() => setFocusWorkout(null), 600);

@@ -34,10 +34,10 @@ export function DailyEditor({ initial, carried, focusId, onDraftChange, onSave }
     const nameInput = row.querySelector<HTMLInputElement>("input.workout-name");
     const firstNumber = row.querySelector<HTMLInputElement>("input[type=number]");
     const input = nameInput && !nameInput.value.trim() ? nameInput : firstNumber ?? nameInput;
-    input?.focus();
-    input?.select();
     lastFocused.current = focusTarget;
-  }, [focusTarget, log.workouts]);
+    if (!input || document.activeElement === input) return;
+    input.focus();
+  }, [focusTarget, log.workouts.length]);
 
   function field<K extends keyof DailyLog>(key: K, value: DailyLog[K]) {
     if (key === "weight" || key === "waist") setTouched((current) => ({ ...current, [key]: true }));
@@ -64,8 +64,8 @@ export function DailyEditor({ initial, carried, focusId, onDraftChange, onSave }
       <div className="editor-grid">
         <article className="entry-card body-card" id="body-card">
           <div className="measure-grid">
-            <label><span>体重{carriedWeight && <small>上次 {shortDate(carriedWeight.date)}</small>}</span><div><input type="number" inputMode="decimal" step="0.1" value={log.weight ?? ""} onChange={(e) => field("weight", numberOrNull(e.target.value))} placeholder="--" /><b>kg</b></div></label>
-            <label><span>腰围{carriedWaist && <small>上次 {shortDate(carriedWaist.date)}</small>}</span><div><input type="number" inputMode="decimal" step="0.1" value={log.waist ?? ""} onChange={(e) => field("waist", numberOrNull(e.target.value))} placeholder="--" /><b>cm</b></div></label>
+            <label><span>体重{carriedWeight && <small>上次 {shortDate(carriedWeight.date)}</small>}</span><div><input type="number" inputMode="decimal" enterKeyHint="done" step="0.1" value={log.weight ?? ""} onChange={(e) => field("weight", numberOrNull(e.target.value))} placeholder="--" /><b>kg</b></div></label>
+            <label><span>腰围{carriedWaist && <small>上次 {shortDate(carriedWaist.date)}</small>}</span><div><input type="number" inputMode="decimal" enterKeyHint="done" step="0.1" value={log.waist ?? ""} onChange={(e) => field("waist", numberOrNull(e.target.value))} placeholder="--" /><b>cm</b></div></label>
           </div>
         </article>
 
@@ -77,10 +77,10 @@ export function DailyEditor({ initial, carried, focusId, onDraftChange, onSave }
               <input className="workout-name" value={workout.name} onChange={(e) => updateWorkout(workout.id, { name: e.target.value })} placeholder="动作或运动名称" />
               <select value={workout.category} onChange={(e) => updateWorkout(workout.id, { category: e.target.value as Workout["category"] })}>{Object.entries(CATEGORIES).map(([value, label]) => <option value={value} key={value}>{label}</option>)}</select>
               {workout.category === "strength" ? <>
-                <label>组<input type="number" value={workout.sets ?? ""} onChange={(e) => updateWorkout(workout.id, { sets: numberOrNull(e.target.value) })} /></label>
-                <label>次<input type="number" value={workout.reps ?? ""} onChange={(e) => updateWorkout(workout.id, { reps: numberOrNull(e.target.value) })} /></label>
-                <label>kg<input type="number" step="0.5" value={workout.weight ?? ""} onChange={(e) => updateWorkout(workout.id, { weight: numberOrNull(e.target.value) })} /></label>
-              </> : <label className="duration-field">分钟<input type="number" value={workout.duration ?? ""} onChange={(e) => updateWorkout(workout.id, { duration: numberOrNull(e.target.value) })} /></label>}
+                <label>组<input type="number" enterKeyHint="done" value={workout.sets ?? ""} onChange={(e) => updateWorkout(workout.id, { sets: numberOrNull(e.target.value) })} /></label>
+                <label>次<input type="number" enterKeyHint="done" value={workout.reps ?? ""} onChange={(e) => updateWorkout(workout.id, { reps: numberOrNull(e.target.value) })} /></label>
+                <label>kg<input type="number" enterKeyHint="done" step="0.5" value={workout.weight ?? ""} onChange={(e) => updateWorkout(workout.id, { weight: numberOrNull(e.target.value) })} /></label>
+              </> : <label className="duration-field">分钟<input type="number" enterKeyHint="done" value={workout.duration ?? ""} onChange={(e) => updateWorkout(workout.id, { duration: numberOrNull(e.target.value) })} /></label>}
               <button className="remove-button" type="button" aria-label={`删除 ${workout.name || "训练"}`} onClick={() => field("workouts", log.workouts.filter((item) => item.id !== workout.id))}>×</button>
             </div>
           ))}</div>
