@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { RestTimer } from "../components/rest-timer";
-import { adjustRestTime, clampTimerPosition, parseTimerPosition, remainingSeconds, timerPanelPosition } from "../lib/rest-timer";
+import { adjustRestTime, clampTimerForActions, clampTimerPosition, parseTimerPosition, remainingSeconds, satellitePositions, TIMER_ACTION_SIZE, TIMER_BUBBLE_SIZE, TIMER_RING_INSET } from "../lib/rest-timer";
 
 describe("rest timer deadline", () => {
   it("counts full and partial seconds without ending early", () => {
@@ -61,6 +61,12 @@ describe("floating rest timer", () => {
     expect(html).not.toContain('class="rest-timer-panel"');
     expect(html).not.toContain("开启通知");
   });
+  it("shows the remaining time on the bubble even before it starts", () => {
+    const html = renderToStaticMarkup(createElement(RestTimer));
+    expect(html).toContain('class="rest-timer-bubble-time"');
+    expect(html).toContain("01:00");
+    expect(html).not.toContain("rest-timer-icon");
+  });
   it("allows free movement inside the screen and clamps every edge", () => {
     expect(clampTimerPosition({ x: 150, y: 200 }, viewport)).toEqual({ x: 150, y: 200 });
     expect(clampTimerPosition({ x: -100, y: -100 }, viewport)).toEqual({ x: 12, y: 12 });
@@ -70,13 +76,34 @@ describe("floating rest timer", () => {
     expect(clampTimerPosition({ x: 900, y: 700 }, { x: 0, y: 0, width: 320, height: 300 })).toEqual({ x: 252, y: 232 });
     expect(clampTimerPosition({ x: 0, y: 0 }, { x: 100, y: 200, width: 320, height: 300 })).toEqual({ x: 112, y: 212 });
   });
-  it("places the panel above the bubble when there is room, otherwise below", () => {
-    const size = { width: 300, height: 240 };
-    expect(timerPanelPosition({ x: 322, y: 776 }, viewport, size)).toEqual({ x: 78, y: 524 });
-    expect(timerPanelPosition({ x: 12, y: 12 }, viewport, size)).toEqual({ x: 12, y: 80 });
+  it("puts minus, plus, reset and start in the four corners around the bubble", () => {
+    const center = { x: 160, y: 400 };
+    const actions = satellitePositions(center, viewport);
+    const cx = center.x + TIMER_BUBBLE_SIZE / 2, cy = center.y + TIMER_BUBBLE_SIZE / 2;
+    expect(actions.minus.x).toBeLessThan(cx); expect(actions.minus.y).toBeLessThan(cy);
+    expect(actions.plus.x).toBeGreaterThan(cx); expect(actions.plus.y).toBeLessThan(cy);
+    expect(actions.reset.x).toBeLessThan(cx); expect(actions.reset.y).toBeGreaterThan(cy);
+    expect(actions.start.x).toBeGreaterThan(cx); expect(actions.start.y).toBeGreaterThan(cy);
   });
-  it("clamps a tall expanded panel to a small visible viewport", () => {
-    expect(timerPanelPosition({ x: 250, y: 100 }, { x: 0, y: 0, width: 320, height: 300 }, { width: 296, height: 276 })).toEqual({ x: 12, y: 12 });
+  it("moves the bubble inward so the whole ring stays visible", () => {
+    expect(TIMER_RING_INSET).toBe(45);
+    expect(clampTimerForActions({ x: 12, y: 12 }, viewport)).toEqual({ x: 45, y: 45 });
+    const roomy = clampTimerForActions({ x: 200, y: 400 }, viewport);
+    expect(roomy).toEqual({ x: 200, y: 400 });
+    const corner = clampTimerForActions({ x: 12, y: 12 }, viewport);
+    for (const point of Object.values(satellitePositions(corner, viewport))) {
+      expect(point.x).toBeGreaterThanOrEqual(0);
+      expect(point.y).toBeGreaterThanOrEqual(0);
+    }
+  });
+  it("keeps every ring button inside a small viewport near the corner", () => {
+    const small = { x: 0, y: 0, width: 320, height: 300 };
+    for (const point of Object.values(satellitePositions({ x: 252, y: 232 }, small))) {
+      expect(point.x).toBeGreaterThanOrEqual(8);
+      expect(point.x + TIMER_ACTION_SIZE).toBeLessThanOrEqual(small.width - 8);
+      expect(point.y).toBeGreaterThanOrEqual(8);
+      expect(point.y + TIMER_ACTION_SIZE).toBeLessThanOrEqual(small.height - 8);
+    }
   });
   it("restores only valid saved positions and tolerates unavailable storage", () => {
     expect(parseTimerPosition('{"x":20,"y":40}')).toEqual({ x: 20, y: 40 });

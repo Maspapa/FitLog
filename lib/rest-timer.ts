@@ -41,3 +41,44 @@ export function timerPanelPosition(point: TimerPoint, viewport: TimerViewport, s
       viewport.y + viewport.height - size.height - EDGE)),
   };
 }
+
+export const TIMER_ACTION_SIZE = 44;
+const ACTION_RADIUS = 72;
+const ACTION_EDGE = 8;
+/** 展开环形按钮时小球需要离边缘的最小距离，保证四个按钮都完整可见。 */
+export const TIMER_RING_INSET = Math.ceil(ACTION_RADIUS / Math.SQRT2 + TIMER_ACTION_SIZE / 2 - TIMER_BUBBLE_SIZE / 2);
+
+/** 展开操作时把小球挪进安全区，让环形按钮完整落在屏幕内。 */
+export function clampTimerForActions(point: TimerPoint, viewport: TimerViewport): TimerPoint {
+  const minX = viewport.x + TIMER_RING_INSET;
+  const maxX = viewport.x + viewport.width - TIMER_BUBBLE_SIZE - TIMER_RING_INSET;
+  const minY = viewport.y + TIMER_RING_INSET;
+  const maxY = viewport.y + viewport.height - TIMER_BUBBLE_SIZE - TIMER_RING_INSET;
+  return {
+    x: Math.max(minX, Math.min(point.x, maxX)),
+    y: Math.max(minY, Math.min(point.y, maxY)),
+  };
+}
+
+export type TimerActionKey = "minus" | "plus" | "reset" | "start";
+
+/** 四个操作按钮围着小球的四个角排成环，并夹在可视区域内。 */
+export function satellitePositions(center: TimerPoint, viewport: TimerViewport): Record<TimerActionKey, TimerPoint> {
+  const offset = ACTION_RADIUS / Math.SQRT2;
+  const centerX = center.x + TIMER_BUBBLE_SIZE / 2;
+  const centerY = center.y + TIMER_BUBBLE_SIZE / 2;
+  const minX = viewport.x + ACTION_EDGE;
+  const maxX = viewport.x + viewport.width - TIMER_ACTION_SIZE - ACTION_EDGE;
+  const minY = viewport.y + ACTION_EDGE;
+  const maxY = viewport.y + viewport.height - TIMER_ACTION_SIZE - ACTION_EDGE;
+  const place = (dx: number, dy: number): TimerPoint => ({
+    x: Math.max(minX, Math.min(centerX + dx - TIMER_ACTION_SIZE / 2, maxX)),
+    y: Math.max(minY, Math.min(centerY + dy - TIMER_ACTION_SIZE / 2, maxY)),
+  });
+  return {
+    minus: place(-offset, -offset),
+    plus: place(offset, -offset),
+    reset: place(-offset, offset),
+    start: place(offset, offset),
+  };
+}

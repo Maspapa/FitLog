@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useId, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
-import { adjustRestTime, clampTimerPosition, parseTimerPosition, remainingSeconds, timerPanelPosition, type TimerPoint, type TimerViewport } from "@/lib/rest-timer";
+import { adjustRestTime, clampTimerPosition, parseTimerPosition, remainingSeconds, clampTimerForActions, satellitePositions, type TimerPoint, type TimerViewport } from "@/lib/rest-timer";
 
 const POSITION_KEY = "fitlog.rest-timer.position";
 
@@ -25,14 +25,12 @@ export function RestTimer() {
   const [position, setPosition] = useState<TimerPoint | null>(null);
   const [viewport, setViewport] = useState<TimerViewport | null>(null);
   const [dragging, setDragging] = useState(false);
-  const [panelSize, setPanelSize] = useState({ width: 300, height: 250 });
   const positionRef = useRef<TimerPoint | null>(null);
   const drag = useRef<{ pointerId: number; x: number; y: number; origin: TimerPoint; moved: boolean } | null>(null);
   const suppressClick = useRef(false);
   const container = useRef<HTMLElement>(null);
   const bubble = useRef<HTMLButtonElement>(null);
-  const panel = useRef<HTMLDivElement>(null);
-  const panelId = useId();
+  const actionsId = useId();
 
   useEffect(() => {
     let stored: TimerPoint | null = null;
@@ -64,13 +62,23 @@ export function RestTimer() {
     function escape(event: KeyboardEvent) {
       if (event.key === "Escape") { setExpanded(false); bubble.current?.focus(); }
     }
-    const observer = new ResizeObserver(([entry]) => {
-      if (entry) setPanelSize({ width: entry.target.getBoundingClientRect().width, height: entry.target.getBoundingClientRect().height });
-    });
-    if (panel.current) observer.observe(panel.current);
+    function keepRingVisible() {
+      const bounds = currentViewport();
+      const point = clampTimerForActions(positionRef.current ?? { x: bounds.x, y: bounds.y }, bounds);
+      positionRef.current = point;
+      setPosition(point);
+      setViewport(bounds);
+    }
     document.addEventListener("pointerdown", dismiss);
     document.addEventListener("keydown", escape);
-    return () => { observer.disconnect(); document.removeEventListener("pointerdown", dismiss); document.removeEventListener("keydown", escape); };
+    window.addEventListener("resize", keepRingVisible);
+    window.visualViewport?.addEventListener("resize", keepRingVisible);
+    return () => {
+      document.removeEventListener("pointerdown", dismiss);
+      document.removeEventListener("keydown", escape);
+      window.removeEventListener("resize", keepRingVisible);
+      window.visualViewport?.removeEventListener("resize", keepRingVisible);
+    };
   }, [expanded]);
 
   function startDrag(event: ReactPointerEvent<HTMLButtonElement>) {
@@ -169,11 +177,19 @@ export function RestTimer() {
   }
 
   const time = `${String(Math.floor(remaining / 60)).padStart(2, "0")}:${String(remaining % 60).padStart(2, "0")}`;
-  const panelPosition = position && viewport ? timerPanelPosition(position, viewport, panelSize) : null;
+  const actions = position && viewport ? satellitePositions(position, viewport) : null;
+  const actionStyle = (key: "minus" | "plus" | "reset" | "start") => actions ? { left: actions[key].x, top: actions[key].y } : undefined;
+  const startLabel = running ? "暂停" : done ? "再来" : remaining < duration ? "继续" : "开始";
   return <aside ref={container} className={`rest-timer${done ? " rest-timer-done" : ""}${running ? " rest-timer-running" : ""}${dragging ? " rest-timer-dragging" : ""}`} aria-label="组间休息计时器" style={position ? { left: position.x, top: position.y, right: "auto", bottom: "auto" } : undefined}>
-    <button ref={bubble} type="button" className="rest-timer-bubble" aria-label={`${expanded ? "收起" : "展开"}休息计时器，${done ? "休息结束" : `剩余 ${time}`}`} aria-expanded={expanded} aria-controls={panelId} title="点击展开，拖动移动位置；方向键也可移动"
+    <button ref={bubble} type="button" className="rest-timer-bubble" aria-label={`${expanded ? "收起" : "展开"}休息计时器，${done ? "休息结束" : `剩余 ${time}`}`} aria-expanded={expanded} aria-controls={actionsId} title="点击展开，拖动移动位置；方向键也可移动"
       onPointerDown={startDrag} onPointerMove={moveDrag} onPointerUp={endDrag} onPointerCancel={endDrag} onLostPointerCapture={endDrag}
-      onClick={(event) => { if (suppressClick.current && event.detail !== 0) { suppressClick.current = false; return; } setExpanded((value) => !value); }}
+      onClick={(event) => {
+        if (suppressClick.current && event.detail !== 0) { suppressClick.current = false; return; }
+        if (expanded) { setExpanded(false); return; }
+        const point = clampTimerForActions(positionRef.current ?? { x: 0, y: 0 }, currentViewport());
+        positionRef.current = point; setPosition(point); rememberPosition(point);
+        setExpanded(true);
+      }}
       onKeyDown={(event) => {
         const directions: Record<string, TimerPoint> = { ArrowLeft: { x: -1, y: 0 }, ArrowRight: { x: 1, y: 0 }, ArrowUp: { x: 0, y: -1 }, ArrowDown: { x: 0, y: 1 } };
         const direction = directions[event.key];
@@ -184,15 +200,14 @@ export function RestTimer() {
         positionRef.current = point; setPosition(point); rememberPosition(point);
       }}>
       <svg className="rest-timer-ring" viewBox="0 0 56 56" aria-hidden="true"><circle className="rest-timer-ring-track" cx="28" cy="28" r="25" /><circle className="rest-timer-ring-progress" cx="28" cy="28" r="25" pathLength="100" strokeDasharray="100" strokeDashoffset={100 - (remaining / duration) * 100} /></svg>
-      {done ? <span className="rest-timer-bubble-done">到时</span> : running || remaining < duration ? <span className="rest-timer-bubble-time">{time}</span> : <svg className="rest-timer-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><circle cx="12" cy="13" r="8" /><path d="M12 9v4l3 2M9 2h6M12 2v3M18 5l2 2" /></svg>}
+      {done ? <span className="rest-timer-bubble-done">到时</span> : <span className="rest-timer-bubble-time">{time}</span>}
     </button>
-    <span className="rest-timer-announcement" role="status">{done && !expanded ? "休息结束，可以开始下一组了" : ""}</span>
-    {expanded && <div ref={panel} id={panelId} className="rest-timer-panel" role="region" aria-label="休息计时器操作" style={panelPosition && viewport ? { left: panelPosition.x, top: panelPosition.y, right: "auto", bottom: "auto", width: Math.min(300, viewport.width - 24), maxHeight: viewport.height - 24 } : undefined}>
-    <div className="rest-timer-heading"><b>组间休息</b><button type="button" className="rest-timer-close" aria-label="收起休息计时器" onClick={() => { setExpanded(false); bubble.current?.focus(); }}>×</button></div>
-    <div className="rest-timer-top"><div aria-label="调整休息时长"><button type="button" aria-label="减少30秒" disabled={duration <= 30} onClick={() => adjustTime(-30)}>−30s</button><button type="button" aria-label="增加30秒" onClick={() => adjustTime(30)}>+30s</button></div></div>
-    <div className="rest-timer-bottom"><output aria-label="剩余时间" role="timer">{time}</output><button type="button" className="rest-timer-start" onClick={toggle}>{running ? "暂停" : done ? "再来一次" : remaining < duration ? "继续" : "开始"}</button><button type="button" onClick={() => reset()} aria-label="重置休息计时器">重置</button></div>
-    <span className="rest-timer-status" role="status">{done ? "休息结束，可以开始下一组了" : ""}</span>
-    {vibrationUnavailable && <small>当前浏览器无法震动，请留意计时器</small>}
+    <span className="rest-timer-announcement" role="status">{done ? "休息结束，可以开始下一组了" : expanded && vibrationUnavailable ? "当前浏览器无法震动，请留意计时器" : ""}</span>
+    {expanded && actions && <div className="rest-timer-actions" id={actionsId} role="group" aria-label="休息计时器操作">
+      <button type="button" className="rest-timer-action rest-timer-action-minus" style={actionStyle("minus")} aria-label="减少30秒" disabled={duration <= 30} onClick={() => adjustTime(-30)}>−30s</button>
+      <button type="button" className="rest-timer-action rest-timer-action-plus" style={actionStyle("plus")} aria-label="增加30秒" onClick={() => adjustTime(30)}>+30s</button>
+      <button type="button" className="rest-timer-action rest-timer-action-reset" style={actionStyle("reset")} aria-label="重置休息计时器" onClick={() => reset()}>重置</button>
+      <button type="button" className="rest-timer-action rest-timer-action-start" style={actionStyle("start")} aria-label={running ? "暂停计时" : "开始计时"} onClick={toggle}>{startLabel}</button>
     </div>}
   </aside>;
 }

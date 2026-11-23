@@ -349,15 +349,13 @@ footer { padding: 38px 5vw; border-top: 1px solid var(--line); background: white
 /* Only the compact timer stays visible; its controls open on demand. */
 body { padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
 .rest-timer { position: fixed; z-index: 100; right: 18px; bottom: calc(28px + env(safe-area-inset-bottom, 0px)); width: 56px; height: 56px; color: var(--indigo, #24246a); }
-.rest-timer-panel { position: fixed; right: 12px; bottom: 96px; width: 300px; max-width: calc(100vw - 24px); max-height: calc(100dvh - 24px); overflow-y: auto; overscroll-behavior: contain; padding: 12px 14px; border: 1px solid var(--line); border-radius: 16px; background: #fff; box-shadow: 0 8px 32px #24246a24; }
-.rest-timer-heading { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; font-size: 13px; }
-.rest-timer .rest-timer-close { min-width: 32px; min-height: 32px; padding: 0; background: transparent; color: var(--muted); font-size: 22px; }
-.rest-timer-top, .rest-timer-bottom { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.rest-timer-top { margin-bottom: 8px; font-size: 12px; }
-.rest-timer-top > div { display: flex; gap: 4px; }
-.rest-timer-top button:disabled { opacity: .4; cursor: default; }
 .rest-timer button { min-height: 36px; border: 0; border-radius: 8px; padding: 6px 10px; font-size: 12px; background: #f1f3ff; color: inherit; cursor: pointer; }
 .rest-timer button[aria-pressed="true"] { background: var(--ultramarine, #3545bd); color: #fff; }
+.rest-timer .rest-timer-actions button { position: fixed; z-index: 101; display: grid; place-items: center; width: 44px; height: 44px; min-height: 44px; padding: 0; border: 1px solid var(--line); border-radius: 50%; background: #fff; color: var(--indigo-deep, #24246a); font-size: 12px; font-weight: 800; letter-spacing: -.02em; box-shadow: 0 6px 18px #24246a26; }
+.rest-timer .rest-timer-actions button:disabled { opacity: .35; cursor: default; }
+.rest-timer .rest-timer-actions .rest-timer-action-reset { background: #eef1ff; font-size: 11px; }
+.rest-timer .rest-timer-actions .rest-timer-action-start { border-color: transparent; background: var(--ultramarine, #3545bd); color: #fff; }
+.rest-timer-done .rest-timer-actions .rest-timer-action-start { background: var(--indigo, #24246a); }
 .rest-timer button:focus-visible { outline: 2px solid var(--ultramarine, #3545bd); outline-offset: 2px; }
 .rest-timer .rest-timer-bubble { position: relative; display: grid; place-items: center; width: 56px; height: 56px; min-height: 56px; padding: 0; border: 0; border-radius: 50%; background: var(--ultramarine, #3545bd); color: #fff; box-shadow: 0 4px 18px #24246a30; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; }
 .rest-timer-dragging .rest-timer-bubble { cursor: grabbing; box-shadow: 0 6px 24px #24246a50; }
@@ -368,9 +366,6 @@ body { padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
 .rest-timer-icon { pointer-events: none; }.rest-timer-bubble-done { font-size: 12px; font-weight: 800; }
 .rest-timer-done .rest-timer-bubble { background: var(--yellow, #ffda00); color: var(--indigo, #24246a); }
 .rest-timer-announcement { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-.rest-timer output { font-size: 30px; line-height: 1; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: 1px; }
-.rest-timer .rest-timer-start { background: var(--yellow, #ffda00); font-weight: 600; min-width: 64px; }
-.rest-timer-status:empty { display: none; }
-.rest-timer-status, .rest-timer small { display: block; margin-top: 8px; font-size: 11px; line-height: 1.4; }
-.rest-timer-done .rest-timer-panel { border-color: var(--ultramarine, #3545bd); }
+
+
 @media (max-width: 640px) { .rest-timer { right: 12px; } }
