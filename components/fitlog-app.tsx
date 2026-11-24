@@ -141,7 +141,7 @@ export function FitLogApp() {
       {report && <CoachReport report={report} />}
     </section></details>
 
-    {data.logs.length > 0 && <details className="compact-disclosure"><summary>历史记录</summary><section className="logbook"><div className="log-list">{[...data.logs].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,14).map((log) => <button type="button" key={log.date} onClick={() => { changeDate(log.date); document.querySelector(".editor-section")?.scrollIntoView({behavior:"smooth"}); }}><time>{log.date.slice(5).replace("-","/")}</time><span>{log.workouts.length ? log.workouts.map((item)=>item.name).join("、") : "休息 / 未记录训练"}</span><b>{log.weight ? `${log.weight}kg` : "--"}</b></button>)}</div></section></details>}
+    {data.logs.length > 0 && <details className="compact-disclosure"><summary>历史记录（{data.logs.length} 天）</summary><section className="logbook"><div className="log-list">{[...data.logs].sort((a,b)=>b.date.localeCompare(a.date)).map((log) => <button type="button" key={log.date} onClick={() => { changeDate(log.date); document.querySelector(".editor-section")?.scrollIntoView({behavior:"smooth"}); }}><time>{log.date.slice(5).replace("-","/")}</time><span>{log.workouts.length ? log.workouts.map((item)=>item.name).join("、") : "休息 / 未记录训练"}</span><b>{log.weight ? `${log.weight}kg` : "--"}</b></button>)}</div></section></details>}
 
     <footer><span>数据保存在你的服务器</span></footer>
     {message && <div className="toast" role="status">{message}</div>}
