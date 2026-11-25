@@ -74,11 +74,14 @@ const EXERCISE_MEDIA: Record<string, LyftaExerciseMedia> = {
   },
   "Reverse crunch": {
     "page": "https://www.lyfta.app/exercise/reverse-crunch-6rd",
-    "source": "Lyfta"
+    "source": "Lyfta",
+    "video": "https://apilyfta.com/static/GymvisualMP4/06711201-Reverse-Crunch-(female)_waist.mp4",
+    "poster": "https://apilyfta.com/static/GymvisualPNG/06711101-Reverse-Crunch_waist_small.png"
   },
   "Smith standing leg calf raise": {
     "page": "https://www.lyfta.app/exercise/smith-standing-leg-calf-raise-6ux",
-    "source": "Lyfta"
+    "source": "Lyfta",
+    "poster": "https://apilyfta.com/static/GymvisualPNG/07731101-Smith-Standing-Leg-Calf-Raise_Calf_small.png"
   },
   "Doorway chest stretch": {
     "page": "https://www.lyfta.app/exercise/doorway-chest-stretch-male-qxq",

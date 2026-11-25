@@ -177,7 +177,7 @@ describe("beginner training plan", () => {
       expect(["https://www.lyfta.app", "https://shop.lifefitness.com"]).toContain(url.origin);
       expect(url.pathname).toMatch(/^\/(exercise|products)\/[a-z0-9-]+$/);
       const media = lyftaExerciseMedia(item.englishName);
-      if (!["Smith incline push-up", "Reverse crunch", "Smith standing leg calf raise", "D.Y. row"].includes(item.englishName)) {
+      if (!["Smith incline push-up", "D.Y. row"].includes(item.englishName)) {
         expect(media.video || media.poster, item.englishName).toBeTruthy();
       }
       if (media.video) {
