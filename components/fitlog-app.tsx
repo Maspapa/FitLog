@@ -6,6 +6,7 @@ import { CoachReport } from "./coach-report";
 import { TrainingPlan } from "./training-plan";
 import { TrendChart } from "./trend-chart";
 import { shouldDismissKeyboard } from "@/lib/keyboard";
+import { paginate } from "@/lib/pagination";
 import { dateKey, latestMeasurementEntry, recentLogs } from "@/lib/metrics";
 import { createData, exportData, getOrCreateDeviceToken, importData, loadData, saveData, upsertLog } from "@/lib/storage";
 import { mergePlanWorkouts, type WorkoutNumbers } from "@/lib/workout-history";
@@ -23,6 +24,7 @@ export function FitLogApp() {
   const [report, setReport] = useState<AiReport | null>(null);
   const [coachLoading, setCoachLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [logPage, setLogPage] = useState(0);
   const [adding, setAdding] = useState(false);
   const addingRef = useRef(false);
   const draftRef = useRef<DailyLog | null>(null);
@@ -39,6 +41,7 @@ export function FitLogApp() {
   }, []);
   const selectedLog = useMemo(() => data.logs.find((log) => log.date === selectedDate) || freshLog(selectedDate), [data.logs, selectedDate]);
   const last14 = useMemo(() => recentLogs(data.logs, 14), [data.logs]);
+  const pagedLogs = useMemo(() => paginate([...data.logs].sort((a, b) => b.date.localeCompare(a.date)), logPage, 10), [data.logs, logPage]);
   const latestWeight = useMemo(() => latestMeasurementEntry(data.logs, "weight"), [data.logs]);
   const latestWaist = useMemo(() => latestMeasurementEntry(data.logs, "waist"), [data.logs]);
   useEffect(() => {
@@ -141,7 +144,8 @@ export function FitLogApp() {
       {report && <CoachReport report={report} />}
     </section></details>
 
-    {data.logs.length > 0 && <details className="compact-disclosure"><summary>历史记录（{data.logs.length} 天）</summary><section className="logbook"><div className="log-list">{[...data.logs].sort((a,b)=>b.date.localeCompare(a.date)).map((log) => <button type="button" key={log.date} onClick={() => { changeDate(log.date); document.querySelector(".editor-section")?.scrollIntoView({behavior:"smooth"}); }}><time>{log.date.slice(5).replace("-","/")}</time><span>{log.workouts.length ? log.workouts.map((item)=>item.name).join("、") : "休息 / 未记录训练"}</span><b>{log.weight ? `${log.weight}kg` : "--"}</b></button>)}</div></section></details>}
+    {data.logs.length > 0 && <details className="compact-disclosure"><summary>历史记录（{data.logs.length} 天）</summary><section className="logbook"><div className="log-list">{pagedLogs.items.map((log) => <button type="button" key={log.date} onClick={() => { changeDate(log.date); document.querySelector(".editor-section")?.scrollIntoView({behavior:"smooth"}); }}><time>{log.date.slice(5).replace("-","/")}</time><span>{log.workouts.length ? log.workouts.map((item)=>item.name).join("、") : "休息 / 未记录训练"}</span><b>{log.weight ? `${log.weight}kg` : "--"}</b></button>)}</div>
+      <div className="log-pager"><button type="button" disabled={pagedLogs.page === 0} onClick={() => setLogPage(pagedLogs.page - 1)}>← 上一页</button><span>第 {pagedLogs.page + 1} / {pagedLogs.pageCount} 页 · 每页 10 天</span><button type="button" disabled={pagedLogs.page >= pagedLogs.pageCount - 1} onClick={() => setLogPage(pagedLogs.page + 1)}>下一页 →</button></div></section></details>}
 
     <footer><span>数据保存在你的服务器</span></footer>
     {message && <div className="toast" role="status">{message}</div>}
