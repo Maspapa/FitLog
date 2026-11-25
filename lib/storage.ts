@@ -26,6 +26,13 @@ export async function saveData(token: string, data: FitData): Promise<FitData> {
   return FitDataSchema.parse(payload.data);
 }
 
+/** 删除某一天的记录（只填身体数据、没有训练时用）。 */
+export async function deleteLog(token: string, date: string): Promise<FitData> {
+  const response = await fetch(`/api/data?date=${encodeURIComponent(date)}`, { method: "DELETE", headers: { "X-FitLog-Token": token } });
+  const payload = await response.json(); if (!response.ok) throw new Error(payload.error || "删除记录失败");
+  return FitDataSchema.parse(payload.data);
+}
+
 export function upsertLog(data: FitData, log: DailyLog): FitData {
   return { ...data, logs: [...data.logs.filter((item) => item.date !== log.date), log].sort((a, b) => a.date.localeCompare(b.date)) };
 }

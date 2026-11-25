@@ -3,7 +3,7 @@ import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import { checkDatabase, getFitData, replaceFitData } from "@/lib/server-store";
+import { checkDatabase, deleteEntry, getFitData, replaceFitData } from "@/lib/server-store";
 import type { DailyLog, FitData } from "@/lib/schemas";
 
 const TOKEN_A = "a".repeat(48);
@@ -62,6 +62,15 @@ describe("shared FitLog storage", () => {
 
     expect(getFitData(TOKEN_A).logs.map((item) => item.date)).toEqual(["2026-09-01", "2026-09-02"]);
     expect(getFitData(TOKEN_B)).toEqual(getFitData(TOKEN_A));
+  });
+
+  it("deletes a day that only carried measurements and keeps the rest", () => {
+    const weightOnly = { ...log("2026-09-04", "2026-09-04T08:00:00.000Z", ""), weight: 75.3 };
+    const trained = log("2026-09-05", "2026-09-05T08:00:00.000Z", "有训练");
+    replaceFitData(TOKEN_A, data([weightOnly, trained]));
+    const after = deleteEntry(TOKEN_A, "2026-09-04");
+    expect(after.logs.map((item) => item.date)).toEqual(["2026-09-05"]);
+    expect(getFitData(TOKEN_B).logs.map((item) => item.date)).toEqual(["2026-09-05"]);
   });
 
   it("keeps newer server records when a stale device saves", () => {

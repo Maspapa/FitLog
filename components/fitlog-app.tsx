@@ -8,7 +8,7 @@ import { TrendChart } from "./trend-chart";
 import { shouldDismissKeyboard } from "@/lib/keyboard";
 import { paginate } from "@/lib/pagination";
 import { dateKey, latestMeasurementEntry, recentLogs } from "@/lib/metrics";
-import { createData, exportData, getOrCreateDeviceToken, importData, loadData, saveData, upsertLog } from "@/lib/storage";
+import { createData, deleteLog, exportData, getOrCreateDeviceToken, importData, loadData, saveData, upsertLog } from "@/lib/storage";
 import { mergePlanWorkouts, type WorkoutNumbers } from "@/lib/workout-history";
 import { formatStartTime, recordTrainingStart } from "@/lib/training-session";
 import type { AiReport, DailyLog, FitData, Goal } from "@/lib/schemas";
@@ -65,7 +65,22 @@ export function FitLogApp() {
     catch (error) { setMessage(error instanceof Error ? error.message : "保存失败"); }
     window.setTimeout(() => setMessage(""), 2500);
   }
-  function saveLog(log: typeof selectedLog) { void persist(upsertLog(data, log)); setEditorKey((key) => key + 1); }
+  async function saveLog(log: typeof selectedLog) {
+    // 只填了体重/腰围、没有任何训练的日子不保留。
+    if (log.workouts.length === 0) {
+      const existed = data.logs.some((item) => item.date === log.date);
+      setEditorKey((key) => key + 1);
+      if (!existed) { setMessage("没有训练内容，这天不保存"); window.setTimeout(() => setMessage(""), 2500); return; }
+      try {
+        setData(await deleteLog(tokenRef.current, log.date));
+        setMessage(`这天的记录没有训练，已删除`);
+      } catch (error) { setMessage(error instanceof Error ? error.message : "删除失败"); }
+      window.setTimeout(() => setMessage(""), 2500);
+      return;
+    }
+    void persist(upsertLog(data, log));
+    setEditorKey((key) => key + 1);
+  }
   async function addPlanExercises(items: PlanExercise[], day: TrainingDay, values: Record<string, WorkoutNumbers> = {}) {
     if (addingRef.current) return false;
     const today = dateKey();

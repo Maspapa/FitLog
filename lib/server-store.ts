@@ -112,4 +112,13 @@ export function replaceFitData(token: string, input: FitData): FitData {
   return getFitData(token);
 }
 
+/** 删除某一天的空记录（只填了体重/腰围、没有任何训练）。 */
+export function deleteEntry(token: string, date: string): FitData {
+  void token;
+  const db = database();
+  ensureSharedVault(db);
+  db.prepare("DELETE FROM daily_logs WHERE vault_hash = ? AND log_date = ?").run(SHARED_VAULT_HASH, date);
+  return getFitData(token);
+}
+
 export function checkDatabase(): boolean { database().prepare("SELECT 1 AS ok").get(); return true; }
